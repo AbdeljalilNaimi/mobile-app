@@ -52,6 +52,7 @@ export const AntigravityHeader = () => {
   ];
 
   const resourcesLinks: { label: string; href: string; icon: LucideIcon }[] = [
+    { label: 'Recherche Médicale', href: '/research', icon: BookOpen },
     { label: t('community', 'headerLink'), href: '/community', icon: MessageSquare },
     { label: t('footer', 'documentation'), href: '/docs', icon: BookOpen },
     { label: t('footer', 'contact'), href: '/contact', icon: Mail },

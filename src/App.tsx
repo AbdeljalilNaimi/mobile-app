@@ -75,6 +75,8 @@ const EditOfferPage = lazy(() => import("./pages/citizen/provide/EditOfferPage")
 const DevToolsPage = lazy(() => import("./pages/DevToolsPage"));
 const ProviderWelcomePage = lazy(() => import("./pages/ProviderWelcomePage"));
 const AdsPage = lazy(() => import("./pages/AdsPage"));
+const ResearchHubPage = lazy(() => import("./pages/ResearchHubPage"));
+const ArticleDetailPage = lazy(() => import("./pages/ArticleDetailPage"));
 
 const queryClient = new QueryClient();
 
@@ -499,6 +501,26 @@ const AppRoutes = () => {
           element={
             <PageTransition>
               <AdsPage />
+            </PageTransition>
+          } 
+        />
+
+        {/* ============================================ */}
+        {/* RESEARCH HUB */}
+        {/* ============================================ */}
+        <Route 
+          path="/research" 
+          element={
+            <PageTransition>
+              <ResearchHubPage />
+            </PageTransition>
+          } 
+        />
+        <Route 
+          path="/research/:articleId" 
+          element={
+            <PageTransition>
+              <ArticleDetailPage />
             </PageTransition>
           } 
         />

@@ -18,7 +18,7 @@ import {
   Globe, Users, Search, RefreshCw, Save, LayoutDashboard,
   Image, Gift, FileText, Droplet, Bell, ClipboardList,
   Home as HomeIcon, Upload, Pill, ToggleLeft, Package, Truck, ShoppingBag,
-  Ambulance, Building2, Baby, Scissors, FlaskConical, GraduationCap, ScanLine
+  Ambulance, Building2, Baby, Scissors, FlaskConical, GraduationCap, ScanLine, BookOpen
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { toast as sonnerToast } from 'sonner';
@@ -63,6 +63,7 @@ import {
   getEmergenciesByProvider, subscribeToResponses, BLOOD_TYPES 
 } from '@/services/bloodEmergencyService';
 import { supabase } from '@/lib/supabaseClient';
+import { ProviderArticlesManager } from '@/components/research/ProviderArticlesManager';
 
 const getWelcomeModalKey = (providerId: string) =>
   `provider_onboarding_welcome_seen_${providerId}`;
@@ -698,6 +699,7 @@ export default function ProviderDashboard() {
   if (isHospital) tabCount++; // hospital-settings
   if (isMaternity) tabCount++; // maternity-settings
   if (!isBloodCabin) tabCount++; // ads
+  tabCount++; // publications
   if (isGivingEligible && !isBloodCabin) tabCount++; // giving
   if (isBloodCabin) tabCount++; // blood-emergency
   tabCount++; // analytics
@@ -1068,6 +1070,11 @@ export default function ProviderDashboard() {
                 {isPending && <Lock className="h-3 w-3 ml-1" />}
               </TabsTrigger>
             )}
+            <TabsTrigger value="publications" disabled={isPending}>
+              <BookOpen className="h-4 w-4 mr-1.5" />
+              <span className="hidden sm:inline">Publications</span>
+              {isPending && <Lock className="h-3 w-3 ml-1" />}
+            </TabsTrigger>
             {isGivingEligible && !isBloodCabin && (
               <TabsTrigger value="giving" disabled={isPending}>
                 <Gift className="h-4 w-4 mr-1.5" />
@@ -2736,6 +2743,11 @@ export default function ProviderDashboard() {
               />
             </TabsContent>
           )}
+
+          {/* Publications Tab */}
+          <TabsContent value="publications">
+            <ProviderArticlesManager />
+          </TabsContent>
 
           {/* Giving for Free Tab - hidden for blood banks */}
           {isGivingEligible && !isBloodCabin && (

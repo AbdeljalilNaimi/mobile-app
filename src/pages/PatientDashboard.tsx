@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Calendar, Clock, Star, MessageSquare, CheckCircle, XCircle, AlertCircle, Download, FileText, Loader2, Bell, BellOff, Trash2, ExternalLink } from 'lucide-react';
+import { Calendar, Clock, Star, MessageSquare, CheckCircle, XCircle, AlertCircle, Download, FileText, Loader2, Bell, BellOff, Trash2, ExternalLink, BookOpen } from 'lucide-react';
 import { AppointmentDetailDialog } from '@/components/appointments/AppointmentDetailDialog';
 import { useProfileScore } from '@/hooks/useProfileScore';
 import { ProfileCompletionWidget } from '@/components/patient/ProfileCompletionWidget';
@@ -22,6 +22,42 @@ import { useAppointmentNotifications } from '@/hooks/useAppointmentNotifications
 import { format } from 'date-fns';
 import { fr, ar, enUS } from 'date-fns/locale';
 import jsPDF from 'jspdf';
+import { getSavedArticles, ResearchArticle } from '@/services/researchService';
+import { ArticleCard } from '@/components/research/ArticleCard';
+
+function SavedArticlesTab({ userId }: { userId?: string }) {
+  const [articles, setArticles] = useState<ResearchArticle[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!userId) { setLoading(false); return; }
+    getSavedArticles(userId).then(setArticles).catch(() => {}).finally(() => setLoading(false));
+  }, [userId]);
+
+  if (loading) return <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
+
+  if (articles.length === 0) {
+    return (
+      <Card className="border-dashed">
+        <CardContent className="py-12 text-center">
+          <BookOpen className="h-10 w-10 mx-auto text-muted-foreground/40 mb-3" />
+          <p className="font-medium text-muted-foreground">Aucun article sauvegardé</p>
+          <p className="text-sm text-muted-foreground/70 mt-1">
+            Explorez la <Link to="/research" className="text-primary hover:underline">Recherche Médicale</Link> pour découvrir des publications
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <div className="grid gap-4 md:grid-cols-2">
+      {articles.map(article => (
+        <ArticleCard key={article.id} article={article} isSaved canReact={false} />
+      ))}
+    </div>
+  );
+}
 
 const PatientDashboard = () => {
   const { profile, isAuthenticated, user } = useAuth();
@@ -230,7 +266,7 @@ const PatientDashboard = () => {
 
           {/* Tabs Section */}
           <Tabs defaultValue="upcoming" className="space-y-6">
-            <TabsList className="w-full max-w-2xl bg-muted/50 p-1 rounded-xl grid grid-cols-4 gap-1">
+            <TabsList className="w-full max-w-2xl bg-muted/50 p-1 rounded-xl grid grid-cols-5 gap-1">
               <TabsTrigger value="upcoming" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm text-xs sm:text-sm gap-1.5 px-2 sm:px-3">
                 <Calendar className="h-4 w-4 shrink-0 hidden sm:block" />
                 {t('appointments', 'upcoming')}
@@ -251,6 +287,11 @@ const PatientDashboard = () => {
               <TabsTrigger value="reviews" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm text-xs sm:text-sm gap-1.5 px-2 sm:px-3">
                 <Star className="h-4 w-4 shrink-0 hidden sm:block" />
                 {t('appointments', 'myReviews')}
+              </TabsTrigger>
+              <TabsTrigger value="saved-articles" className="rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm text-xs sm:text-sm gap-1.5 px-2 sm:px-3">
+                <BookOpen className="h-4 w-4 shrink-0 hidden sm:block" />
+                <span className="hidden sm:inline">Articles</span>
+                <span className="sm:hidden">Articles</span>
               </TabsTrigger>
             </TabsList>
 
@@ -527,6 +568,11 @@ const PatientDashboard = () => {
                 ))
               )}
             </TabsContent>
+            {/* Saved Articles Tab */}
+            <TabsContent value="saved-articles" className="space-y-3">
+              <SavedArticlesTab userId={user?.uid} />
+            </TabsContent>
+
           </Tabs>
         </div>
       </div>
