@@ -179,6 +179,96 @@ export type Database = {
         }
         Relationships: []
       }
+      article_reactions: {
+        Row: {
+          article_id: string
+          created_at: string
+          id: string
+          reaction_type: string
+          user_id: string
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          id?: string
+          reaction_type?: string
+          user_id: string
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          id?: string
+          reaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_reactions_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "research_articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      article_saves: {
+        Row: {
+          article_id: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_saves_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "research_articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      article_views: {
+        Row: {
+          article_id: string
+          created_at: string
+          id: string
+          viewer_id: string | null
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          id?: string
+          viewer_id?: string | null
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          id?: string
+          viewer_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_views_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "research_articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blood_emergencies: {
         Row: {
           blood_type_needed: string
@@ -674,6 +764,81 @@ export type Database = {
           id?: string
           provider_id?: string
           status?: string
+        }
+        Relationships: []
+      }
+      research_articles: {
+        Row: {
+          abstract: string
+          category: string
+          content: string
+          created_at: string
+          doi: string | null
+          id: string
+          is_featured: boolean
+          is_verified_provider: boolean
+          pdf_url: string | null
+          provider_avatar: string | null
+          provider_city: string | null
+          provider_id: string
+          provider_name: string
+          provider_type: string | null
+          reactions_count: number
+          rejection_reason: string | null
+          saves_count: number
+          status: string
+          tags: string[] | null
+          title: string
+          updated_at: string
+          views_count: number
+        }
+        Insert: {
+          abstract: string
+          category: string
+          content: string
+          created_at?: string
+          doi?: string | null
+          id?: string
+          is_featured?: boolean
+          is_verified_provider?: boolean
+          pdf_url?: string | null
+          provider_avatar?: string | null
+          provider_city?: string | null
+          provider_id: string
+          provider_name: string
+          provider_type?: string | null
+          reactions_count?: number
+          rejection_reason?: string | null
+          saves_count?: number
+          status?: string
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          views_count?: number
+        }
+        Update: {
+          abstract?: string
+          category?: string
+          content?: string
+          created_at?: string
+          doi?: string | null
+          id?: string
+          is_featured?: boolean
+          is_verified_provider?: boolean
+          pdf_url?: string | null
+          provider_avatar?: string | null
+          provider_city?: string | null
+          provider_id?: string
+          provider_name?: string
+          provider_type?: string | null
+          reactions_count?: number
+          rejection_reason?: string | null
+          saves_count?: number
+          status?: string
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          views_count?: number
         }
         Relationships: []
       }
