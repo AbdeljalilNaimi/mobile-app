@@ -123,6 +123,10 @@ const config: Config = {
           '0%': { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },
         },
+        'marquee-reverse': {
+          '0%': { transform: 'translateX(-50%)' },
+          '100%': { transform: 'translateX(0)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
@@ -140,6 +144,7 @@ const config: Config = {
         'spin-slow': 'spin 2s linear infinite',
         'pulse-glow': 'pulse-glow 2s ease-in-out infinite',
         marquee: 'marquee 30s linear infinite',
+        'marquee-reverse': 'marquee-reverse 30s linear infinite',
       },
     }
   },
