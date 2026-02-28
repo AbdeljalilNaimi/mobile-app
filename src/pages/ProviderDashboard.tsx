@@ -166,6 +166,7 @@ export default function ProviderDashboard() {
 
   // Ref to the tabs for programmatic navigation
   const tabsRef = useRef<HTMLDivElement>(null);
+  const [activeTab, setActiveTab] = useState('overview');
   
   // Settings modal state
   const [showSettingsModal, setShowSettingsModal] = useState(false);
@@ -667,9 +668,11 @@ export default function ProviderDashboard() {
 
   // Helper function to navigate to any tab
   const navigateToTab = (tabValue: string) => {
-    const tabsList = document.querySelector('[role="tablist"]');
-    const tab = tabsList?.querySelector(`[value="${tabValue}"]`) as HTMLButtonElement;
-    tab?.click();
+    setActiveTab(tabValue);
+    // Scroll to tabs area for better UX
+    setTimeout(() => {
+      tabsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
   };
 
   const navigateToVerificationTab = () => {
@@ -961,7 +964,7 @@ export default function ProviderDashboard() {
         )}
 
         {/* Main Tabs */}
-        <Tabs defaultValue="overview" className="space-y-5" ref={tabsRef}>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-5" ref={tabsRef}>
           <TabsList className="flex w-full overflow-x-auto bg-muted/40 p-1 rounded-xl md:grid" style={{ gridTemplateColumns: `repeat(${tabCount}, minmax(0, 1fr))` }}>
             <TabsTrigger value="overview">
               <LayoutDashboard className="h-4 w-4 mr-1.5" />
