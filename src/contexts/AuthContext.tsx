@@ -431,9 +431,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           handleCodeInApp: true,
         });
       } catch {
-        // Fallback without continueUrl if domain not allowlisted
+        // Fallback: still set continueUrl so Firebase's "Continue" button redirects to our app
         try {
-          await sendEmailVerification(newUser);
+          await sendEmailVerification(newUser, {
+            url: `${window.location.origin}/email-verified`,
+          });
         } catch (retryError: any) {
           console.warn('Email verification send failed:', retryError);
           if (retryError?.code === 'auth/too-many-requests') {

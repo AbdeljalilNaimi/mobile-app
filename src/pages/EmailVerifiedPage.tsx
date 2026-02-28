@@ -25,19 +25,16 @@ const EmailVerifiedPage = () => {
   useEffect(() => {
     const verifyAndLogin = async () => {
       const oobCode = searchParams.get('oobCode');
-      if (!oobCode) {
-        setStatus('error');
-        setErrorMsg('Lien de vérification invalide ou expiré.');
-        return;
-      }
+      const auth = getAuth();
 
       try {
-        const auth = getAuth();
-        // Step 1: Verify the email
-        await applyActionCode(auth, oobCode);
-        setStatus('logging-in');
+        // Flow A: oobCode present → verify programmatically
+        if (oobCode) {
+          await applyActionCode(auth, oobCode);
+        }
 
-        // Step 2: Auto-login with stored credentials
+        // Auto-login with stored credentials
+        setStatus('logging-in');
         const storedEmail = sessionStorage.getItem('cityhealth_pending_email');
         const storedPassword = sessionStorage.getItem('cityhealth_pending_password');
 
@@ -47,9 +44,9 @@ const EmailVerifiedPage = () => {
           sessionStorage.removeItem('cityhealth_pending_password');
           setStatus('success');
           toast.success('Bienvenue sur CityHealth !');
-          // Auth listener will handle redirect
+          // Auth listener will handle redirect to dashboard
         } else {
-          // No stored credentials — send to login
+          // Flow B: No credentials (e.g. different browser) → send to login
           setStatus('success');
           toast.success('Email vérifié ! Connectez-vous pour continuer.');
           navigate('/citizen/login', { replace: true });
