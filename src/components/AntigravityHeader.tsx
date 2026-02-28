@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ChevronDown, Menu, Shield, Heart, LayoutDashboard, Users, Globe, Check, Stethoscope, Search, Map, Siren, Bot, Droplets, UserPlus, BookOpen, Mail, LogOut, MessageSquare, FileText, ArrowRight, Megaphone, ArrowLeft, type LucideIcon } from 'lucide-react';
+import { ChevronDown, Menu, Shield, Heart, LayoutDashboard, Users, Globe, Check, Stethoscope, Search, Map, Siren, Bot, Droplets, UserPlus, BookOpen, Mail, LogOut, MessageSquare, FileText, ArrowRight, Megaphone, ArrowLeft, Sun, Moon, type LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Logo } from '@/components/ui/Logo';
 import {
   DropdownMenu,
@@ -40,6 +41,7 @@ export const AntigravityHeader = () => {
   const location = useLocation();
   const { language, setLanguage, t } = useLanguage();
   const { user, logout, profile, isProvider, isAdmin, isCitizen } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -179,6 +181,21 @@ export const AntigravityHeader = () => {
 
           {/* Right: Actions */}
           <div className="flex items-center gap-3 flex-shrink-0">
+            {/* Dark Mode Toggle */}
+            <div className="hidden md:block">
+              <button
+                onClick={toggleTheme}
+                className="flex items-center justify-center h-9 w-9 rounded-xl bg-muted/40 hover:bg-muted/60 border border-border/50 hover:border-primary/30 transition-all duration-300"
+                aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              >
+                {theme === 'dark' ? (
+                  <Sun className="h-4 w-4 text-yellow-400" />
+                ) : (
+                  <Moon className="h-4 w-4 text-muted-foreground" />
+                )}
+              </button>
+            </div>
+
             {/* Language Selector */}
             <div className="hidden md:block">
               <DropdownMenu>
@@ -532,6 +549,19 @@ export const AntigravityHeader = () => {
                 <Siren className="h-4 w-4" />
                 🚨 {t('nav', 'emergency')} 24/7
               </Link>
+
+              <Separator className="my-3" />
+
+              {/* Dark Mode Toggle - Mobile */}
+              <div className="px-4">
+                <button
+                  onClick={toggleTheme}
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl bg-muted/50 hover:bg-primary/10 border border-border/50 hover:border-primary/30 transition-all duration-300"
+                >
+                  {theme === 'dark' ? <Sun className="h-4 w-4 text-yellow-400" /> : <Moon className="h-4 w-4 text-muted-foreground" />}
+                  <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+                </button>
+              </div>
 
               <Separator className="my-3" />
 

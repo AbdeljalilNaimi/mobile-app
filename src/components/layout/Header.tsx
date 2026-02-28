@@ -3,8 +3,9 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Menu, LogOut, Settings, User as UserIcon, Calendar, Bot, Stethoscope, Sparkles,
   MapPin, Phone, Heart, Search, ChevronDown, Droplet, AlertTriangle, Home, Info, HelpCircle, UserPlus, Building2, Shield, Users, HeartPulse, Globe, Check,
-  HeartHandshake, FileText, Megaphone, BookOpen
+  HeartHandshake, FileText, Megaphone, BookOpen, Sun, Moon
 } from 'lucide-react';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
@@ -47,6 +48,7 @@ export const Header = () => {
   const navigate = useNavigate();
   const { language, setLanguage, t, isRTL } = useLanguage();
   const { profile, isAuthenticated, logout, isAdmin, isProvider: isProviderAuth, isCitizen } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const languages = [
@@ -332,6 +334,21 @@ export const Header = () => {
             </a>
           </Button>
 
+          {/* Dark Mode Toggle */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleTheme}
+            className="h-9 w-9 rounded-xl border border-border/50 hover:border-primary/30 hover:bg-primary/10 transition-all duration-300"
+            aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {theme === 'dark' ? (
+              <Sun className="h-4 w-4 text-yellow-400 transition-transform duration-300 rotate-0" />
+            ) : (
+              <Moon className="h-4 w-4 text-muted-foreground transition-transform duration-300" />
+            )}
+          </Button>
+
           {/* Language Selector Premium */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -570,6 +587,18 @@ export const Header = () => {
                 ))}
                 
                 {/* Mobile Language Selector Premium */}
+                {/* Dark Mode Toggle - Mobile */}
+                <div className="border-t border-border/40 pt-4">
+                  <button
+                    onClick={toggleTheme}
+                    className="w-full flex items-center justify-center gap-2 px-3 py-2.5 text-sm font-medium rounded-xl bg-muted/50 hover:bg-primary/10 border border-border/50 hover:border-primary/30 transition-all duration-300"
+                  >
+                    {theme === 'dark' ? <Sun className="h-4 w-4 text-yellow-400" /> : <Moon className="h-4 w-4 text-muted-foreground" />}
+                    <span>{theme === 'dark' ? 'Light Mode' : 'Dark Mode'}</span>
+                  </button>
+                </div>
+
+                {/* Language Selector - Mobile */}
                 <div className="border-t border-border/40 pt-4">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
