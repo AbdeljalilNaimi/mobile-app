@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { 
   MapPin, 
@@ -9,9 +10,10 @@ import {
   Award,
   Upload,
   Send,
-  Sparkles
+  Sparkles,
+  ChevronRight
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 interface OnboardingWelcomeProps {
@@ -19,66 +21,31 @@ interface OnboardingWelcomeProps {
   onGetStarted: () => void;
 }
 
+const allSteps = [
+  { icon: User, title: 'Informations de base', description: 'Nom, email et téléphone', phase: 0 },
+  { icon: MapPin, title: 'Localisation', description: 'Adresse et coordonnées GPS', phase: 0 },
+  { icon: FileText, title: 'Description & Horaires', description: 'Présentez votre pratique', phase: 0 },
+  { icon: Award, title: 'Licence professionnelle', description: 'Numéro d\'agrément', phase: 1 },
+  { icon: Camera, title: 'Photos du cabinet', description: 'Montrez votre établissement', phase: 1 },
+  { icon: Upload, title: 'Documents officiels', description: 'Licence + pièce d\'identité', phase: 1 },
+  { icon: Send, title: 'Soumettre pour vérification', description: 'Envoi pour validation', phase: 2 },
+  { icon: BadgeCheck, title: 'Obtenir le badge vérifié', description: 'Visible publiquement', phase: 2 },
+];
+
+const phases = [
+  { label: 'Identité', emoji: '👤', description: 'Vos informations de base' },
+  { label: 'Preuves', emoji: '📋', description: 'Documents et photos' },
+  { label: 'Validation', emoji: '✅', description: 'Vérification finale' },
+];
+
 export function OnboardingWelcome({ providerName, onGetStarted }: OnboardingWelcomeProps) {
-  const phases = [
-    {
-      label: 'Votre identité',
-      color: 'primary' as const,
-      steps: [
-        { icon: User, title: 'Informations de base', description: 'Nom, email et téléphone' },
-        { icon: MapPin, title: 'Localisation', description: 'Adresse et coordonnées GPS' },
-        { icon: FileText, title: 'Description & Horaires', description: 'Présentez votre pratique' },
-      ],
-    },
-    {
-      label: 'Vos preuves',
-      color: 'amber' as const,
-      steps: [
-        { icon: Award, title: 'Licence professionnelle', description: 'Numéro d\'agrément' },
-        { icon: Camera, title: 'Photos du cabinet', description: 'Montrez votre établissement' },
-        { icon: Upload, title: 'Documents officiels', description: 'Licence + pièce d\'identité' },
-      ],
-    },
-    {
-      label: 'Validation',
-      color: 'emerald' as const,
-      steps: [
-        { icon: Send, title: 'Soumettre pour vérification', description: 'Envoi pour validation' },
-        { icon: BadgeCheck, title: 'Obtenir le badge vérifié', description: 'Visible publiquement' },
-      ],
-    },
-  ];
-
-  const colorMap = {
-    primary: {
-      bg: 'bg-primary/10',
-      text: 'text-primary',
-      border: 'border-primary/20',
-      dot: 'bg-primary',
-      line: 'from-primary/30',
-    },
-    amber: {
-      bg: 'bg-amber-500/10',
-      text: 'text-amber-600 dark:text-amber-400',
-      border: 'border-amber-500/20',
-      dot: 'bg-amber-500',
-      line: 'from-amber-500/30',
-    },
-    emerald: {
-      bg: 'bg-emerald-500/10',
-      text: 'text-emerald-600 dark:text-emerald-400',
-      border: 'border-emerald-500/20',
-      dot: 'bg-emerald-500',
-      line: 'from-emerald-500/30',
-    },
-  };
-
-  let globalIndex = 0;
+  const [activePhase, setActivePhase] = useState(0);
+  const phaseSteps = allSteps.filter(s => s.phase === activePhase);
 
   return (
-    <div className="p-6 space-y-7">
+    <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="text-center space-y-3">
+      <div className="text-center space-y-2">
         <motion.div
           initial={{ scale: 0, rotate: -30 }}
           animate={{ scale: 1, rotate: 0 }}
@@ -87,88 +54,122 @@ export function OnboardingWelcome({ providerName, onGetStarted }: OnboardingWelc
         >
           <Sparkles className="h-7 w-7 text-primary" />
         </motion.div>
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">
-            Bienvenue{providerName ? `, ${providerName}` : ''} !
-          </h2>
-          <p className="text-sm text-muted-foreground mt-1 max-w-sm mx-auto">
-            Complétez ces étapes pour activer votre profil et commencer à recevoir des patients.
-          </p>
-        </div>
+        <h2 className="text-2xl font-bold tracking-tight">
+          Bienvenue{providerName ? `, ${providerName}` : ''} !
+        </h2>
+        <p className="text-sm text-muted-foreground max-w-xs mx-auto">
+          8 étapes simples pour activer votre profil professionnel.
+        </p>
       </div>
 
-      {/* Phases */}
-      <div className="space-y-5">
-        {phases.map((phase, phaseIdx) => {
-          const colors = colorMap[phase.color];
-          return (
-            <motion.div
-              key={phase.label}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: phaseIdx * 0.15, duration: 0.4 }}
-            >
-              {/* Phase label */}
-              <div className="flex items-center gap-2 mb-2.5">
-                <div className={cn('w-2 h-2 rounded-full', colors.dot)} />
-                <span className={cn('text-xs font-semibold uppercase tracking-wider', colors.text)}>
-                  {phase.label}
-                </span>
-                <div className="flex-1 h-px bg-border" />
-              </div>
+      {/* Phase Tabs */}
+      <div className="flex gap-2">
+        {phases.map((phase, idx) => (
+          <button
+            key={phase.label}
+            onClick={() => setActivePhase(idx)}
+            className={cn(
+              'flex-1 relative rounded-xl p-3 text-center transition-all duration-300 border',
+              activePhase === idx
+                ? 'bg-primary/10 border-primary/30 shadow-sm'
+                : 'bg-card border-border hover:bg-muted/50'
+            )}
+          >
+            <span className="text-xl">{phase.emoji}</span>
+            <p className={cn(
+              'text-xs font-semibold mt-1',
+              activePhase === idx ? 'text-primary' : 'text-foreground'
+            )}>
+              {phase.label}
+            </p>
+            {activePhase === idx && (
+              <motion.div
+                layoutId="phase-indicator"
+                className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 rounded-full bg-primary"
+                transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+              />
+            )}
+          </button>
+        ))}
+      </div>
 
-              {/* Steps */}
-              <div className="space-y-1.5">
-                {phase.steps.map((step, stepIdx) => {
-                  const currentGlobal = globalIndex++;
-                  const Icon = step.icon;
-                  return (
-                    <motion.div
-                      key={step.title}
-                      initial={{ opacity: 0, x: -12 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: currentGlobal * 0.06 + 0.2 }}
-                      className={cn(
-                        'flex items-center gap-3 px-3.5 py-3 rounded-xl border transition-colors',
-                        'bg-card hover:bg-muted/40',
-                        colors.border
-                      )}
-                    >
-                      {/* Step number + icon */}
-                      <div className="relative">
-                        <div className={cn(
-                          'w-9 h-9 rounded-lg flex items-center justify-center shrink-0',
-                          colors.bg
-                        )}>
-                          <Icon className={cn('h-4 w-4', colors.text)} />
-                        </div>
-                        <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-card border border-border flex items-center justify-center">
-                          <span className="text-[9px] font-bold text-muted-foreground">{currentGlobal + 1}</span>
-                        </span>
-                      </div>
+      {/* Phase description */}
+      <AnimatePresence mode="wait">
+        <motion.p
+          key={activePhase}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          transition={{ duration: 0.2 }}
+          className="text-xs text-muted-foreground text-center"
+        >
+          {phases[activePhase].description}
+        </motion.p>
+      </AnimatePresence>
 
-                      {/* Content */}
-                      <div className="min-w-0 flex-1">
-                        <h3 className="text-sm font-semibold text-foreground leading-tight">{step.title}</h3>
-                        <p className="text-xs text-muted-foreground mt-0.5">{step.description}</p>
-                      </div>
-                    </motion.div>
-                  );
-                })}
+      {/* Steps for active phase */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activePhase}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          transition={{ duration: 0.25 }}
+          className="space-y-2"
+        >
+          {phaseSteps.map((step, idx) => {
+            const Icon = step.icon;
+            const globalNum = allSteps.indexOf(step) + 1;
+            return (
+              <div
+                key={step.title}
+                className="flex items-center gap-3.5 p-3.5 rounded-xl bg-muted/30 border border-border/50 hover:bg-muted/60 transition-colors"
+              >
+                {/* Number circle */}
+                <div className="relative shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+                    <Icon className="h-4.5 w-4.5 text-primary" />
+                  </div>
+                  <span className="absolute -top-1 -left-1 w-4.5 h-4.5 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-[10px] font-bold shadow-sm">
+                    {globalNum}
+                  </span>
+                </div>
+
+                {/* Text */}
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-sm font-semibold text-foreground">{step.title}</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">{step.description}</p>
+                </div>
+
+                <ChevronRight className="h-4 w-4 text-muted-foreground/40 shrink-0" />
               </div>
-            </motion.div>
-          );
-        })}
+            );
+          })}
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Progress dots */}
+      <div className="flex justify-center gap-1.5">
+        {phases.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setActivePhase(idx)}
+            className={cn(
+              'h-1.5 rounded-full transition-all duration-300',
+              activePhase === idx ? 'w-6 bg-primary' : 'w-1.5 bg-border'
+            )}
+          />
+        ))}
       </div>
 
       {/* CTA */}
-      <div className="pt-1 space-y-3">
+      <div className="space-y-2.5">
         <Button onClick={onGetStarted} className="w-full gap-2 h-12 text-sm font-semibold rounded-xl shadow-md shadow-primary/20" size="lg">
           Commencer l'inscription
           <ArrowRight className="h-4 w-4" />
         </Button>
         <p className="text-[11px] text-center text-muted-foreground">
-          ⏱️ Environ 10-15 minutes • Vous pouvez sauvegarder et reprendre à tout moment
+          ⏱️ ~15 min • Sauvegarde automatique à chaque étape
         </p>
       </div>
     </div>
