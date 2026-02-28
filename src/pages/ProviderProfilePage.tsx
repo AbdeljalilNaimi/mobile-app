@@ -358,12 +358,21 @@ const ProviderProfilePage = () => {
         <section className="rounded-2xl border bg-card p-6 mb-6 shadow-sm animate-fade-in">
           <div className="flex flex-col md:flex-row gap-5">
             {/* Avatar */}
-            <div className="w-24 h-24 rounded-2xl border-4 border-background shadow-md overflow-hidden flex-shrink-0 bg-muted flex items-center justify-center">
-              {provider.image && provider.image !== '/placeholder.svg' && provider.image !== '' ? (
-                <img src={provider.image} alt={provider.name} className="w-full h-full object-cover" />
-              ) : (
-                <TypeIcon className={`h-10 w-10 ${typeConfig.color}`} />
-              )}
+            <div className="relative group w-24 h-24 md:w-28 md:h-28 flex-shrink-0">
+              <div className="w-full h-full rounded-2xl border-4 border-background shadow-lg overflow-hidden bg-muted flex items-center justify-center ring-2 ring-primary/10 transition-all duration-300 group-hover:ring-primary/30 group-hover:shadow-xl">
+                {provider.image && provider.image !== '/placeholder.svg' && provider.image !== '' ? (
+                  <img 
+                    src={provider.image} 
+                    alt={provider.name} 
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-muted">
+                    <TypeIcon className={`h-10 w-10 md:h-12 md:w-12 ${typeConfig.color} drop-shadow-sm`} />
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Info */}
