@@ -1,8 +1,11 @@
 import { createClient } from '@supabase/supabase-js';
 
-const SUPABASE_URL = 'https://hozjbchgaucbfqumrhhs.supabase.co';
-const SUPABASE_ANON_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhvempiY2hnYXVjYmZxdW1yaGhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNjM4OTAsImV4cCI6MjA4NzgzOTg5MH0.Sf-TEIxtDfz_liFlPfiP1robvSGpJTK24mcqAGHypwI';
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  console.error('[CityHealth] Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY in .env');
+}
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-export { SUPABASE_URL };
+export const APP_URL = import.meta.env.VITE_APP_URL || '';

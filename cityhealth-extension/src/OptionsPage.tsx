@@ -143,6 +143,21 @@ export function OptionsPage() {
               Réinitialiser
             </button>
           </div>
+
+          {/* Privacy & Permissions */}
+          <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 mt-2">
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">🔒 Confidentialité & Permissions</h3>
+            <ul className="space-y-2 text-xs text-gray-500">
+              <li className="flex items-start gap-2">
+                <span className="shrink-0">🔔</span>
+                <span><strong className="text-gray-600">Notifications :</strong> Uniquement pour les alertes vitales de don de sang.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="shrink-0">💾</span>
+                <span><strong className="text-gray-600">Stockage :</strong> Pour sauvegarder vos préférences en toute sécurité sur cet appareil.</span>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
