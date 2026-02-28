@@ -1,6 +1,5 @@
-import { Check, Crown, Star, Zap, MapPin, Droplets, ShieldCheck, Calendar, Pill, MessageSquare, Image as ImageIcon, Search, Brain, BarChart3 } from 'lucide-react';
+import { Check, Crown, Star, Zap, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -11,45 +10,51 @@ const plans = [
     name: 'Basic',
     icon: Zap,
     price: 'Gratuit',
+    period: '',
     subtitle: 'Pour démarrer votre présence en ligne',
     features: [
-      { text: 'Profil public standard', icon: MapPin },
-      { text: 'Localisation sur la carte interactive', icon: MapPin },
-      { text: 'Accès au réseau "Urgence Sang"', icon: Droplets },
-      { text: 'Badge "Vérifié" standard', icon: ShieldCheck },
+      'Profil public standard',
+      'Localisation sur la carte interactive',
+      'Accès au réseau "Urgence Sang"',
+      'Badge "Vérifié" standard',
     ],
     cta: 'Commencer gratuitement',
     popular: false,
+    tier: 'basic' as const,
   },
   {
     name: 'Standard',
     icon: Star,
     price: '0 DA',
+    period: '/ mois',
     subtitle: 'Idéal pour développer votre activité',
     features: [
-      { text: 'Tout le forfait Basic', icon: Check },
-      { text: 'Prise de rendez-vous en ligne', icon: Calendar },
-      { text: 'Mode "Pharmacie de Garde"', icon: Pill },
-      { text: 'Affichage des avis patients', icon: MessageSquare },
-      { text: 'Galerie photos de l\'établissement', icon: ImageIcon },
+      'Tout le forfait Basic inclus',
+      'Prise de rendez-vous en ligne',
+      'Mode "Pharmacie de Garde"',
+      'Affichage des avis patients',
+      'Galerie photos de l\'établissement',
     ],
     cta: 'Choisir le Standard',
     popular: true,
+    tier: 'standard' as const,
   },
   {
     name: 'Premium',
     icon: Crown,
     price: '0 DA',
+    period: '/ mois',
     subtitle: 'Visibilité maximale & outils avancés',
     features: [
-      { text: 'Tout le forfait Standard', icon: Check },
-      { text: 'Badge exclusif "Premium Vérifié"', icon: Crown },
-      { text: 'Apparition en tête des résultats', icon: Search },
-      { text: 'Recommandation par l\'Assistant IA Triage', icon: Brain },
-      { text: 'Statistiques avancées du tableau de bord', icon: BarChart3 },
+      'Tout le forfait Standard inclus',
+      'Badge exclusif "Premium Vérifié"',
+      'Apparition en tête des résultats',
+      'Recommandation par l\'Assistant IA',
+      'Statistiques avancées du dashboard',
     ],
     cta: 'Devenir Premium',
     popular: false,
+    tier: 'premium' as const,
   },
 ];
 
@@ -57,102 +62,168 @@ export const PricingSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="py-20 bg-background">
-      <div className="container mx-auto max-w-6xl px-4">
+    <section className="py-24 relative overflow-hidden">
+      {/* Subtle background decoration */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-primary/[0.03] rounded-full blur-3xl" />
+      </div>
+
+      <div className="container mx-auto max-w-5xl px-4 relative z-10">
+        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-14"
+          transition={{ duration: 0.5 }}
+          className="text-center mb-16"
         >
-          <span className="inline-block px-3 py-1 text-xs font-medium text-muted-foreground bg-muted border border-border rounded-full mb-3">
-            Tarification
-          </span>
-          <h2 className="text-3xl font-bold text-foreground mb-2">
+          <Badge variant="outline" className="mb-4 text-xs font-medium px-3 py-1 border-primary/20 text-primary">
+            Tarification transparente
+          </Badge>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3 tracking-tight">
             Des forfaits adaptés à vos besoins
           </h2>
-          <p className="text-muted-foreground text-sm max-w-md mx-auto">
-            Tous les forfaits sont entièrement gratuits la première année. Aucune carte bancaire requise.
+          <p className="text-muted-foreground max-w-lg mx-auto text-sm leading-relaxed">
+            Tous les forfaits sont <span className="font-semibold text-foreground">entièrement gratuits la première année</span>. 
+            Aucune carte bancaire requise.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Plans Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-stretch">
           {plans.map((plan, i) => {
             const Icon = plan.icon;
+            const isPremium = plan.tier === 'premium';
+            const isPopular = plan.popular;
+
             return (
               <motion.div
                 key={plan.name}
-                initial={{ opacity: 0, y: 24 }}
+                initial={{ opacity: 0, y: 28 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1, duration: 0.4 }}
+                transition={{ delay: i * 0.12, duration: 0.45 }}
+                className="relative"
               >
-                <Card
+                {/* Popular label */}
+                {isPopular && (
+                  <div className="absolute -top-3.5 left-0 right-0 flex justify-center z-10">
+                    <span className="bg-primary text-primary-foreground text-[11px] font-semibold px-4 py-1 rounded-full shadow-md shadow-primary/25">
+                      Le plus populaire
+                    </span>
+                  </div>
+                )}
+
+                <div
                   className={cn(
-                    'relative h-full flex flex-col transition-shadow duration-300',
-                    plan.popular
-                      ? 'border-primary shadow-lg shadow-primary/10'
-                      : 'hover:shadow-md'
+                    'h-full rounded-2xl p-[1px] transition-all duration-300',
+                    isPopular
+                      ? 'bg-gradient-to-b from-primary/60 via-primary/20 to-primary/5 shadow-xl shadow-primary/10'
+                      : isPremium
+                        ? 'bg-gradient-to-b from-amber-500/40 via-amber-500/10 to-transparent'
+                        : 'bg-border hover:bg-primary/20'
                   )}
                 >
-                  {plan.popular && (
-                    <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                      <Badge className="bg-primary text-primary-foreground text-xs px-3">
-                        Le plus populaire
-                      </Badge>
-                    </div>
-                  )}
-
-                  <CardHeader className="pb-4">
-                    <div className="flex items-center gap-2 mb-2">
-                      <div className={cn(
-                        'p-1.5 rounded-md',
-                        plan.popular ? 'bg-primary/10' : 'bg-muted'
-                      )}>
-                        <Icon className={cn(
-                          'h-4 w-4',
-                          plan.popular ? 'text-primary' : 'text-muted-foreground'
-                        )} />
+                  <div className={cn(
+                    'h-full rounded-[15px] bg-card flex flex-col p-6',
+                    isPopular && 'pt-8'
+                  )}>
+                    {/* Plan header */}
+                    <div className="mb-5">
+                      <div className="flex items-center gap-2.5 mb-3">
+                        <div className={cn(
+                          'w-9 h-9 rounded-xl flex items-center justify-center',
+                          isPremium
+                            ? 'bg-amber-500/10'
+                            : isPopular
+                              ? 'bg-primary/10'
+                              : 'bg-muted'
+                        )}>
+                          <Icon className={cn(
+                            'h-4.5 w-4.5',
+                            isPremium
+                              ? 'text-amber-500'
+                              : isPopular
+                                ? 'text-primary'
+                                : 'text-muted-foreground'
+                          )} />
+                        </div>
+                        <div>
+                          <h3 className="text-base font-bold text-foreground">{plan.name}</h3>
+                        </div>
                       </div>
-                      <CardTitle className="text-lg">{plan.name}</CardTitle>
+                      <p className="text-xs text-muted-foreground leading-relaxed">{plan.subtitle}</p>
                     </div>
-                    <p className="text-xs text-muted-foreground">{plan.subtitle}</p>
-                    <div className="flex items-baseline gap-1 mt-2">
-                      <span className="text-3xl font-bold text-foreground">{plan.price}</span>
-                      {plan.price !== 'Gratuit' && (
-                        <span className="text-sm text-muted-foreground">/ mois</span>
-                      )}
-                    </div>
-                    <Badge variant="outline" className="w-fit mt-2 border-green-500/30 bg-green-500/10 text-green-700 dark:text-green-400 text-xs">
-                      Gratuit la 1ère année
-                    </Badge>
-                  </CardHeader>
 
-                  <CardContent className="flex-1 flex flex-col">
+                    {/* Price */}
+                    <div className="mb-5">
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-4xl font-extrabold tracking-tight text-foreground">{plan.price}</span>
+                        {plan.period && (
+                          <span className="text-sm text-muted-foreground font-medium">{plan.period}</span>
+                        )}
+                      </div>
+                      <div className="mt-2">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                          <Check className="h-3 w-3" />
+                          Gratuit la 1ère année
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Divider */}
+                    <div className="h-px bg-border mb-5" />
+
+                    {/* Features */}
                     <ul className="space-y-3 flex-1 mb-6">
-                      {plan.features.map((f) => {
-                        const FeatureIcon = f.icon;
-                        return (
-                          <li key={f.text} className="flex items-start gap-2 text-sm text-muted-foreground">
-                            <FeatureIcon className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-                            {f.text}
-                          </li>
-                        );
-                      })}
+                      {plan.features.map((feature) => (
+                        <li key={feature} className="flex items-start gap-2.5">
+                          <div className={cn(
+                            'w-4.5 h-4.5 rounded-full flex items-center justify-center shrink-0 mt-0.5',
+                            isPremium
+                              ? 'bg-amber-500/10'
+                              : 'bg-primary/10'
+                          )}>
+                            <Check className={cn(
+                              'h-2.5 w-2.5',
+                              isPremium ? 'text-amber-500' : 'text-primary'
+                            )} />
+                          </div>
+                          <span className="text-sm text-muted-foreground leading-snug">{feature}</span>
+                        </li>
+                      ))}
                     </ul>
+
+                    {/* CTA */}
                     <Button
-                      className="w-full"
-                      variant={plan.popular ? 'default' : 'outline'}
+                      className={cn(
+                        'w-full h-11 font-semibold text-sm gap-2 rounded-xl transition-all',
+                        isPopular && 'shadow-md shadow-primary/20',
+                        isPremium && 'bg-amber-500 hover:bg-amber-600 text-white shadow-md shadow-amber-500/20'
+                      )}
+                      variant={isPopular ? 'default' : isPremium ? 'default' : 'outline'}
                       onClick={() => navigate('/provider/register')}
                     >
                       {plan.cta}
+                      <ArrowRight className="h-4 w-4" />
                     </Button>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
               </motion.div>
             );
           })}
         </div>
+
+        {/* Bottom note */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.5 }}
+          className="text-center text-xs text-muted-foreground mt-10"
+        >
+          Aucun engagement • Annulation à tout moment • Support inclus dans tous les forfaits
+        </motion.p>
       </div>
     </section>
   );
