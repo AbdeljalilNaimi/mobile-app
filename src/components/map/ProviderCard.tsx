@@ -72,7 +72,7 @@ export const ProviderCard = ({ provider, distance, onClose }: ProviderCardProps)
   
   const tx = t[language as keyof typeof t] || t.fr;
   
-  const typeLabel = PROVIDER_TYPE_LABELS[provider.type]?.[language === 'en' ? 'fr' : language as 'fr' | 'ar'] || provider.type;
+  const typeLabel = PROVIDER_TYPE_LABELS[provider.type]?.[language as 'fr' | 'ar' | 'en'] || PROVIDER_TYPE_LABELS[provider.type]?.fr || provider.type;
   
   const isNew = isNewProvider((provider as any).createdAt);
   

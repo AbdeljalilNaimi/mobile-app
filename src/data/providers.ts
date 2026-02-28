@@ -241,17 +241,17 @@ export interface CityHealthProvider {
   };
 }
 
-// Provider Type Labels (French/Arabic)
-export const PROVIDER_TYPE_LABELS: Record<ProviderType, { fr: string; ar: string; icon: string }> = {
-  hospital: { fr: 'Hôpital', ar: 'مستشفى', icon: '🏥' },
-  birth_hospital: { fr: 'Maternité', ar: 'مستشفى الولادة', icon: '👶' },
-  clinic: { fr: 'Clinique', ar: 'عيادة', icon: '🏨' },
-  doctor: { fr: 'Cabinet Médical', ar: 'عيادة طبية', icon: '👨‍⚕️' },
-  pharmacy: { fr: 'Pharmacie', ar: 'صيدلية', icon: '💊' },
-  lab: { fr: 'Laboratoire d\'Analyses', ar: 'مختبر التحاليل', icon: '🔬' },
-  blood_cabin: { fr: 'Centre de Don de Sang', ar: 'مركز التبرع بالدم', icon: '🩸' },
-  radiology_center: { fr: 'Centre de Radiologie', ar: 'مركز الأشعة', icon: '📷' },
-  medical_equipment: { fr: 'Équipement Médical', ar: 'معدات طبية', icon: '🦽' },
+// Provider Type Labels (French/Arabic/English)
+export const PROVIDER_TYPE_LABELS: Record<ProviderType, { fr: string; ar: string; en: string; icon: string }> = {
+  hospital: { fr: 'Hôpital', ar: 'مستشفى', en: 'Hospital', icon: '🏥' },
+  birth_hospital: { fr: 'Maternité', ar: 'مستشفى الولادة', en: 'Maternity', icon: '👶' },
+  clinic: { fr: 'Clinique', ar: 'عيادة', en: 'Clinic', icon: '🏨' },
+  doctor: { fr: 'Cabinet Médical', ar: 'عيادة طبية', en: 'Medical Office', icon: '👨‍⚕️' },
+  pharmacy: { fr: 'Pharmacie', ar: 'صيدلية', en: 'Pharmacy', icon: '💊' },
+  lab: { fr: 'Laboratoire d\'Analyses', ar: 'مختبر التحاليل', en: 'Laboratory', icon: '🔬' },
+  blood_cabin: { fr: 'Centre de Don de Sang', ar: 'مركز التبرع بالدم', en: 'Blood Donation Center', icon: '🩸' },
+  radiology_center: { fr: 'Centre de Radiologie', ar: 'مركز الأشعة', en: 'Radiology Center', icon: '📷' },
+  medical_equipment: { fr: 'Équipement Médical', ar: 'معدات طبية', en: 'Medical Equipment', icon: '🦽' },
 };
 
 export const SPECIALTIES = [

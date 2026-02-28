@@ -215,7 +215,7 @@ export const AnimatedMapSection = () => {
                                 <ProviderAvatar image={pin.image} name={pin.name} type={pin.type} className="h-7 w-7 flex-shrink-0" iconSize={14} />
                                 <div className="min-w-0 flex-1">
                                   <p className="text-xs font-medium text-foreground truncate">{pin.name}</p>
-                                  <p className="text-[10px] text-muted-foreground truncate">{pin.specialty || PROVIDER_TYPE_LABELS[pin.type]?.fr}</p>
+                                  <p className="text-[10px] text-muted-foreground truncate">{pin.specialty || PROVIDER_TYPE_LABELS[pin.type]?.[language as 'fr' | 'ar' | 'en'] || PROVIDER_TYPE_LABELS[pin.type]?.fr}</p>
                                 </div>
                               </div>
                               <span className="text-[10px] text-primary font-medium">{miniCardLabels[language as keyof typeof miniCardLabels] || miniCardLabels.fr} →</span>

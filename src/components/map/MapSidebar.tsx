@@ -175,9 +175,7 @@ export const MapSidebar = ({
               const distance = distances.get(provider.id);
               const isSelected = selectedProvider?.id === provider.id;
               const typeLabel =
-                PROVIDER_TYPE_LABELS[provider.type]?.[
-                  language === 'en' ? 'fr' : (language as 'fr' | 'ar')
-                ] || provider.type;
+                PROVIDER_TYPE_LABELS[provider.type]?.[language as 'fr' | 'ar' | 'en'] || provider.type;
               const isComputingRoute = routingId === provider.id || (isRouting && isSelected);
 
               return (

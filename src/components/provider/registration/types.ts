@@ -290,16 +290,16 @@ export interface SocialLinks {
 }
 
 // Expanded Provider Type Labels
-export const PROVIDER_TYPE_LABELS: Record<string, { fr: string; ar: string; icon: string; category: string }> = {
-  hospital: { fr: 'Hôpital', ar: 'مستشفى', icon: '🏥', category: 'medical' },
-  birth_hospital: { fr: 'Maternité', ar: 'مستشفى الولادة', icon: '👶', category: 'medical' },
-  clinic: { fr: 'Clinique', ar: 'عيادة', icon: '🏨', category: 'medical' },
-  doctor: { fr: 'Cabinet Médical', ar: 'عيادة طبية', icon: '👨‍⚕️', category: 'medical' },
-  pharmacy: { fr: 'Pharmacie', ar: 'صيدلية', icon: '💊', category: 'pharmacy' },
-  lab: { fr: 'Laboratoire d\'Analyses', ar: 'مختبر التحاليل', icon: '🔬', category: 'diagnostic' },
-  blood_cabin: { fr: 'Centre de Don de Sang', ar: 'مركز التبرع بالدم', icon: '🩸', category: 'diagnostic' },
-  radiology_center: { fr: 'Centre de Radiologie', ar: 'مركز الأشعة', icon: '📷', category: 'diagnostic' },
-  medical_equipment: { fr: 'Équipement Médical', ar: 'معدات طبية', icon: '🦽', category: 'equipment' },
+export const PROVIDER_TYPE_LABELS: Record<string, { fr: string; ar: string; en: string; icon: string; category: string }> = {
+  hospital: { fr: 'Hôpital', ar: 'مستشفى', en: 'Hospital', icon: '🏥', category: 'medical' },
+  birth_hospital: { fr: 'Maternité', ar: 'مستشفى الولادة', en: 'Maternity', icon: '👶', category: 'medical' },
+  clinic: { fr: 'Clinique', ar: 'عيادة', en: 'Clinic', icon: '🏨', category: 'medical' },
+  doctor: { fr: 'Cabinet Médical', ar: 'عيادة طبية', en: 'Medical Office', icon: '👨‍⚕️', category: 'medical' },
+  pharmacy: { fr: 'Pharmacie', ar: 'صيدلية', en: 'Pharmacy', icon: '💊', category: 'pharmacy' },
+  lab: { fr: 'Laboratoire d\'Analyses', ar: 'مختبر التحاليل', en: 'Laboratory', icon: '🔬', category: 'diagnostic' },
+  blood_cabin: { fr: 'Centre de Don de Sang', ar: 'مركز التبرع بالدم', en: 'Blood Donation Center', icon: '🩸', category: 'diagnostic' },
+  radiology_center: { fr: 'Centre de Radiologie', ar: 'مركز الأشعة', en: 'Radiology Center', icon: '📷', category: 'diagnostic' },
+  medical_equipment: { fr: 'Équipement Médical', ar: 'معدات طبية', en: 'Medical Equipment', icon: '🦽', category: 'equipment' },
 };
 
 // Pharmacy Services
