@@ -70,6 +70,9 @@ const CitizenRegisterPage = () => {
       setIsLoading(true);
       const fullPhone = validated.phone ? `+213${validated.phone.replace(/\s/g, '')}` : undefined;
       await signupAsCitizen(validated.email, validated.password, validated.fullName, fullPhone);
+      // Store credentials temporarily for auto-login after email verification
+      sessionStorage.setItem('cityhealth_pending_email', validated.email);
+      sessionStorage.setItem('cityhealth_pending_password', validated.password);
       setRegisteredEmail(validated.email);
       setEmailSent(true);
     } catch (error) {

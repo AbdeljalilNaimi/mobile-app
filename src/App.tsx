@@ -19,7 +19,7 @@ import { AntigravityHeader } from "./components/AntigravityHeader";
 // Conditional header - hidden on pages with their own navigation
 const ConditionalHeader = () => {
   const location = useLocation();
-  const hiddenPrefixes = ['/admin/dashboard', '/provider/dashboard', '/docs', '/map/', '/admin/login', '/provider/login', '/citizen/login', '/citizen/register', '/provider/register'];
+  const hiddenPrefixes = ['/admin/dashboard', '/provider/dashboard', '/docs', '/map/', '/admin/login', '/provider/login', '/citizen/login', '/citizen/register', '/provider/register', '/email-verified'];
   const shouldHide = hiddenPrefixes.some(p => location.pathname.startsWith(p));
   if (shouldHide) return null;
   return <AntigravityHeader />;
@@ -77,7 +77,7 @@ const ProviderWelcomePage = lazy(() => import("./pages/ProviderWelcomePage"));
 const AdsPage = lazy(() => import("./pages/AdsPage"));
 const ResearchHubPage = lazy(() => import("./pages/ResearchHubPage"));
 const ArticleDetailPage = lazy(() => import("./pages/ArticleDetailPage"));
-
+const EmailVerifiedPage = lazy(() => import("./pages/EmailVerifiedPage"));
 const queryClient = new QueryClient();
 
 // Loading fallback component
@@ -155,6 +155,7 @@ const AppRoutes = () => {
         {/* ============================================ */}
         <Route path="/citizen/login" element={<PageTransition><CitizenLoginPage /></PageTransition>} />
         <Route path="/citizen/register" element={<PageTransition><CitizenRegisterPage /></PageTransition>} />
+        <Route path="/email-verified" element={<PageTransition><EmailVerifiedPage /></PageTransition>} />
         <Route element={<MainLayout />}>
           <Route 
             path="/citizen/dashboard" 

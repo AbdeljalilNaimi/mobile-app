@@ -424,10 +424,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         displayName: fullName
       });
 
-      // Send email verification with redirect to citizen dashboard
+      // Send email verification with redirect to /email-verified page
       try {
         await sendEmailVerification(newUser, {
-          url: `${window.location.origin}/citizen/dashboard`,
+          url: `${window.location.origin}/email-verified`,
           handleCodeInApp: false,
         });
       } catch {
