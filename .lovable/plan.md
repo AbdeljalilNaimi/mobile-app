@@ -1,30 +1,35 @@
 
 
-# Provider Registration Section Before Footer
+# Unify Header Dropdowns and Add Back Button
 
-## Current State
-The `ProviderCTA` component already exists at `src/components/homepage/ProviderCTA.tsx` and is already placed directly before the `<Footer />` in `AntigravityIndex.tsx` (lines 48-52). It already includes:
-- Full trilingual support (French, Arabic, English)
-- RTL layout for Arabic
-- Responsive grid layout (stacked on mobile, 2-column on desktop)
-- Provider type cards, benefits list, premium badge, stats counter, and CTA button
+## Problem
+- Map pages (`/map/providers`, `/map/emergency`, `/map/blood`) use a simpler `Header` component with basic dropdown menus, while the rest of the site uses `AntigravityHeader` with rich mega-menus
+- No "back to previous page" button exists on map pages or other inner pages
 
-## What Needs to Be Done
+## Changes
 
-Since the component and its placement already exist, the work is minimal -- just verifying and ensuring everything renders correctly:
+### 1. Replace Header in MapMother with AntigravityHeader
+**File: `src/components/map/MapMother.tsx`**
+- Replace `import { Header } from '@/components/layout/Header'` with `import { AntigravityHeader } from '@/components/AntigravityHeader'`
+- Replace `<Header />` with `<AntigravityHeader />` in the render
+- Remove `/map/` from the `hiddenPrefixes` array in `App.tsx` `ConditionalHeader` so the logic stays clean (since MapMother renders its own header, we keep the prefix exclusion but switch to AntigravityHeader inside MapMother)
 
-### 1. Verify placement in `AntigravityIndex.tsx`
-The `<ProviderCTA />` is already the last section before `<Footer />`. No structural change needed.
+### 2. Add a Back Button to Map Pages
+**File: `src/components/map/MapMother.tsx`**
+- Add a "back to previous page" button next to the page title (below the header, before the map)
+- Uses `useNavigate()` with `navigate(-1)` and an `ArrowLeft` icon
+- Trilingual label: Retour / العودة / Back
 
-### 2. Minor responsive and language improvements in `ProviderCTA.tsx`
-- Ensure the `providerTypes` labels support all 3 languages (currently Arabic uses `isRTL` but English falls back to French labels like "Cliniques" instead of "Clinics")
-- Fix provider type labels to use proper `language`-based lookup instead of `isRTL` boolean for correct English labels
+### 3. Add a Back Button to Other Inner Pages Without One
+**File: `src/components/layout/Header.tsx`** (kept as fallback but no longer used by map)
+- No changes needed since map pages now use AntigravityHeader
 
-### Files Modified
+### 4. Add Back Button to AntigravityHeader for Non-homepage routes
+**File: `src/components/AntigravityHeader.tsx`**
+- When `location.pathname !== '/'`, render a small back button (ArrowLeft) in the header bar, left of the logo or as part of the nav area
+- This provides universal "back" navigation on all pages using AntigravityHeader
 
-**`src/components/homepage/ProviderCTA.tsx`**
-- Update `providerTypes` array to use `language`-based labels instead of `isRTL` ternary (so English gets "Clinics", "Laboratories", "Pharmacies", "Doctors" instead of the French labels)
-- Everything else (layout, translations, responsiveness, RTL) is already correctly implemented
-
-This is a very small change -- just fixing the provider type card labels to properly reflect all 3 languages.
+## Files Modified
+- `src/components/map/MapMother.tsx` — switch to AntigravityHeader
+- `src/components/AntigravityHeader.tsx` — add conditional back button for inner pages
 
