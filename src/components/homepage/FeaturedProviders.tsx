@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
-import { Star, ArrowRight, MapPin, Shield, Stethoscope, Building2, Pill, FlaskConical, Hospital, Baby, Droplets, RadioTower, Wrench } from 'lucide-react';
+import { Star, ArrowRight, ArrowLeft, ChevronLeft, ChevronRight, MapPin, Shield, Stethoscope, Building2, Pill, FlaskConical, Hospital, Baby, Droplets, RadioTower, Wrench } from 'lucide-react';
 import { ProviderAvatar } from '@/components/ui/ProviderAvatar';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useMemo, useState, useRef } from 'react';
+import { useMemo, useState, useRef, useCallback, useEffect } from 'react';
 import { useVerifiedProviders } from '@/hooks/useProviders';
 import { isProviderVerified } from '@/utils/verificationUtils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -84,6 +84,32 @@ export const FeaturedProviders = () => {
 
   const TypeIcon = (type: string) => typeIcons[type] || Stethoscope;
 
+  // Scroll state
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(true);
+
+  const updateScrollState = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+  }, []);
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    updateScrollState();
+    el.addEventListener('scroll', updateScrollState, { passive: true });
+    return () => el.removeEventListener('scroll', updateScrollState);
+  }, [filteredProviders, updateScrollState]);
+
+  const scroll = useCallback((dir: 'left' | 'right') => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const amount = 280;
+    el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
+  }, []);
+
   return (
     <section className="py-20 px-4 bg-background relative overflow-hidden">
       <div className="container mx-auto max-w-6xl relative">
@@ -158,92 +184,116 @@ export const FeaturedProviders = () => {
             </Button>
           </motion.div>
         ) : (
-          <div
-            ref={scrollRef}
-            className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide scroll-smooth"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-          >
-            <AnimatePresence mode="popLayout">
-              {filteredProviders.map((provider, index) => {
-                const Icon = TypeIcon(provider.type);
-                return (
-                  <motion.div
-                    key={provider.id}
-                    layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    transition={{ duration: 0.35, delay: index * 0.04 }}
-                    className="snap-start flex-shrink-0"
-                  >
-                    <Link
-                      to={`/provider/${provider.id}`}
-                      className="group relative block w-[260px] bg-card border border-border rounded-2xl overflow-hidden hover:shadow-lg hover:border-foreground/10 transition-all duration-300"
+          <div className="relative group/carousel">
+            {/* Left arrow */}
+            {canScrollLeft && (
+              <button
+                onClick={() => scroll('left')}
+                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-3 z-10 hidden md:flex w-9 h-9 items-center justify-center rounded-full bg-background border border-border shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
+                aria-label="Scroll left"
+              >
+                <ChevronLeft className="h-4 w-4 text-foreground" />
+              </button>
+            )}
+
+            {/* Right arrow */}
+            {canScrollRight && (
+              <button
+                onClick={() => scroll('right')}
+                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-3 z-10 hidden md:flex w-9 h-9 items-center justify-center rounded-full bg-background border border-border shadow-md hover:shadow-lg hover:scale-105 transition-all duration-200"
+                aria-label="Scroll right"
+              >
+                <ChevronRight className="h-4 w-4 text-foreground" />
+              </button>
+            )}
+
+            {/* Fade edges */}
+            {canScrollLeft && (
+              <div className="absolute left-0 top-0 bottom-4 w-12 bg-gradient-to-r from-background to-transparent z-[5] pointer-events-none hidden md:block" />
+            )}
+            {canScrollRight && (
+              <div className="absolute right-0 top-0 bottom-4 w-12 bg-gradient-to-l from-background to-transparent z-[5] pointer-events-none hidden md:block" />
+            )}
+
+            <div
+              ref={scrollRef}
+              className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-hide scroll-smooth"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              <AnimatePresence mode="popLayout">
+                {filteredProviders.map((provider, index) => {
+                  const Icon = TypeIcon(provider.type);
+                  return (
+                    <motion.div
+                      key={provider.id}
+                      layout
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.35, delay: index * 0.04 }}
+                      className="snap-start flex-shrink-0"
                     >
-                      {/* Top visual area */}
-                      <div className="relative h-28 bg-muted/50 flex items-center justify-center overflow-hidden">
-                        {provider.image && provider.image !== '/placeholder.svg' && provider.image !== '' ? (
-                          <img
-                            src={provider.image}
-                            alt={provider.name}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                          />
-                        ) : (
-                          <Icon className="h-10 w-10 text-muted-foreground/40" />
-                        )}
-                        {/* Gradient overlay */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
+                      <Link
+                        to={`/provider/${provider.id}`}
+                        className="group relative block w-[260px] bg-card border border-border rounded-2xl overflow-hidden hover:shadow-lg hover:border-foreground/10 transition-all duration-300"
+                      >
+                        {/* Top visual area */}
+                        <div className="relative h-28 bg-muted/50 flex items-center justify-center overflow-hidden">
+                          {provider.image && provider.image !== '/placeholder.svg' && provider.image !== '' ? (
+                            <img
+                              src={provider.image}
+                              alt={provider.name}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                          ) : (
+                            <Icon className="h-10 w-10 text-muted-foreground/40" />
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
 
-                        {/* Verified badge */}
-                        {provider.isVerified && (
-                          <div className="absolute top-3 right-3 w-6 h-6 bg-primary rounded-full flex items-center justify-center shadow-sm">
-                            <Shield className="w-3 h-3 text-primary-foreground" />
-                          </div>
-                        )}
+                          {provider.isVerified && (
+                            <div className="absolute top-3 right-3 w-6 h-6 bg-primary rounded-full flex items-center justify-center shadow-sm">
+                              <Shield className="w-3 h-3 text-primary-foreground" />
+                            </div>
+                          )}
 
-                        {/* Rank badge for top 3 */}
-                        {index < 3 && activeFilter === 'all' && (
-                          <div className="absolute top-3 left-3 px-2 py-0.5 bg-foreground/90 text-background text-[10px] font-bold rounded-full">
-                            #{index + 1}
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Content */}
-                      <div className="p-4">
-                        <h3 className="font-semibold text-foreground text-sm truncate group-hover:text-primary transition-colors duration-200">
-                          {provider.name}
-                        </h3>
-
-                        <div className="flex items-center gap-1.5 mt-1.5">
-                          <Icon className="h-3 w-3 text-muted-foreground" />
-                          <span className="text-xs text-muted-foreground truncate">{provider.specialty}</span>
+                          {index < 3 && activeFilter === 'all' && (
+                            <div className="absolute top-3 left-3 px-2 py-0.5 bg-foreground/90 text-background text-[10px] font-bold rounded-full">
+                              #{index + 1}
+                            </div>
+                          )}
                         </div>
 
-                        {provider.city && (
-                          <div className="flex items-center gap-1 mt-1">
-                            <MapPin className="h-3 w-3 text-muted-foreground/60" />
-                            <span className="text-[11px] text-muted-foreground/60 truncate">{provider.city}</span>
+                        <div className="p-4">
+                          <h3 className="font-semibold text-foreground text-sm truncate group-hover:text-primary transition-colors duration-200">
+                            {provider.name}
+                          </h3>
+                          <div className="flex items-center gap-1.5 mt-1.5">
+                            <Icon className="h-3 w-3 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground truncate">{provider.specialty}</span>
                           </div>
-                        )}
-
-                        {/* Rating + CTA */}
-                        <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
-                          <div className="flex items-center gap-1">
-                            <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                            <span className="text-sm font-semibold text-foreground">{provider.rating.toFixed(1)}</span>
-                            <span className="text-[11px] text-muted-foreground">({provider.reviewCount})</span>
+                          {provider.city && (
+                            <div className="flex items-center gap-1 mt-1">
+                              <MapPin className="h-3 w-3 text-muted-foreground/60" />
+                              <span className="text-[11px] text-muted-foreground/60 truncate">{provider.city}</span>
+                            </div>
+                          )}
+                          <div className="flex items-center justify-between mt-3 pt-3 border-t border-border">
+                            <div className="flex items-center gap-1">
+                              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                              <span className="text-sm font-semibold text-foreground">{provider.rating.toFixed(1)}</span>
+                              <span className="text-[11px] text-muted-foreground">({provider.reviewCount})</span>
+                            </div>
+                            <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                              Voir →
+                            </span>
                           </div>
-                          <span className="text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                            Voir →
-                          </span>
                         </div>
-                      </div>
-                    </Link>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
+                      </Link>
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </div>
           </div>
         )}
 
