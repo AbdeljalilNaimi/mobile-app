@@ -78,7 +78,7 @@ const ProviderProfilePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t, language } = useLanguage();
-  const { user, isAuthenticated } = useAuth();
+  const { user, profile, isAuthenticated } = useAuth();
   const [bookingOpen, setBookingOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [chatOpen, setChatOpen] = useState(false);
@@ -2229,12 +2229,13 @@ const ProviderProfilePage = () => {
               <ReviewSystem 
                 providerId={provider.id}
                 providerName={provider.name}
-                canReview={true}
+                canReview={!!user && profile?.userType === 'citizen'}
                 reviews={reviewsData}
                 stats={reviewStats}
                 isLoading={reviewsLoading}
                 submitReview={submitReviewMutation}
                 currentUserId={user?.uid}
+                currentUserName={profile?.full_name || user?.displayName || undefined}
               />
             </div>
           </div>

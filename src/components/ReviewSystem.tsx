@@ -23,6 +23,7 @@ interface ReviewSystemProps {
   isLoading: boolean;
   submitReview: UseMutationResult<void, Error, { patientId: string; patientName: string; rating: number; comment: string }>;
   currentUserId?: string;
+  currentUserName?: string;
 }
 
 export const ReviewSystem: React.FC<ReviewSystemProps> = ({
@@ -34,14 +35,14 @@ export const ReviewSystem: React.FC<ReviewSystemProps> = ({
   isLoading,
   submitReview,
   currentUserId,
+  currentUserName,
 }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
-  const [patientName, setPatientName] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleSubmit = () => {
-    if (!rating || !comment.trim() || !patientName.trim()) {
+    if (!rating || !comment.trim()) {
       toast.error('Veuillez remplir tous les champs');
       return;
     }
@@ -49,15 +50,15 @@ export const ReviewSystem: React.FC<ReviewSystemProps> = ({
       toast.error('Vous devez être connecté pour laisser un avis');
       return;
     }
+    const name = currentUserName || 'Patient';
 
     submitReview.mutate(
-      { patientId: currentUserId, patientName, rating, comment },
+      { patientId: currentUserId, patientName: name, rating, comment },
       {
         onSuccess: () => {
           toast.success('Votre avis a été publié avec succès!');
           setRating(0);
           setComment('');
-          setPatientName('');
           setDialogOpen(false);
         },
         onError: () => {
@@ -97,14 +98,6 @@ export const ReviewSystem: React.FC<ReviewSystemProps> = ({
                   <DialogTitle>Laisser un avis pour {providerName}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium">Votre nom</label>
-                    <Input
-                      value={patientName}
-                      onChange={(e) => setPatientName(e.target.value)}
-                      placeholder="Nom complet"
-                    />
-                  </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Votre note</label>
                     <div className="flex gap-2">
