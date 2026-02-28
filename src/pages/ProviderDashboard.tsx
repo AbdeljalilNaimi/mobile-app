@@ -13,7 +13,7 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { 
   Eye, Phone, MapPin, TrendingUp, Calendar, Star, 
-  Settings, BarChart3, Clock, Megaphone, Shield,
+  Settings, BarChart3, Clock, Megaphone, Shield, Crown,
   AlertTriangle, XCircle, CheckCircle2, Loader2, Lock,
   Globe, Users, Search, RefreshCw, Save, LayoutDashboard,
   Image, Gift, FileText, Droplet, Bell, ClipboardList,
@@ -834,10 +834,17 @@ export default function ProviderDashboard() {
                   <div className="flex items-center gap-2.5 flex-wrap">
                     <h1 className="text-xl font-bold tracking-tight">{sensitiveData.name || 'Nouveau Professionnel'}</h1>
                     {isVerified ? (
-                      <Badge className="bg-primary/10 text-primary hover:bg-primary/15 border-0 text-xs px-2 py-0.5">
-                        <Shield className="h-3 w-3 mr-1" />
-                        Vérifié
-                      </Badge>
+                      providerData?.planType === 'premium' ? (
+                        <Badge className="bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/15 border-0 text-xs px-2 py-0.5">
+                          <Crown className="h-3 w-3 mr-1" />
+                          Premium Vérifié
+                        </Badge>
+                      ) : (
+                        <Badge className="bg-primary/10 text-primary hover:bg-primary/15 border-0 text-xs px-2 py-0.5">
+                          <Shield className="h-3 w-3 mr-1" />
+                          Vérifié
+                        </Badge>
+                      )
                     ) : isPending ? (
                       <Badge variant="secondary" className="bg-amber-500/10 text-amber-600 border-0 text-xs px-2 py-0.5">
                         <Clock className="h-3 w-3 mr-1" />
