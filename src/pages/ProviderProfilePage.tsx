@@ -470,31 +470,31 @@ const ProviderProfilePage = () => {
             <div className="flex md:flex-col gap-2 flex-wrap md:items-end flex-shrink-0">
               {/* Primary CTA */}
               {['doctor', 'clinic', 'hospital', 'birth_hospital'].includes(resolvedType) && (
-                <Button onClick={() => setBookingOpen(true)} size="sm" className="gap-1.5">
+                <Button onClick={() => setBookingOpen(true)} size="sm" className="gap-1.5 transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95">
                   <Calendar className="h-3.5 w-3.5" />
                   Prendre rendez-vous
                 </Button>
               )}
               {['lab', 'radiology_center'].includes(resolvedType) && (
-                <Button onClick={() => setBookingOpen(true)} size="sm" className="gap-1.5">
+                <Button onClick={() => setBookingOpen(true)} size="sm" className="gap-1.5 transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95">
                   <ClipboardList className="h-3.5 w-3.5" />
                   Planifier un examen
                 </Button>
               )}
               {resolvedType === 'pharmacy' && (
-                <Button onClick={handleCall} size="sm" className="gap-1.5">
+                <Button onClick={handleCall} size="sm" className="gap-1.5 transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95">
                   <Phone className="h-3.5 w-3.5" />
                   Appeler
                 </Button>
               )}
               {resolvedType === 'blood_cabin' && (
-                <Button onClick={() => navigate('/blood-donation')} size="sm" className="gap-1.5 bg-destructive hover:bg-destructive/90">
+                <Button onClick={() => navigate('/blood-donation')} size="sm" className="gap-1.5 bg-destructive hover:bg-destructive/90 transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95">
                   <Droplets className="h-3.5 w-3.5" />
                   Donner mon sang
                 </Button>
               )}
               {resolvedType === 'medical_equipment' && (
-                <Button onClick={handleCall} size="sm" className="gap-1.5">
+                <Button onClick={handleCall} size="sm" className="gap-1.5 transition-all duration-200 hover:scale-105 hover:shadow-md active:scale-95">
                   <FileText className="h-3.5 w-3.5" />
                   Demander un devis
                 </Button>
@@ -505,7 +505,7 @@ const ProviderProfilePage = () => {
                 <Button 
                   variant={isFavorite ? "default" : "outline"} 
                   size="icon"
-                  className="h-8 w-8"
+                  className="h-8 w-8 transition-all duration-200 hover:scale-110 active:scale-90"
                   onClick={handleFavoriteClick}
                   disabled={favoriteLoading}
                 >
@@ -514,7 +514,7 @@ const ProviderProfilePage = () => {
 
                 <Dialog>
                   <DialogTrigger asChild>
-                    <Button variant="outline" size="icon" className="h-8 w-8">
+                    <Button variant="outline" size="icon" className="h-8 w-8 transition-all duration-200 hover:scale-110 active:scale-90">
                       <Share2 className="h-3.5 w-3.5" />
                     </Button>
                   </DialogTrigger>
