@@ -110,6 +110,26 @@ export const FeaturedProviders = () => {
     el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
   }, []);
 
+  // Auto-scroll
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (isPaused) return;
+    const el = scrollRef.current;
+    if (!el) return;
+
+    const interval = setInterval(() => {
+      const atEnd = el.scrollLeft >= el.scrollWidth - el.clientWidth - 4;
+      if (atEnd) {
+        el.scrollTo({ left: 0, behavior: 'smooth' });
+      } else {
+        el.scrollBy({ left: 1, behavior: 'auto' });
+      }
+    }, 30);
+
+    return () => clearInterval(interval);
+  }, [isPaused, filteredProviders]);
+
   return (
     <section className="py-20 px-4 bg-background relative overflow-hidden">
       <div className="container mx-auto max-w-6xl relative">
@@ -184,7 +204,7 @@ export const FeaturedProviders = () => {
             </Button>
           </motion.div>
         ) : (
-          <div className="relative group/carousel">
+          <div className="relative group/carousel" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)}>
             {/* Left arrow */}
             {canScrollLeft && (
               <button
