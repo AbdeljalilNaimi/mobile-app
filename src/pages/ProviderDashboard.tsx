@@ -785,13 +785,13 @@ export default function ProviderDashboard() {
               <div className="flex items-center gap-4">
                 {/* Avatar with upload */}
                 <div className="relative group">
-                  <Avatar className="h-14 w-14 ring-2 ring-border">
+                  <Avatar className="h-16 w-16 ring-2 ring-border">
                     {providerData?.image && providerData.image !== '/placeholder.svg' && providerData.image !== '' ? (
                       <AvatarImage src={providerData.image} />
                     ) : nonSensitiveData.photos[0] ? (
                       <AvatarImage src={nonSensitiveData.photos[0]} />
                     ) : null}
-                    <AvatarFallback className="text-sm font-semibold">{sensitiveData.name?.substring(0, 2).toUpperCase() || 'PR'}</AvatarFallback>
+                    <AvatarFallback className="text-base font-semibold bg-primary/10 text-primary">{sensitiveData.name?.substring(0, 2).toUpperCase() || 'PR'}</AvatarFallback>
                   </Avatar>
                   <label className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
                     <Upload className="h-4 w-4 text-white" />
@@ -815,22 +815,22 @@ export default function ProviderDashboard() {
                   </label>
                 </div>
                 {/* Name & Status */}
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2.5">
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2.5 flex-wrap">
                     <h1 className="text-xl font-bold tracking-tight">{sensitiveData.name || 'Nouveau Professionnel'}</h1>
                     {isVerified ? (
-                      <Badge className="bg-primary/10 text-primary hover:bg-primary/15 border-0 text-[10px] px-1.5 py-0">
-                        <Shield className="h-2.5 w-2.5 mr-0.5" />
+                      <Badge className="bg-primary/10 text-primary hover:bg-primary/15 border-0 text-xs px-2 py-0.5">
+                        <Shield className="h-3 w-3 mr-1" />
                         Vérifié
                       </Badge>
                     ) : isPending ? (
-                      <Badge variant="secondary" className="bg-amber-500/10 text-amber-600 border-0 text-[10px] px-1.5 py-0">
-                        <Clock className="h-2.5 w-2.5 mr-0.5" />
+                      <Badge variant="secondary" className="bg-amber-500/10 text-amber-600 border-0 text-xs px-2 py-0.5">
+                        <Clock className="h-3 w-3 mr-1" />
                         En attente
                       </Badge>
                     ) : (
-                      <Badge variant="destructive" className="text-[10px] px-1.5 py-0">
-                        <XCircle className="h-2.5 w-2.5 mr-0.5" />
+                      <Badge variant="destructive" className="text-xs px-2 py-0.5">
+                        <XCircle className="h-3 w-3 mr-1" />
                         Refusé
                       </Badge>
                     )}
@@ -840,16 +840,17 @@ export default function ProviderDashboard() {
               </div>
               {/* Right side: progress + actions */}
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   <CircularProgress 
                     value={profileProgress} 
-                    size={40}
+                    size={42}
                     strokeWidth={3}
+                    showValue={false}
                   >
                     {isProfileComplete ? (
-                      <CheckCircle2 className="h-3 w-3 text-primary" />
+                      <CheckCircle2 className="h-3.5 w-3.5 text-primary" />
                     ) : (
-                      <span className="text-[9px] font-bold text-foreground">{Math.round(profileProgress)}%</span>
+                      <span className="text-[10px] font-bold text-foreground">{Math.round(profileProgress)}%</span>
                     )}
                   </CircularProgress>
                   <span className="text-xs text-muted-foreground hidden sm:inline">Profil</span>
