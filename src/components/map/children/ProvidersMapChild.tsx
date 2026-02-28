@@ -285,7 +285,8 @@ const ProvidersMapChild = () => {
       <div className={cn(
         "absolute top-4 z-[1000] w-80 max-w-[calc(100%-2rem)]",
         "bg-white/95 dark:bg-card/95 backdrop-blur-md shadow-xl rounded-2xl p-4",
-        "flex flex-col gap-3",
+        "flex flex-col gap-3 transition-opacity duration-300",
+        "opacity-40 hover:opacity-100 focus-within:opacity-100",
         isRTL ? "right-4" : "left-4"
       )}>
         {/* Row 1: Menu button + Search bar */}
