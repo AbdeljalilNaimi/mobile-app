@@ -47,6 +47,7 @@ const sectionContent = {
 const ServiceCardItem = ({ service, language }: { service: ServiceCard; language: 'fr' | 'ar' | 'en' }) => {
   const navigate = useNavigate();
   const title = service.title[language];
+  const description = service.description[language];
 
   const handleClick = () => navigate(service.route);
 
@@ -60,12 +61,12 @@ const ServiceCardItem = ({ service, language }: { service: ServiceCard; language
           handleClick();
         }
       }}
-      className="group flex-shrink-0 w-[200px] rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm transition-all duration-200 hover:-translate-y-2 hover:shadow-xl hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 cursor-pointer active:scale-[0.97] mx-2.5"
+      className="group flex-shrink-0 w-[220px] rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm transition-all duration-200 hover:-translate-y-2 hover:shadow-xl hover:border-primary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 cursor-pointer active:scale-[0.97] mx-2.5"
       tabIndex={0}
       aria-label={title}
     >
       {/* Image preview area */}
-      <div className="h-[140px] bg-muted/30 flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="h-[130px] bg-muted/30 flex items-center justify-center p-4 relative overflow-hidden">
         <img
           src={service.image}
           alt={title}
@@ -73,9 +74,10 @@ const ServiceCardItem = ({ service, language }: { service: ServiceCard; language
           loading="lazy"
         />
       </div>
-      {/* Label */}
-      <div className="px-3 py-2.5 border-t border-border/30 flex items-center gap-2 bg-card">
-        <span className="font-semibold text-sm text-foreground leading-tight truncate">{title}</span>
+      {/* Label + Description */}
+      <div className="px-3 py-2.5 border-t border-border/30 bg-card text-left">
+        <span className="font-semibold text-sm text-foreground leading-tight truncate block">{title}</span>
+        <span className="text-xs text-muted-foreground leading-snug line-clamp-2 mt-0.5 block">{description}</span>
       </div>
     </button>
   );
