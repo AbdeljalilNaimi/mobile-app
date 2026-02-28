@@ -17,6 +17,7 @@ import {
   User,
   BookOpen,
   CalendarDays,
+  Code,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
@@ -47,6 +48,7 @@ const navItems: NavItem[] = [
   { title: 'Signalements', icon: Flag, tabValue: 'reports' },
   { title: 'Configuration', icon: Settings, tabValue: 'settings' },
   { title: 'Documentation IA', icon: BookOpen, tabValue: 'documentation' },
+  { title: 'Gestion API', icon: Code, tabValue: 'api' },
 ];
 
 interface AdminSidebarProps {

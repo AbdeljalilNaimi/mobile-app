@@ -17,6 +17,7 @@ import { ProviderDetailDialog } from '@/components/admin/ProviderDetailDialog';
 import { AdminDocUpload } from '@/components/admin/AdminDocUpload';
 import { ReportsModerationPanel } from '@/components/admin/ReportsModerationPanel';
 import { AdminAppointmentsOverview } from '@/components/admin/AdminAppointmentsOverview';
+import { ApiManagementPanel } from '@/components/admin/ApiManagementPanel';
 import { notificationService } from '@/services/notificationService';
 import { getUnreadCount } from '@/services/adminNotificationService';
 import { usePendingProviders, useAllProviders, useUpdateVerification } from '@/hooks/useProviders';
@@ -52,6 +53,7 @@ const TAB_TITLES: Record<string, string> = {
   reports: 'Signalements',
   settings: 'Configuration',
   documentation: 'Documentation IA',
+  api: 'Gestion API',
 };
 
 export default function AdminDashboard() {
@@ -339,6 +341,9 @@ export default function AdminDashboard() {
       
       case 'documentation':
         return <AdminDocUpload />;
+      
+      case 'api':
+        return <ApiManagementPanel />;
       
       default:
         return <AdminOverview onTabChange={setCurrentTab} />;

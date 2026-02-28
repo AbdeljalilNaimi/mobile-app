@@ -19,7 +19,7 @@ import { AntigravityHeader } from "./components/AntigravityHeader";
 // Conditional header - hidden on pages with their own navigation
 const ConditionalHeader = () => {
   const location = useLocation();
-  const hiddenPrefixes = ['/admin/dashboard', '/provider/dashboard', '/docs', '/map/', '/admin/login', '/provider/login', '/citizen/login', '/citizen/register', '/provider/register', '/email-verified'];
+  const hiddenPrefixes = ['/admin/dashboard', '/provider/dashboard', '/docs', '/map/', '/admin/login', '/provider/login', '/citizen/login', '/citizen/register', '/provider/register', '/email-verified', '/developers'];
   const shouldHide = hiddenPrefixes.some(p => location.pathname.startsWith(p));
   if (shouldHide) return null;
   return <AntigravityHeader />;
@@ -78,6 +78,9 @@ const AdsPage = lazy(() => import("./pages/AdsPage"));
 const ResearchHubPage = lazy(() => import("./pages/ResearchHubPage"));
 const ArticleDetailPage = lazy(() => import("./pages/ArticleDetailPage"));
 const EmailVerifiedPage = lazy(() => import("./pages/EmailVerifiedPage"));
+const DeveloperLandingPage = lazy(() => import("./pages/developers/DeveloperLandingPage"));
+const DeveloperDashboardPage = lazy(() => import("./pages/developers/DeveloperDashboardPage"));
+const DeveloperDocsPage = lazy(() => import("./pages/developers/DeveloperDocsPage"));
 const queryClient = new QueryClient();
 
 // Loading fallback component
@@ -535,6 +538,13 @@ const AppRoutes = () => {
         <Route path="/providers-map" element={<Navigate to="/map/providers" replace />} />
         <Route path="/urgences" element={<Navigate to="/map/emergency" replace />} />
         
+        {/* ============================================ */}
+        {/* DEVELOPER PORTAL */}
+        {/* ============================================ */}
+        <Route path="/developers" element={<PageTransition><DeveloperLandingPage /></PageTransition>} />
+        <Route path="/developers/dashboard" element={<PageTransition><DeveloperDashboardPage /></PageTransition>} />
+        <Route path="/developers/docs" element={<PageTransition><DeveloperDocsPage /></PageTransition>} />
+
         {/* ============================================ */}
         {/* DEV TOOLS (hidden) */}
         {/* ============================================ */}

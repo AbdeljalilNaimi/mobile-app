@@ -179,6 +179,115 @@ export type Database = {
         }
         Relationships: []
       }
+      api_keys: {
+        Row: {
+          app_description: string | null
+          app_name: string | null
+          created_at: string
+          developer_id: string
+          id: string
+          is_active: boolean
+          key_hash: string
+          key_suffix: string
+          plan: string
+          rate_limit_per_day: number
+        }
+        Insert: {
+          app_description?: string | null
+          app_name?: string | null
+          created_at?: string
+          developer_id: string
+          id?: string
+          is_active?: boolean
+          key_hash: string
+          key_suffix: string
+          plan?: string
+          rate_limit_per_day?: number
+        }
+        Update: {
+          app_description?: string | null
+          app_name?: string | null
+          created_at?: string
+          developer_id?: string
+          id?: string
+          is_active?: boolean
+          key_hash?: string
+          key_suffix?: string
+          plan?: string
+          rate_limit_per_day?: number
+        }
+        Relationships: []
+      }
+      api_logs: {
+        Row: {
+          api_key_id: string
+          created_at: string
+          endpoint: string
+          id: string
+          method: string
+          response_time_ms: number | null
+          status_code: number
+        }
+        Insert: {
+          api_key_id: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          method: string
+          response_time_ms?: number | null
+          status_code: number
+        }
+        Update: {
+          api_key_id?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          method?: string
+          response_time_ms?: number | null
+          status_code?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_logs_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "api_keys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      api_usage: {
+        Row: {
+          api_key_id: string
+          date: string
+          endpoint: string
+          id: string
+          request_count: number
+        }
+        Insert: {
+          api_key_id: string
+          date?: string
+          endpoint: string
+          id?: string
+          request_count?: number
+        }
+        Update: {
+          api_key_id?: string
+          date?: string
+          endpoint?: string
+          id?: string
+          request_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_usage_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "api_keys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       article_reactions: {
         Row: {
           article_id: string
@@ -731,6 +840,75 @@ export type Database = {
           patient_name?: string
           provider_id?: string
           rating?: number
+        }
+        Relationships: []
+      }
+      providers_public: {
+        Row: {
+          address: string | null
+          area: string | null
+          city: string | null
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_24h: boolean
+          is_open: boolean
+          is_verified: boolean
+          languages: string[] | null
+          lat: number | null
+          lng: number | null
+          name: string
+          night_duty: boolean | null
+          phone: string | null
+          rating: number | null
+          reviews_count: number | null
+          specialty: string | null
+          type: string
+        }
+        Insert: {
+          address?: string | null
+          area?: string | null
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          id: string
+          image_url?: string | null
+          is_24h?: boolean
+          is_open?: boolean
+          is_verified?: boolean
+          languages?: string[] | null
+          lat?: number | null
+          lng?: number | null
+          name: string
+          night_duty?: boolean | null
+          phone?: string | null
+          rating?: number | null
+          reviews_count?: number | null
+          specialty?: string | null
+          type: string
+        }
+        Update: {
+          address?: string | null
+          area?: string | null
+          city?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_24h?: boolean
+          is_open?: boolean
+          is_verified?: boolean
+          languages?: string[] | null
+          lat?: number | null
+          lng?: number | null
+          name?: string
+          night_duty?: boolean | null
+          phone?: string | null
+          rating?: number | null
+          reviews_count?: number | null
+          specialty?: string | null
+          type?: string
         }
         Relationships: []
       }
