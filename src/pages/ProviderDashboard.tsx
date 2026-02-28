@@ -1116,7 +1116,12 @@ export default function ProviderDashboard() {
           <TabsContent value="overview">
             {/* Subscription Card */}
             <div className="mb-6">
-              <SubscriptionCard planType={(providerData as any)?.planType || 'basic'} />
+              <SubscriptionCard
+                planType={(providerData as any)?.planType || 'basic'}
+                onUpgrade={async (newPlan) => {
+                  await updateProviderData({ planType: newPlan } as any);
+                }}
+              />
             </div>
             <div className="grid gap-6 lg:grid-cols-2">
               {/* ===== Blood Bank Overview Widgets ===== */}

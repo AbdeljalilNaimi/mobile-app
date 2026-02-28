@@ -1,13 +1,17 @@
 import { useState } from 'react';
-import { Crown, Star, Zap, Search, Brain, BarChart3, ShieldCheck, Sparkles } from 'lucide-react';
+import { Crown, Star, Zap, Search, Brain, BarChart3, ShieldCheck, Sparkles, Loader2, CheckCircle2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
+
+type PlanType = 'basic' | 'standard' | 'premium';
 
 interface SubscriptionCardProps {
-  planType?: 'basic' | 'standard' | 'premium';
+  planType?: PlanType;
+  onUpgrade?: (newPlan: PlanType) => Promise<void>;
 }
 
 const planConfig = {
@@ -36,11 +40,29 @@ const premiumBenefits = [
   { icon: ShieldCheck, text: 'Priorité de support technique' },
 ];
 
-export const SubscriptionCard = ({ planType = 'basic' }: SubscriptionCardProps) => {
+export const SubscriptionCard = ({ planType = 'basic', onUpgrade }: SubscriptionCardProps) => {
   const [showModal, setShowModal] = useState(false);
+  const [isUpgrading, setIsUpgrading] = useState(false);
   const config = planConfig[planType];
   const Icon = config.icon;
   const isPremium = planType === 'premium';
+
+  const handleConfirmUpgrade = async () => {
+    if (!onUpgrade) return;
+    setIsUpgrading(true);
+    try {
+      await onUpgrade('premium');
+      setShowModal(false);
+      toast.success('🎉 Félicitations ! Vous êtes maintenant Premium', {
+        description: 'Votre badge Premium Vérifié est désormais actif.',
+        duration: 5000,
+      });
+    } catch {
+      toast.error('Erreur lors de la mise à niveau. Veuillez réessayer.');
+    } finally {
+      setIsUpgrading(false);
+    }
+  };
 
   return (
     <>
@@ -64,7 +86,12 @@ export const SubscriptionCard = ({ planType = 'basic' }: SubscriptionCardProps) 
             Gratuit la 1ère année
           </Badge>
 
-          {!isPremium && (
+          {isPremium ? (
+            <div className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400">
+              <CheckCircle2 className="h-4 w-4" />
+              <span className="font-medium">Premium actif</span>
+            </div>
+          ) : (
             <Button
               className="w-full gap-2"
               variant="default"
@@ -108,9 +135,17 @@ export const SubscriptionCard = ({ planType = 'basic' }: SubscriptionCardProps) 
             Gratuit la 1ère année — 0 DA / mois
           </Badge>
 
-          <Button className="w-full gap-2" onClick={() => setShowModal(false)}>
-            <Crown className="h-4 w-4" />
-            Confirmer le passage au Premium
+          <Button
+            className="w-full gap-2"
+            onClick={handleConfirmUpgrade}
+            disabled={isUpgrading}
+          >
+            {isUpgrading ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <Crown className="h-4 w-4" />
+            )}
+            {isUpgrading ? 'Mise à niveau en cours...' : 'Confirmer le passage au Premium'}
           </Button>
         </DialogContent>
       </Dialog>
