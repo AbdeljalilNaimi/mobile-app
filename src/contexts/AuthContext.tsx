@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { 
   User,
   signInWithEmailAndPassword,
@@ -77,6 +77,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const isSigningUpRef = useRef(false);
 
   // Fetch user profile and roles from Firestore
   const fetchUserProfile = async (userId: string, userEmail: string) => {
@@ -174,14 +175,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     // Set up Firebase auth state listener
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      setUser(firebaseUser);
+      // Skip auth state changes during signup to prevent premature navigation
+      if (isSigningUpRef.current) {
+        setIsLoading(false);
+        return;
+      }
 
       if (firebaseUser) {
+        // Block unverified citizen users - they must confirm email first
+        if (!firebaseUser.emailVerified) {
+          // Sign them out and don't set profile
+          await firebaseSignOut(auth);
+          setUser(null);
+          setProfile(null);
+          setIsLoading(false);
+          return;
+        }
+
+        setUser(firebaseUser);
         // Fetch profile when user signs in
         setTimeout(() => {
           fetchUserProfile(firebaseUser.uid, firebaseUser.email || '');
         }, 0);
       } else {
+        setUser(null);
         setProfile(null);
       }
 
@@ -398,19 +415,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   // Signup as Citizen
   const signupAsCitizen = async (email: string, password: string, fullName: string, phone?: string) => {
     setIsLoading(true);
+    isSigningUpRef.current = true;
     try {
       const { user: newUser } = await createUserWithEmailAndPassword(auth, email, password);
-      
+
       // Update Firebase Auth profile
       await firebaseUpdateProfile(newUser, {
         displayName: fullName
       });
 
       // Send email verification FIRST (before any Firestore writes that might fail)
-      await sendEmailVerification(newUser, {
-        url: `${window.location.origin}/citizen/login`,
-        handleCodeInApp: false,
-      });
+      try {
+        await sendEmailVerification(newUser);
+      } catch (verificationError) {
+        console.warn('Email verification send failed (domain may not be allowlisted):', verificationError);
+        // Continue anyway - account is created, user can request verification later
+      }
 
       // Create Firestore documents (non-blocking errors won't prevent confirmation screen)
       try {
@@ -453,6 +473,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       toast.error(message);
       throw error;
     } finally {
+      isSigningUpRef.current = false;
       setIsLoading(false);
     }
   };
