@@ -12,18 +12,8 @@ import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ProviderRouteGuard } from "@/components/ProviderRouteGuard";
 import { AdminGuard } from "@/components/guards/AdminGuard";
 import { CitizenGuard } from "@/components/guards/CitizenGuard";
-import { MainLayout } from "@/components/layout/MainLayout";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { AntigravityHeader } from "./components/AntigravityHeader";
-
-// Conditional header - hidden on pages with their own navigation
-const ConditionalHeader = () => {
-  const location = useLocation();
-  const hiddenPrefixes = ['/admin/dashboard', '/provider/dashboard', '/docs', '/map/', '/admin/login', '/provider/login', '/citizen/login', '/citizen/register', '/provider/register', '/email-verified', '/developers'];
-  const shouldHide = hiddenPrefixes.some(p => location.pathname.startsWith(p));
-  if (shouldHide) return null;
-  return <AntigravityHeader />;
-};
+import { MobileAppShell } from "@/components/layout/MobileAppShell";
 
 // Lazy-load heavy pages for better LCP
 const AntigravityIndex = lazy(() => import("./pages/AntigravityIndex"));
@@ -90,33 +80,15 @@ const PageLoader = () => (
   </div>
 );
 
-// Page transition wrapper
-const PageTransition = ({ children }: { children: React.ReactNode }) => {
-  const location = useLocation();
-  
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location.pathname]);
-  
-  return (
-    <div className="transition-opacity duration-300 animate-fade-in">
-      {children}
-    </div>
-  );
-};
-
-
 // Verification redirect wrapper for providers
 const VerificationGuard = ({ children }: { children: React.ReactNode }) => {
   const { profile, isAuthenticated } = useAuth();
   const location = useLocation();
   
-  // Check if user is a provider with pending verification
   const isPendingProvider = isAuthenticated && 
     profile?.userType === 'provider' && 
     profile?.verification_status === 'pending';
   
-  // Allowed paths for pending providers
   const allowedPaths = ['/registration-status', '/provider/register', '/provider/login', '/citizen/login', '/admin/login', '/'];
   const isAllowedPath = allowedPaths.some(path => location.pathname.startsWith(path));
   
@@ -137,310 +109,67 @@ function CarteRedirect() {
   return <Navigate to={dest} replace />;
 }
 
-
-
 const AppRoutes = () => {
   return (
     <Suspense fallback={<PageLoader />}>
       <Routes>
-        <Route 
-          path="/" 
-          element={
-            <PageTransition>
-              <AntigravityIndex />
-            </PageTransition>
-          } 
-        />
-        
-        
         {/* ============================================ */}
-        {/* CITIZEN ROUTES */}
+        {/* MOBILE APP SHELL — bottom nav routes */}
         {/* ============================================ */}
-        <Route path="/citizen/login" element={<PageTransition><CitizenLoginPage /></PageTransition>} />
-        <Route path="/citizen/register" element={<PageTransition><CitizenRegisterPage /></PageTransition>} />
-        <Route path="/email-verified" element={<PageTransition><EmailVerifiedPage /></PageTransition>} />
-        <Route element={<MainLayout />}>
-          <Route 
-            path="/citizen/dashboard" 
-            element={
-              <PageTransition>
-                <CitizenGuard>
-                  <PatientDashboard />
-                </CitizenGuard>
-              </PageTransition>
-            } 
-          />
-          <Route 
-            path="/profile" 
-            element={
-              <PageTransition>
-                <CitizenGuard>
-                  <CitizenProfilePage />
-                </CitizenGuard>
-              </PageTransition>
-            } 
-          />
-          <Route 
-            path="/favorites" 
-            element={
-              <PageTransition>
-                <CitizenGuard>
-                  <FavoritesPage />
-                </CitizenGuard>
-              </PageTransition>
-            } 
-          />
-          <Route 
-            path="/citizen/appointments" 
-            element={
-              <PageTransition>
-                <CitizenGuard>
-                  <CitizenAppointmentsPage />
-                </CitizenGuard>
-              </PageTransition>
-            } 
-          />
-          <Route 
-            path="/citizen/appointments/history" 
-            element={
-              <PageTransition>
-                <CitizenGuard>
-                  <AppointmentHistoryPage />
-                </CitizenGuard>
-              </PageTransition>
-            } 
-          />
-          <Route 
-            path="/citizen/appointments/new" 
-            element={
-              <PageTransition>
-                <CitizenGuard>
-                  <NewAppointmentPage />
-                </CitizenGuard>
-              </PageTransition>
-            } 
-          />
-          {/* ---- Provide (Community Help) ---- */}
-          <Route 
-            path="/citizen/provide" 
-            element={
-              <PageTransition>
-                <ProvideListPage />
-              </PageTransition>
-            } 
-          />
-          <Route 
-            path="/citizen/provide/mine" 
-            element={
-              <PageTransition>
-                <ProviderRouteGuard>
-                  <MyOffersPage />
-                </ProviderRouteGuard>
-              </PageTransition>
-            } 
-          />
-          <Route 
-            path="/citizen/provide/new" 
-            element={
-              <PageTransition>
-                <ProviderRouteGuard>
-                  <CreateOfferPage />
-                </ProviderRouteGuard>
-              </PageTransition>
-            } 
-          />
-          <Route 
-            path="/citizen/provide/edit/:offerId" 
-            element={
-              <PageTransition>
-                <ProviderRouteGuard>
-                  <EditOfferPage />
-                </ProviderRouteGuard>
-              </PageTransition>
-            } 
-          />
+        <Route element={<MobileAppShell />}>
+          {/* Home */}
+          <Route path="/" element={<AntigravityIndex />} />
+          
+          {/* Search */}
+          <Route path="/search" element={
+            <VerificationGuard><SearchPage /></VerificationGuard>
+          } />
+          
+          {/* Medical Assistant (IA Chat tab) */}
+          <Route path="/medical-assistant" element={<MedicalAssistantPage />} />
+          
+          {/* Profile & citizen pages */}
+          <Route path="/profile" element={
+            <CitizenGuard><CitizenProfilePage /></CitizenGuard>
+          } />
+          <Route path="/favorites" element={
+            <CitizenGuard><FavoritesPage /></CitizenGuard>
+          } />
+          <Route path="/citizen/dashboard" element={
+            <CitizenGuard><PatientDashboard /></CitizenGuard>
+          } />
+          <Route path="/citizen/appointments" element={
+            <CitizenGuard><CitizenAppointmentsPage /></CitizenGuard>
+          } />
+          <Route path="/citizen/appointments/history" element={
+            <CitizenGuard><AppointmentHistoryPage /></CitizenGuard>
+          } />
+          <Route path="/citizen/appointments/new" element={
+            <CitizenGuard><NewAppointmentPage /></CitizenGuard>
+          } />
+          
+          {/* Provide (community help) */}
+          <Route path="/citizen/provide" element={<ProvideListPage />} />
+          <Route path="/citizen/provide/mine" element={<ProviderRouteGuard><MyOffersPage /></ProviderRouteGuard>} />
+          <Route path="/citizen/provide/new" element={<ProviderRouteGuard><CreateOfferPage /></ProviderRouteGuard>} />
+          <Route path="/citizen/provide/edit/:offerId" element={<ProviderRouteGuard><EditOfferPage /></ProviderRouteGuard>} />
+          
+          {/* Public content pages */}
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/emergency" element={<EmergencyPage />} />
+          <Route path="/blood-donation" element={<BloodDonationPage />} />
+          <Route path="/community" element={<CommunityPage />} />
+          <Route path="/annonces" element={<AdsPage />} />
+          <Route path="/research" element={<ResearchHubPage />} />
+          <Route path="/research/:articleId" element={<ArticleDetailPage />} />
+          <Route path="/provider/:id" element={<ProviderProfilePage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/faq" element={<FAQPage />} />
         </Route>
-        {/* Legacy /dashboard redirects to citizen dashboard */}
-        <Route path="/dashboard" element={<Navigate to="/citizen/dashboard" replace />} />
-        
+
         {/* ============================================ */}
-        {/* PROVIDER ROUTES */}
-        {/* ============================================ */}
-        <Route path="/provider/login" element={<PageTransition><ProviderLoginPage /></PageTransition>} />
-        <Route 
-          path="/provider/register/*" 
-          element={
-            <PageTransition>
-              <ProviderRegister />
-            </PageTransition>
-          } 
-        />
-        <Route 
-          path="/provider/dashboard" 
-          element={
-            <PageTransition>
-              <ProviderRouteGuard>
-                <ProviderDashboard />
-              </ProviderRouteGuard>
-            </PageTransition>
-          } 
-        />
-        <Route 
-          path="/provider/profile" 
-          element={
-            <PageTransition>
-              <ProviderRouteGuard>
-                <ProviderOwnProfilePage />
-              </ProviderRouteGuard>
-            </PageTransition>
-          } 
-        />
-        <Route 
-          path="/provider/welcome" 
-          element={
-            <PageTransition>
-              <ProtectedRoute>
-                <ProviderProvider>
-                  <ProviderWelcomePage />
-                </ProviderProvider>
-              </ProtectedRoute>
-            </PageTransition>
-          } 
-        />
-        <Route path="/provider" element={<Navigate to="/provider/dashboard" replace />} />
-        <Route 
-          path="/registration-status" 
-          element={
-            <PageTransition>
-              <ProtectedRoute>
-                <RegistrationStatus />
-              </ProtectedRoute>
-            </PageTransition>
-          } 
-        />
-        <Route 
-          path="/registration-thank-you" 
-          element={
-            <PageTransition>
-              <RegistrationThankYou />
-            </PageTransition>
-          } 
-        />
-        
-        {/* ============================================ */}
-        {/* ADMIN ROUTES */}
-        {/* ============================================ */}
-        <Route path="/admin/login" element={<PageTransition><AdminLoginPage /></PageTransition>} />
-        <Route 
-          path="/admin/dashboard" 
-          element={
-            <PageTransition>
-              <AdminGuard>
-                <AdminDashboard />
-              </AdminGuard>
-            </PageTransition>
-          } 
-        />
-        <Route element={<MainLayout />}>
-          <Route 
-            path="/admin/migrate" 
-            element={
-              <PageTransition>
-                <AdminGuard>
-                  <AdminMigratePage />
-                </AdminGuard>
-              </PageTransition>
-            } 
-          />
-        </Route>
-        <Route 
-          path="/admin/profile" 
-          element={
-            <PageTransition>
-              <AdminGuard>
-                <AdminProfilePage />
-              </AdminGuard>
-            </PageTransition>
-          } 
-        />
-        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
-        
-        {/* ============================================ */}
-        {/* PUBLIC ROUTES */}
-        {/* ============================================ */}
-        <Route 
-          path="/search" 
-          element={
-            <VerificationGuard>
-              <PageTransition>
-                <SearchPage />
-              </PageTransition>
-            </VerificationGuard>
-          } 
-        />
-        <Route path="/providers" element={<Navigate to="/provider/register" replace />} />
-        <Route 
-          path="/provider/:id" 
-          element={
-            <PageTransition>
-              <ProviderProfilePage />
-            </PageTransition>
-          } 
-        />
-        <Route 
-          path="/contact" 
-          element={
-            <PageTransition>
-              <ContactPage />
-            </PageTransition>
-          } 
-        />
-        <Route 
-          path="/emergency" 
-          element={
-            <PageTransition>
-              <EmergencyPage />
-            </PageTransition>
-          } 
-        />
-        <Route element={<MainLayout />}>
-          <Route 
-            path="/blood-donation" 
-            element={
-              <PageTransition>
-                <BloodDonationPage />
-              </PageTransition>
-            } 
-          />
-        </Route>
-        <Route path="/ai-health-chat" element={<Navigate to="/docs" replace />} />
-        <Route 
-          path="/medical-assistant" 
-          element={
-            <PageTransition>
-              <MedicalAssistantPage />
-            </PageTransition>
-          } 
-        />
-        <Route 
-          path="/community" 
-          element={
-            <PageTransition>
-              <CommunityPage />
-            </PageTransition>
-          } 
-        />
-        
-        {/* ============================================ */}
-        {/* EMERGENCY CARD PUBLIC ROUTE */}
-        {/* ============================================ */}
-        <Route 
-          path="/emergency-card/:token" 
-          element={<EmergencyCardPublicPage />} 
-        />
-        
-        {/* ============================================ */}
-        {/* MAP ROUTES */}
+        {/* MAP ROUTES (full-screen, no shell) */}
         {/* ============================================ */}
         <Route path="/map" element={<MapMother />}>
           <Route index element={<Navigate to="/map/providers" replace />} />
@@ -448,119 +177,72 @@ const AppRoutes = () => {
           <Route path="emergency" element={<EmergencyMapChild />} />
           <Route path="blood" element={<BloodMapChild />} />
         </Route>
-        
-        {/* ============================================ */}
-        {/* DOCUMENTATION ROUTES */}
-        {/* ============================================ */}
-        <Route 
-          path="/docs" 
-          element={
-            <PageTransition>
-              <DocsPage />
-            </PageTransition>
-          } 
-        />
-        <Route 
-          path="/docs/:sectionId/:pageId" 
-          element={
-            <PageTransition>
-              <DocsPage />
-            </PageTransition>
-          } 
-        />
-        
-        {/* ============================================ */}
-        {/* LEGAL PAGES */}
-        {/* ============================================ */}
-        <Route 
-          path="/privacy" 
-          element={
-            <PageTransition>
-              <PrivacyPage />
-            </PageTransition>
-          } 
-        />
-        <Route 
-          path="/terms" 
-          element={
-            <PageTransition>
-              <TermsPage />
-            </PageTransition>
-          } 
-        />
-        <Route 
-          path="/faq" 
-          element={
-            <PageTransition>
-              <FAQPage />
-            </PageTransition>
-          } 
-        />
-        
-        {/* ============================================ */}
-        {/* ADS PUBLIC PAGE */}
-        {/* ============================================ */}
-        <Route 
-          path="/annonces" 
-          element={
-            <PageTransition>
-              <AdsPage />
-            </PageTransition>
-          } 
-        />
 
         {/* ============================================ */}
-        {/* RESEARCH HUB */}
+        {/* AUTH ROUTES (no shell) */}
         {/* ============================================ */}
-        <Route 
-          path="/research" 
-          element={
-            <PageTransition>
-              <ResearchHubPage />
-            </PageTransition>
-          } 
-        />
-        <Route 
-          path="/research/:articleId" 
-          element={
-            <PageTransition>
-              <ArticleDetailPage />
-            </PageTransition>
-          } 
-        />
+        <Route path="/citizen/login" element={<CitizenLoginPage />} />
+        <Route path="/citizen/register" element={<CitizenRegisterPage />} />
+        <Route path="/email-verified" element={<EmailVerifiedPage />} />
+        <Route path="/provider/login" element={<ProviderLoginPage />} />
+        <Route path="/admin/login" element={<AdminLoginPage />} />
+
+        {/* ============================================ */}
+        {/* PROVIDER ROUTES (own layouts) */}
+        {/* ============================================ */}
+        <Route path="/provider/register/*" element={<ProviderRegister />} />
+        <Route path="/provider/dashboard" element={
+          <ProviderRouteGuard><ProviderDashboard /></ProviderRouteGuard>
+        } />
+        <Route path="/provider/profile" element={
+          <ProviderRouteGuard><ProviderOwnProfilePage /></ProviderRouteGuard>
+        } />
+        <Route path="/provider/welcome" element={
+          <ProtectedRoute><ProviderProvider><ProviderWelcomePage /></ProviderProvider></ProtectedRoute>
+        } />
+        <Route path="/provider" element={<Navigate to="/provider/dashboard" replace />} />
+        <Route path="/registration-status" element={<ProtectedRoute><RegistrationStatus /></ProtectedRoute>} />
+        <Route path="/registration-thank-you" element={<RegistrationThankYou />} />
+
+        {/* ============================================ */}
+        {/* ADMIN ROUTES (own layouts) */}
+        {/* ============================================ */}
+        <Route path="/admin/dashboard" element={<AdminGuard><AdminDashboard /></AdminGuard>} />
+        <Route path="/admin/migrate" element={<AdminGuard><AdminMigratePage /></AdminGuard>} />
+        <Route path="/admin/profile" element={<AdminGuard><AdminProfilePage /></AdminGuard>} />
+        <Route path="/admin" element={<Navigate to="/admin/dashboard" replace />} />
+
+        {/* ============================================ */}
+        {/* DOCS & DEVELOPER (own layouts) */}
+        {/* ============================================ */}
+        <Route path="/docs" element={<DocsPage />} />
+        <Route path="/docs/:sectionId/:pageId" element={<DocsPage />} />
+        <Route path="/developers" element={<DeveloperLandingPage />} />
+        <Route path="/developers/dashboard" element={<DeveloperDashboardPage />} />
+        <Route path="/developers/docs" element={<DeveloperDocsPage />} />
+
+        {/* ============================================ */}
+        {/* EMERGENCY CARD PUBLIC */}
+        {/* ============================================ */}
+        <Route path="/emergency-card/:token" element={<EmergencyCardPublicPage />} />
 
         {/* ============================================ */}
         {/* LEGACY REDIRECTS */}
         {/* ============================================ */}
+        <Route path="/dashboard" element={<Navigate to="/citizen/dashboard" replace />} />
+        <Route path="/providers" element={<Navigate to="/provider/register" replace />} />
         <Route path="/why" element={<Navigate to="/docs/getting-started/why-cityhealth" replace />} />
         <Route path="/how" element={<Navigate to="/docs/getting-started/how-it-works" replace />} />
         <Route path="/carte" element={<CarteRedirect />} />
         <Route path="/providers-map" element={<Navigate to="/map/providers" replace />} />
         <Route path="/urgences" element={<Navigate to="/map/emergency" replace />} />
-        
-        {/* ============================================ */}
-        {/* DEVELOPER PORTAL */}
-        {/* ============================================ */}
-        <Route path="/developers" element={<PageTransition><DeveloperLandingPage /></PageTransition>} />
-        <Route path="/developers/dashboard" element={<PageTransition><DeveloperDashboardPage /></PageTransition>} />
-        <Route path="/developers/docs" element={<PageTransition><DeveloperDocsPage /></PageTransition>} />
+        <Route path="/ai-health-chat" element={<Navigate to="/docs" replace />} />
 
-        {/* ============================================ */}
-        {/* DEV TOOLS (hidden) */}
-        {/* ============================================ */}
-        <Route path="/dev-tools" element={<PageTransition><DevToolsPage /></PageTransition>} />
-        
-        {/* ============================================ */}
+        {/* DEV TOOLS */}
+        <Route path="/dev-tools" element={<DevToolsPage />} />
+
         {/* 404 */}
-        {/* ============================================ */}
-        <Route 
-          path="*" 
-          element={
-            <PageTransition>
-              <NotFound />
-            </PageTransition>
-          } 
-        />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>
   );
@@ -577,9 +259,7 @@ const App = () => (
                 <Toaster />
                 <Sonner />
                 <BrowserRouter>
-                  
                   <div className="min-h-screen bg-background text-foreground">
-                    <ConditionalHeader />
                     <AppRoutes />
                   </div>
                 </BrowserRouter>
