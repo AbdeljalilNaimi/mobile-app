@@ -14,7 +14,7 @@ import {
   getUserSaves,
 } from '@/services/researchService';
 import { Loader2, BookOpen } from 'lucide-react';
-import Footer from '@/components/Footer';
+
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 
 export default function ResearchHubPage() {
@@ -147,7 +147,7 @@ export default function ResearchHubPage() {
           )}
         </div>
       </div>
-      <Footer />
+      
     </>
   );
 }

@@ -16,7 +16,7 @@ import {
 } from '@/services/researchService';
 import { ArrowLeft, Loader2, Heart, Bookmark, Share2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import Footer from '@/components/Footer';
+
 import { toast } from 'sonner';
 
 export default function ArticleDetailPage() {
@@ -182,7 +182,7 @@ export default function ArticleDetailPage() {
           </div>
         </div>
       </div>
-      <Footer />
+      
     </>
   );
 }

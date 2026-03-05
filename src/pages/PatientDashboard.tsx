@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate, Link } from 'react-router-dom';
-import Footer from '@/components/Footer';
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -649,7 +649,6 @@ const PatientDashboard = () => {
       />
 
       <PostAppointmentReviewWidget appointments={appointments} />
-      <Footer />
     </>
   );
 };

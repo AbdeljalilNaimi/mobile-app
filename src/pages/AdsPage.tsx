@@ -8,7 +8,7 @@ import { AdCard } from '@/components/ads/AdCard';
 import { AdDetailDialog } from '@/components/ads/AdDetailDialog';
 import { Ad, getApprovedAds, getUserLikes, getUserSaves, AdFilters } from '@/services/adsService';
 import { cn } from '@/lib/utils';
-import Footer from '@/components/Footer';
+
 import { Helmet } from 'react-helmet-async';
 
 const SORT_OPTIONS = [
@@ -137,8 +137,6 @@ export default function AdsPage() {
             </div>
           )}
         </div>
-
-        <Footer />
       </div>
 
       {/* Detail dialog */}
