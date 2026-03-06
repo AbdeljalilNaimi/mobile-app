@@ -169,13 +169,15 @@ const AppRoutes = () => {
         </Route>
 
         {/* ============================================ */}
-        {/* MAP ROUTES (full-screen, no shell) */}
+        {/* MAP ROUTES (inside shell for bottom nav) */}
         {/* ============================================ */}
-        <Route path="/map" element={<MapMother />}>
-          <Route index element={<Navigate to="/map/providers" replace />} />
-          <Route path="providers" element={<ProvidersMapChild />} />
-          <Route path="emergency" element={<EmergencyMapChild />} />
-          <Route path="blood" element={<BloodMapChild />} />
+        <Route element={<MobileAppShell />}>
+          <Route path="/map" element={<MapMother />}>
+            <Route index element={<Navigate to="/map/providers" replace />} />
+            <Route path="providers" element={<ProvidersMapChild />} />
+            <Route path="emergency" element={<EmergencyMapChild />} />
+            <Route path="blood" element={<BloodMapChild />} />
+          </Route>
         </Route>
 
         {/* ============================================ */}
