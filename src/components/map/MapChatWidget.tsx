@@ -231,8 +231,8 @@ INSTRUCTIONS IMPORTANTES:
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="absolute bottom-24 right-6 z-[500] w-96 rounded-2xl shadow-2xl border border-border/60 bg-card/95 backdrop-blur-sm flex flex-col overflow-hidden"
-          style={{ maxHeight: 'calc(100% - 120px)', height: 500 }}
+          className="absolute bottom-20 left-2 right-2 z-[500] rounded-2xl shadow-2xl border border-border/60 bg-card/95 backdrop-blur-sm flex flex-col overflow-hidden"
+          style={{ maxHeight: 'calc(100% - 140px)', height: 420 }}
         >
           {/* ── Header ── */}
           <div className="flex items-center gap-3 p-3 border-b border-border/50 bg-primary text-primary-foreground flex-shrink-0">

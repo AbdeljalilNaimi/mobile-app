@@ -16,33 +16,7 @@ import { useCallback } from 'react';
 const TILE_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const TILE_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
 
-/** Floating mode tabs at the top of the map */
-const ModeSelector = ({ mode, onModeChange }: { mode: MapMode; onModeChange: (m: MapMode) => void }) => {
-  const modes: { key: MapMode; label: string; color: string }[] = [
-    { key: 'providers', label: 'Prestataires', color: 'bg-primary' },
-    { key: 'emergency', label: 'Urgences', color: 'bg-red-500' },
-    { key: 'blood', label: 'Don de sang', color: 'bg-rose-500' },
-  ];
-
-  return (
-    <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] flex gap-1 bg-background/80 backdrop-blur-lg border border-border/50 rounded-full p-1 shadow-lg">
-      {modes.map((m) => (
-        <button
-          key={m.key}
-          onClick={() => onModeChange(m.key)}
-          className={cn(
-            'px-3 py-1.5 rounded-full text-xs font-medium transition-all',
-            mode === m.key
-              ? `${m.color} text-white shadow-sm`
-              : 'text-muted-foreground hover:text-foreground'
-          )}
-        >
-          {m.label}
-        </button>
-      ))}
-    </div>
-  );
-};
+/** Floating mode tabs at the top of the map — only shown on emergency/blood modes */
 
 const MapMotherInner = () => {
   const {
@@ -166,8 +140,7 @@ const MapMotherInner = () => {
       {/* Map container */}
       <div ref={mapContainerRef} className="absolute inset-0 z-0" />
 
-      {/* Mode selector pills */}
-      <ModeSelector mode={mode} onModeChange={handleModeChange} />
+      {/* Child map layers handle their own top UI */}
 
       {/* Right-side floating controls */}
       <div className="absolute bottom-28 right-3 z-[1000] flex flex-col gap-2">
