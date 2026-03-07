@@ -69,6 +69,8 @@ const ResearchHubPage = lazy(() => import("./pages/ResearchHubPage"));
 const ArticleDetailPage = lazy(() => import("./pages/ArticleDetailPage"));
 const EmailVerifiedPage = lazy(() => import("./pages/EmailVerifiedPage"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
+const OnboardingPage = lazy(() => import("./pages/OnboardingPage"));
+const AuthGatewayPage = lazy(() => import("./pages/AuthGatewayPage"));
 const DeveloperLandingPage = lazy(() => import("./pages/developers/DeveloperLandingPage"));
 const DeveloperDashboardPage = lazy(() => import("./pages/developers/DeveloperDashboardPage"));
 const DeveloperDocsPage = lazy(() => import("./pages/developers/DeveloperDocsPage"));
@@ -110,16 +112,27 @@ function CarteRedirect() {
   return <Navigate to={dest} replace />;
 }
 
+// Onboarding guard — redirects to /onboarding on first visit
+function OnboardingGuard({ children }: { children: React.ReactNode }) {
+  const done = localStorage.getItem('cityhealth_onboarding_done');
+  if (!done) return <Navigate to="/onboarding" replace />;
+  return <>{children}</>;
+}
+
 const AppRoutes = () => {
   return (
     <Suspense fallback={<PageLoader />}>
       <Routes>
+        {/* Onboarding & Auth Gateway (no shell) */}
+        <Route path="/onboarding" element={<OnboardingPage />} />
+        <Route path="/auth-gateway" element={<AuthGatewayPage />} />
+
         {/* ============================================ */}
         {/* MOBILE APP SHELL — bottom nav routes */}
         {/* ============================================ */}
         <Route element={<MobileAppShell />}>
-          {/* Home */}
-          <Route path="/" element={<AntigravityIndex />} />
+          {/* Home — guarded by onboarding */}
+          <Route path="/" element={<OnboardingGuard><AntigravityIndex /></OnboardingGuard>} />
           
           {/* Search */}
           <Route path="/search" element={
