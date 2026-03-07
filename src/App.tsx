@@ -129,10 +129,14 @@ const AppRoutes = () => {
           {/* Medical Assistant (IA Chat tab) */}
           <Route path="/medical-assistant" element={<MedicalAssistantPage />} />
           
-          {/* Profile & citizen pages */}
+          {/* Profile */}
           <Route path="/profile" element={
             <CitizenGuard><CitizenProfilePage /></CitizenGuard>
           } />
+          
+          {/* Settings */}
+          <Route path="/settings" element={<SettingsPage />} />
+          
           <Route path="/favorites" element={
             <CitizenGuard><FavoritesPage /></CitizenGuard>
           } />
