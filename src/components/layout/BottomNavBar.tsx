@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Search, Map, Bot, User } from 'lucide-react';
+import { Home, Search, Map, Bot, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface NavTab {
