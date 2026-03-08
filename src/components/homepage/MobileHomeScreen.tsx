@@ -224,7 +224,7 @@ export const MobileHomeScreen = () => {
 
       {/* ── Symptoms (scrollable → AI assistant) ── */}
       <motion.div variants={fadeUp}>
-        <SectionHeader label="Health" title="Symptoms" />
+        <SectionHeader label={t('mobileHome', 'healthLabel')} title={t('mobileHome', 'symptomsLabel')} />
         <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory -mx-4 px-4 mt-3">
           {symptoms.map((s, i) => (
             <motion.button
