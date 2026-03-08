@@ -114,7 +114,7 @@ function CarteRedirect() {
 
 // Onboarding guard — redirects to /onboarding on first visit
 function OnboardingGuard({ children }: { children: React.ReactNode }) {
-  const done = localStorage.getItem('cityhealth_onboarding_done');
+  const done = localStorage.getItem('onboarding_complete');
   if (!done) return <Navigate to="/onboarding" replace />;
   return <>{children}</>;
 }
