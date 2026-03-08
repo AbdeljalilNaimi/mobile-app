@@ -76,17 +76,18 @@ export async function getApiKeys(developerId: string): Promise<ApiKey[]> {
   return (data || []) as ApiKey[];
 }
 
-// Deactivate an API key
-export async function deactivateApiKey(keyId: string): Promise<void> {
+// Deactivate an API key (owner-scoped)
+export async function deactivateApiKey(keyId: string, developerId: string): Promise<void> {
   const { error } = await supabase
     .from("api_keys")
     .update({ is_active: false })
-    .eq("id", keyId);
+    .eq("id", keyId)
+    .eq("developer_id", developerId);
   if (error) throw error;
 }
 
-// Regenerate an API key
-export async function regenerateApiKey(keyId: string): Promise<{ rawKey: string }> {
+// Regenerate an API key (owner-scoped)
+export async function regenerateApiKey(keyId: string, developerId: string): Promise<{ rawKey: string }> {
   const rawKey = `ch_live_${crypto.randomUUID().replace(/-/g, "")}`;
   const keyHash = await hashKey(rawKey);
   const keySuffix = `ch_live_****${rawKey.slice(-4)}`;
@@ -94,7 +95,8 @@ export async function regenerateApiKey(keyId: string): Promise<{ rawKey: string 
   const { error } = await supabase
     .from("api_keys")
     .update({ key_hash: keyHash, key_suffix: keySuffix, is_active: true })
-    .eq("id", keyId);
+    .eq("id", keyId)
+    .eq("developer_id", developerId);
 
   if (error) throw error;
   return { rawKey };

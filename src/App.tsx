@@ -252,7 +252,7 @@ const AppRoutes = () => {
         <Route path="/ai-health-chat" element={<Navigate to="/docs" replace />} />
 
         {/* DEV TOOLS */}
-        <Route path="/dev-tools" element={<DevToolsPage />} />
+        <Route path="/dev-tools" element={<AdminGuard><DevToolsPage /></AdminGuard>} />
 
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
