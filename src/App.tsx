@@ -146,9 +146,7 @@ const AppRoutes = () => {
           <Route path="/medical-assistant" element={<MedicalAssistantPage />} />
           
           {/* Profile */}
-          <Route path="/profile" element={
-            <CitizenGuard><CitizenProfilePage /></CitizenGuard>
-          } />
+          <Route path="/profile" element={<CitizenProfilePage />} />
           
           {/* Settings */}
           <Route path="/settings" element={<SettingsPage />} />

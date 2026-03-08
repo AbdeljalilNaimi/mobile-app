@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import GuestProfilePage from '@/components/guest/GuestProfilePage';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -48,6 +49,12 @@ const TABS = [
 ] as const;
 
 export default function CitizenProfilePage() {
+  const { isAuthenticated } = useAuth();
+  if (!isAuthenticated) return <GuestProfilePage />;
+  return <AuthenticatedProfilePage />;
+}
+
+function AuthenticatedProfilePage() {
   const { user, profile, updateProfile, logout, isAuthenticated, hasRole } = useAuth();
   const { preferences, updatePreferences } = useNotifications();
   const navigate = useNavigate();
