@@ -314,16 +314,5 @@ export async function resolveReport(reportId: string): Promise<void> {
 export async function uploadAdImage(file: File, providerId: string): Promise<string> {
   const ext = file.name.split('.').pop();
   const path = `${providerId}/ads/${Date.now()}.${ext}`;
-
-  const { error } = await supabase.storage
-    .from('provider-images')
-    .upload(path, file, { upsert: true });
-
-  if (error) throw error;
-
-  const { data } = supabase.storage
-    .from('provider-images')
-    .getPublicUrl(path);
-
-  return data.publicUrl;
+  return secureUpload('provider-images', path, file, true);
 }
