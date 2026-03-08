@@ -52,14 +52,21 @@ export const BottomNavBar = () => {
                   key={tab.key}
                   onClick={() => navigate(tab.path)}
                   className={cn(
-                    'flex flex-col items-center justify-center gap-1 min-w-[48px] min-h-[48px] rounded-2xl transition-all duration-150 active:scale-90 relative',
+                    'flex flex-col items-center justify-center gap-1 min-w-[48px] min-h-[48px] rounded-2xl transition-colors duration-200 active:scale-90 relative',
                     active
-                      ? 'bg-primary/10 px-3 py-1.5 text-primary'
-                      : 'text-muted-foreground px-2 py-1.5'
+                      ? 'text-primary'
+                      : 'text-muted-foreground'
                   )}
                   aria-label={tab.label}
                 >
-                  <div className="relative">
+                  {active && (
+                    <motion.div
+                      layoutId="bottomNavIndicator"
+                      className="absolute inset-0 bg-primary/10 rounded-2xl"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  <div className="relative z-10">
                     {tab.isProfile ? (
                       <div
                         className={cn(
@@ -87,10 +94,15 @@ export const BottomNavBar = () => {
                       </div>
                     ) : (
                       <>
-                        <Icon
-                          className={cn('h-6 w-6 transition-transform', active && 'scale-105')}
-                          strokeWidth={active ? 2.5 : 1.5}
-                        />
+                        <motion.div
+                          animate={{ scale: active ? 1.1 : 1 }}
+                          transition={{ type: 'spring', stiffness: 400, damping: 20 }}
+                        >
+                          <Icon
+                            className="h-6 w-6"
+                            strokeWidth={active ? 2.5 : 1.5}
+                          />
+                        </motion.div>
                         {tab.badge === 'notification' && (
                           <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-destructive rounded-full" />
                         )}
@@ -102,7 +114,7 @@ export const BottomNavBar = () => {
                   </div>
                   <span
                     className={cn(
-                      'leading-none transition-all',
+                      'leading-none transition-all relative z-10',
                       active ? 'text-[11px] font-bold text-primary' : 'text-[10px] font-medium'
                     )}
                   >
