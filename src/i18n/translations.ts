@@ -1029,6 +1029,35 @@ export interface Translations {
     reads: string;
     // Community
     comments: string;
+    // Categories
+    catDoctors: string;
+    catPharmacy: string;
+    catHospitals: string;
+    catLabs: string;
+    catClinics: string;
+    // Symptoms
+    headache: string;
+    nausea: string;
+    fever: string;
+    fatigue: string;
+    allergy: string;
+    breathing: string;
+    chestPain: string;
+    // Section headers
+    categoriesLabel: string;
+    healthLabel: string;
+    symptomsLabel: string;
+    premiumLabel: string;
+    topProviders: string;
+    // Provider card
+    premiumBadge: string;
+    defaultSpecialty: string;
+    reviews: string;
+    bookAppointment: string;
+    promoTag: string;
+    // Hero
+    heroLine1: string;
+    heroLine2: string;
   };
 
   // Settings Page
@@ -2150,6 +2179,30 @@ export const translations: Record<Language, Translations> = {
       foodAid: 'Aide alimentaire',
       reads: 'lectures',
       comments: 'commentaires',
+      catDoctors: 'Médecins',
+      catPharmacy: 'Pharmacies',
+      catHospitals: 'Hôpitaux',
+      catLabs: 'Laboratoires',
+      catClinics: 'Cliniques',
+      headache: 'Mal de tête',
+      nausea: 'Nausée',
+      fever: 'Fièvre',
+      fatigue: 'Fatigue',
+      allergy: 'Allergie',
+      breathing: 'Respiration',
+      chestPain: 'Douleur thoracique',
+      categoriesLabel: 'Catégories',
+      healthLabel: 'Santé',
+      symptomsLabel: 'Symptômes',
+      premiumLabel: 'Premium',
+      topProviders: 'Meilleurs praticiens',
+      premiumBadge: 'Premium',
+      defaultSpecialty: 'Médecin',
+      reviews: 'avis',
+      bookAppointment: 'RDV',
+      promoTag: 'Promo',
+      heroLine1: 'Trouvez votre',
+      heroLine2: 'Médecin !',
     },
     settingsPage: {
       title: 'Paramètres',
@@ -3250,6 +3303,30 @@ export const translations: Record<Language, Translations> = {
       foodAid: 'مساعدة غذائية',
       reads: 'قراءات',
       comments: 'تعليقات',
+      catDoctors: 'أطباء',
+      catPharmacy: 'صيدليات',
+      catHospitals: 'مستشفيات',
+      catLabs: 'مختبرات',
+      catClinics: 'عيادات',
+      headache: 'صداع',
+      nausea: 'غثيان',
+      fever: 'حمى',
+      fatigue: 'إرهاق',
+      allergy: 'حساسية',
+      breathing: 'تنفس',
+      chestPain: 'ألم في الصدر',
+      categoriesLabel: 'الفئات',
+      healthLabel: 'الصحة',
+      symptomsLabel: 'الأعراض',
+      premiumLabel: 'مميز',
+      topProviders: 'أفضل الأطباء',
+      premiumBadge: 'مميز',
+      defaultSpecialty: 'طبيب',
+      reviews: 'تقييمات',
+      bookAppointment: 'حجز',
+      promoTag: 'عرض',
+      heroLine1: 'ابحث عن',
+      heroLine2: 'طبيبك !',
     },
     settingsPage: {
       title: 'الإعدادات',
@@ -4350,6 +4427,30 @@ export const translations: Record<Language, Translations> = {
       foodAid: 'Food aid',
       reads: 'reads',
       comments: 'comments',
+      catDoctors: 'Doctors',
+      catPharmacy: 'Pharmacy',
+      catHospitals: 'Hospitals',
+      catLabs: 'Labs',
+      catClinics: 'Clinics',
+      headache: 'Headache',
+      nausea: 'Nausea',
+      fever: 'Fever',
+      fatigue: 'Fatigue',
+      allergy: 'Allergy',
+      breathing: 'Breathing',
+      chestPain: 'Chest pain',
+      categoriesLabel: 'Categories',
+      healthLabel: 'Health',
+      symptomsLabel: 'Symptoms',
+      premiumLabel: 'Premium',
+      topProviders: 'Top Providers',
+      premiumBadge: 'Premium',
+      defaultSpecialty: 'Doctor',
+      reviews: 'reviews',
+      bookAppointment: 'Book',
+      promoTag: 'Promo',
+      heroLine1: 'Find your',
+      heroLine2: 'Doctor!',
     },
     settingsPage: {
       title: 'Settings',

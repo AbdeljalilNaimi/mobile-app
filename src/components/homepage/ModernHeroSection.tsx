@@ -40,7 +40,7 @@ export const ModernHeroSection = () => {
             className="bg-gradient-to-r from-primary to-accent hover:opacity-90 text-white px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-105"
             aria-label="Search for healthcare provider"
           >
-            <Search className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+            <Search className="me-2 h-4 w-4 sm:h-5 sm:w-5" />
             {t('hero', 'cta')}
           </Button>
         </div>

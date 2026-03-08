@@ -30,25 +30,11 @@ const fadeUp = {
   show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } },
 };
 
-/* ── Categories ── */
-const categories = [
-  { label: 'Doctors', icon: Stethoscope, type: 'doctor' },
-  { label: 'Pharmacy', icon: Pill, type: 'pharmacy' },
-  { label: 'Hospitals', icon: Building2, type: 'hospital' },
-  { label: 'Labs', icon: FlaskConical, type: 'lab' },
-  { label: 'Clinics', icon: Activity, type: 'clinic' },
-];
+/* ── Categories (moved inside component for translations) ── */
 
-/* ── Symptoms (with icons) ── */
-const symptoms = [
-  { icon: Brain, label: 'Headache' },
-  { icon: Frown, label: 'Nausea' },
-  { icon: Thermometer, label: 'Fever' },
-  { icon: Moon, label: 'Fatigue' },
-  { icon: Pill, label: 'Allergy' },
-  { icon: Wind, label: 'Breathing' },
-  { icon: HeartPulse, label: 'Chest pain' },
-];
+/* ── Symptoms icons ── */
+const symptomIcons = [Brain, Frown, Thermometer, Moon, Pill, Wind, HeartPulse];
+const symptomKeys = ['headache', 'nausea', 'fever', 'fatigue', 'allergy', 'breathing', 'chestPain'] as const;
 
 export const MobileHomeScreen = () => {
   const { user, profile } = useAuth();
@@ -64,6 +50,19 @@ export const MobileHomeScreen = () => {
 
   const displayName = profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || t('mobileHome', 'visitor');
   const isGuest = !user;
+
+  const categories = [
+    { label: t('mobileHome', 'catDoctors'), icon: Stethoscope, type: 'doctor' },
+    { label: t('mobileHome', 'catPharmacy'), icon: Pill, type: 'pharmacy' },
+    { label: t('mobileHome', 'catHospitals'), icon: Building2, type: 'hospital' },
+    { label: t('mobileHome', 'catLabs'), icon: FlaskConical, type: 'lab' },
+    { label: t('mobileHome', 'catClinics'), icon: Activity, type: 'clinic' },
+  ];
+
+  const symptoms = symptomKeys.map((key, i) => ({
+    icon: symptomIcons[i],
+    label: t('mobileHome', key),
+  }));
   const hour = new Date().getHours();
   const greeting = hour >= 18
     ? t('mobileHome', 'goodEvening')
@@ -116,7 +115,7 @@ export const MobileHomeScreen = () => {
   // Map real data
   const ads = (adsData ?? []).map((ad) => ({
     id: ad.id, title: ad.title, provider: ad.provider_name,
-    tag: ad.is_featured ? '⭐' : 'Promo', isPrimary: ad.is_featured,
+    tag: ad.is_featured ? '⭐' : t('mobileHome', 'promoTag'), isPrimary: ad.is_featured,
   }));
 
   const articles = (articlesData ?? []).map((a) => ({
@@ -183,7 +182,7 @@ export const MobileHomeScreen = () => {
         {/* Greeting + hero text */}
         <p className="text-primary-foreground/70 text-sm mb-1">👋 {greeting}, {displayName}</p>
         <h1 className="text-3xl md:text-4xl font-extrabold text-primary-foreground leading-tight">
-          Let's find your<br /><span className="text-primary-foreground">Docteur !</span>
+          {t('mobileHome', 'heroLine1')}<br /><span className="text-primary-foreground">{t('mobileHome', 'heroLine2')}</span>
         </h1>
 
         {/* Search bar inside header */}
@@ -191,19 +190,19 @@ export const MobileHomeScreen = () => {
           onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
           className="relative mt-5 mb-[-24px] z-10"
         >
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+          <Search className="absolute start-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
           <Input
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={t('mobileHome', 'searchPlaceholder')}
-            className="pl-10 pr-4 h-12 rounded-xl bg-card border-border shadow-md text-sm"
+            className="ps-10 pe-4 h-12 rounded-xl bg-card border-border shadow-md text-sm"
           />
         </form>
       </motion.div>
 
       {/* ── Categories (scrollable) ── */}
       <motion.div variants={fadeUp}>
-        <SectionHeader label={t('mobileHome', 'specialties')} title="Categories" />
+        <SectionHeader label={t('mobileHome', 'specialties')} title={t('mobileHome', 'categoriesLabel')} />
         <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory -mx-4 px-4 mt-3">
           {categories.map((cat, i) => (
             <motion.button
@@ -225,7 +224,7 @@ export const MobileHomeScreen = () => {
 
       {/* ── Symptoms (scrollable → AI assistant) ── */}
       <motion.div variants={fadeUp}>
-        <SectionHeader label="Health" title="Symptoms" />
+        <SectionHeader label={t('mobileHome', 'healthLabel')} title={t('mobileHome', 'symptomsLabel')} />
         <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory -mx-4 px-4 mt-3">
           {symptoms.map((s, i) => (
             <motion.button
@@ -245,13 +244,13 @@ export const MobileHomeScreen = () => {
 
       {/* ── Top Providers ── */}
       <motion.div variants={fadeUp}>
-        <SectionHeader label="Premium" title="Top Providers" actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/search')} />
+        <SectionHeader label={t('mobileHome', 'premiumLabel')} title={t('mobileHome', 'topProviders')} actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/search')} />
         <div className="space-y-3 mt-3">
           {topProviders.map((doc) => (
             <button
               key={doc.id}
               onClick={() => navigate(`/provider/${doc.id}`)}
-              className="w-full rounded-2xl bg-card border border-border shadow-sm p-4 flex items-center gap-4 text-left active:scale-[0.98] transition-transform"
+              className="w-full rounded-2xl bg-card border border-border shadow-sm p-4 flex items-center gap-4 text-start active:scale-[0.98] transition-transform"
             >
               <Avatar className="h-14 w-14 flex-shrink-0 ring-2 ring-primary/10">
                 <AvatarImage src={doc.image} className="object-cover" />
@@ -264,20 +263,20 @@ export const MobileHomeScreen = () => {
                   <p className="text-sm font-semibold text-foreground truncate">{doc.name}</p>
                   {doc.isPremium && (
                     <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[9px] font-bold flex-shrink-0">
-                      <Shield className="h-2.5 w-2.5" /> Premium
+                      <Shield className="h-2.5 w-2.5" /> {t('mobileHome', 'premiumBadge')}
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-muted-foreground truncate">{doc.specialty || 'Médecin'}</p>
+                <p className="text-xs text-muted-foreground truncate">{doc.specialty || t('mobileHome', 'defaultSpecialty')}</p>
                 <div className="flex items-center gap-1 mt-1">
                   <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
                   <span className="text-xs font-medium text-foreground">{doc.rating.toFixed(1)}</span>
-                  <span className="text-[10px] text-muted-foreground">({doc.reviewsCount} avis)</span>
+                  <span className="text-[10px] text-muted-foreground">({doc.reviewsCount} {t('mobileHome', 'reviews')})</span>
                 </div>
               </div>
               <div className="flex flex-col items-center gap-2 flex-shrink-0">
                 <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-primary text-primary-foreground text-[11px] font-semibold shadow-sm">
-                  RDV <ArrowRight className="h-3 w-3" />
+                  {t('mobileHome', 'bookAppointment')} <ArrowRight className="h-3 w-3" />
                 </span>
                 <Heart className="h-4 w-4 text-muted-foreground" />
               </div>
@@ -287,10 +286,10 @@ export const MobileHomeScreen = () => {
       </motion.div>
 
       {/* ── Urgent banner ── */}
-      <motion.div variants={fadeUp} className="w-full rounded-xl bg-card border border-border border-l-4 border-l-destructive shadow-sm p-4 space-y-3">
+      <motion.div variants={fadeUp} className="w-full rounded-xl bg-card border border-border border-s-4 border-s-destructive shadow-sm p-4 space-y-3">
         <button
           onClick={() => navigate('/blood-donation')}
-          className="w-full flex items-center gap-3 text-left active:scale-[0.98] transition-transform"
+          className="w-full flex items-center gap-3 text-start active:scale-[0.98] transition-transform"
           aria-label={t('mobileHome', 'bloodDonation')}
         >
           <div className="w-10 h-10 rounded-lg bg-destructive/10 flex items-center justify-center flex-shrink-0">
@@ -389,7 +388,7 @@ export const MobileHomeScreen = () => {
               <button
                 key={ad.id}
                 onClick={() => navigate('/ads')}
-                className="rounded-xl bg-card border border-border shadow-sm p-3.5 text-left active:scale-[0.97] transition-transform flex flex-col justify-between min-h-[100px]"
+                className="rounded-xl bg-card border border-border shadow-sm p-3.5 text-start active:scale-[0.97] transition-transform flex flex-col justify-between min-h-[100px]"
               >
                 <span className={`self-start text-[9px] font-bold px-2 py-0.5 rounded-full ${ad.isPrimary ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
                   {ad.tag}
@@ -413,7 +412,7 @@ export const MobileHomeScreen = () => {
               <button
                 key={article.id}
                 onClick={() => navigate('/research')}
-                className="w-full p-3.5 flex items-start gap-3 text-left active:bg-accent transition-colors"
+                className="w-full p-3.5 flex items-start gap-3 text-start active:bg-accent transition-colors"
               >
                 <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center flex-shrink-0 mt-0.5">
                   <BookOpen className="h-4 w-4 text-muted-foreground" />
@@ -443,7 +442,7 @@ export const MobileHomeScreen = () => {
               <button
                 key={post.id}
                 onClick={() => navigate('/community')}
-                className="rounded-xl bg-card border border-border shadow-sm p-3.5 text-left active:scale-[0.97] transition-transform flex flex-col justify-between min-h-[100px]"
+                className="rounded-xl bg-card border border-border shadow-sm p-3.5 text-start active:scale-[0.97] transition-transform flex flex-col justify-between min-h-[100px]"
               >
                 <span className={`self-start text-[9px] font-semibold border px-2 py-0.5 rounded-full ${post.isPrimary ? 'border-primary text-primary' : 'border-border text-muted-foreground'}`}>
                   {post.category}

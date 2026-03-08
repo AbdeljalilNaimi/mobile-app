@@ -285,7 +285,7 @@ export default function SettingsPage() {
                 );
 
                 return hasAction ? (
-                  <button key={ii} className="w-full text-left" onClick={item.onClick}>
+                  <button key={ii} className="w-full text-start" onClick={item.onClick}>
                     {content}
                   </button>
                 ) : (
