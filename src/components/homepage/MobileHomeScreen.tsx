@@ -496,27 +496,6 @@ export const MobileHomeScreen = () => {
         </div>
       </motion.div>
 
-      {/* ── Quick access ── */}
-      <SectionHeader label={t('mobileHome', 'navigation')} title={t('mobileHome', 'quickAccess')} />
-      <motion.div variants={fadeUp} className="space-y-2.5" role="navigation" aria-label={t('mobileHome', 'quickAccess')}>
-        {quickAccess.map((item, i) => (
-          <button
-            key={i}
-            onClick={() => navigate(item.path)}
-            className={`w-full rounded-xl bg-card border border-border border-l-4 ${item.isPrimary ? 'border-l-primary' : 'border-l-muted-foreground/30'} shadow-sm p-4 flex items-center gap-3 text-left active:scale-[0.98] transition-transform`}
-            aria-label={item.title}
-          >
-            <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
-              <item.icon className="h-5 w-5 text-muted-foreground" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-foreground">{item.title}</p>
-              <p className="text-xs text-muted-foreground">{item.subtitle}</p>
-            </div>
-            <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-          </button>
-        ))}
-      </motion.div>
     </motion.div>
   );
 };
