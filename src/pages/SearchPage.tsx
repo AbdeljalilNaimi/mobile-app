@@ -194,6 +194,31 @@ const SearchPage = () => {
           ))}
         </div>
 
+        <div className="flex items-center gap-1.5">
+          {/* View toggle */}
+          <div className="flex items-center bg-muted/60 rounded-lg p-0.5">
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-1.5 rounded-md transition-colors ${
+                viewMode === 'list'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <List className="h-3.5 w-3.5" />
+            </button>
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-1.5 rounded-md transition-colors ${
+                viewMode === 'grid'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <LayoutGrid className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="outline" size="sm" className="h-8 px-2.5 rounded-lg border-border/50 relative">
