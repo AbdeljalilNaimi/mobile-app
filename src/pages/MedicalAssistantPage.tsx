@@ -162,7 +162,7 @@ export default function MedicalAssistantPage() {
 
   return (
     <div className={cn(
-      "flex flex-col bg-background",
+      "flex flex-col bg-background overflow-hidden",
       "h-[calc(100dvh-4rem-env(safe-area-inset-bottom,8px))]",
       language === "ar" && "rtl"
     )}>
