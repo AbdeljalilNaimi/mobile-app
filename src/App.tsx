@@ -168,7 +168,7 @@ const AppRoutes = () => {
           <Route path="/emergency" element={<EmergencyPage />} />
           <Route path="/blood-donation" element={<BloodDonationPage />} />
           <Route path="/community" element={<CommunityPage />} />
-          <Route path="/notifications" element={<SettingsPage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/annonces" element={<AdsPage />} />
           <Route path="/research" element={<ResearchHubPage />} />
           <Route path="/research/:articleId" element={<ArticleDetailPage />} />
