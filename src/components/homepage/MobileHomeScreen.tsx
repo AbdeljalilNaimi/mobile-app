@@ -28,7 +28,7 @@ const quickActions = [
   { icon: MapPin, label: 'Carte', path: '/map' },
   { icon: Siren, label: 'Urgences', path: '/map?mode=emergency' },
   { icon: CalendarDays, label: 'RDV', path: '/citizen/appointments' },
-  { icon: CreditCard, label: 'Carte', path: '/emergency-card' },
+  { icon: CreditCard, label: 'Carte Santé', path: '/emergency-card' },
   { icon: Users, label: 'Communauté', path: '/community' },
   { icon: Newspaper, label: 'Annonces', path: '/annonces' },
   { icon: FlaskConical, label: 'Recherche', path: '/research' },
