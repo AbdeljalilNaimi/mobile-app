@@ -30,14 +30,7 @@ export const ProviderPDFUpload = () => {
     setErrorMsg('');
 
     try {
-      const { error } = await supabase.storage
-        .from('pdfs')
-        .upload(`${user.uid}.pdf`, file, {
-          upsert: true,
-          contentType: 'application/pdf',
-        });
-
-      if (error) throw error;
+      await secureUpload('pdfs', `${user.uid}.pdf`, file, true);
       setStatus('success');
     } catch (err: any) {
       setStatus('error');
