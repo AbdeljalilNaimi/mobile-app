@@ -97,12 +97,16 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
   // Reset on resetKey change
   useEffect(() => {
     if (resetKey > 0) {
-      setMessages([]);
+      if (initialMessages && initialMessages.length > 0) {
+        setMessages(initialMessages.map(m => ({ role: m.role, content: m.content })));
+      } else {
+        setMessages([]);
+      }
       setInput("");
       setIsLoading(false);
       setTimeout(() => inputRef.current?.focus(), 100);
     }
-  }, [resetKey]);
+  }, [resetKey, initialMessages]);
 
   useEffect(() => {
     setIsLoadingProviders(true);
