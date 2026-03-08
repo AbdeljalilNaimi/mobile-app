@@ -83,6 +83,7 @@ interface SymptomTriageBotProps {
   resetKey?: number;
   onMessageSent?: (role: "user" | "assistant", content: string) => void;
   initialMessages?: { role: "user" | "assistant"; content: string }[];
+  autoSendSymptom?: string | null;
 }
 
 export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages }: SymptomTriageBotProps) {
