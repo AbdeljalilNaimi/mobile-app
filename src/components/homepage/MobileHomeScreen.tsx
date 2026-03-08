@@ -32,6 +32,7 @@ const quickActions = [
   { icon: Users, label: 'Communauté', path: '/community' },
   { icon: Newspaper, label: 'Annonces', path: '/annonces' },
   { icon: FlaskConical, label: 'Recherche', path: '/research' },
+  { icon: UserCircle, label: 'Mon Profil', path: '/profile' },
 ];
 
 const healthServices = [
