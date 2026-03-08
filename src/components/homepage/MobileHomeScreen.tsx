@@ -289,6 +289,30 @@ export const MobileHomeScreen = () => {
         ))}
       </motion.div>
 
+      {/* 8.5. Entraide citoyenne */}
+      <SectionHeader label="Solidarité" title="Entraide citoyenne" actionLabel="Voir tout" onAction={() => navigate('/citizen/provide')} />
+      <motion.div variants={fadeUp} className="-mx-4 px-4">
+        <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide">
+          {entraideItems.map((item, i) => (
+            <button
+              key={i}
+              onClick={() => navigate(item.path)}
+              className="flex-shrink-0 w-[140px] snap-start active:scale-[0.97] transition-transform"
+            >
+              <div className="rounded-xl bg-card border border-border shadow-sm p-3.5 h-full flex flex-col justify-between min-h-[120px]">
+                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <item.icon className="h-4 w-4 text-primary" strokeWidth={2} />
+                </div>
+                <div className="mt-auto space-y-0.5">
+                  <p className="text-foreground font-semibold text-[11px] leading-tight">{item.title}</p>
+                  <p className="text-muted-foreground text-[10px]">{item.subtitle}</p>
+                </div>
+              </div>
+            </button>
+          ))}
+        </div>
+      </motion.div>
+
       {/* 9. Accès rapide */}
       <SectionHeader label="Navigation" title="Accès rapide" />
       <motion.div variants={fadeUp} className="space-y-2.5">
