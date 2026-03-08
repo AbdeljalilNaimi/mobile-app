@@ -111,18 +111,6 @@ export const MobileHomeScreen = () => {
     { icon: Handshake, title: t('mobileHome', 'food'), subtitle: t('mobileHome', 'foodAid'), path: '/citizen/provide' },
   ];
 
-  const quickAccess = [
-    { icon: Bot, title: t('mobileHome', 'aiAssistant'), subtitle: t('mobileHome', 'askQuestions'), isPrimary: true, path: '/medical-assistant' },
-    { icon: Heart, title: t('mobileHome', 'favorites'), subtitle: t('mobileHome', 'savedDoctors'), isPrimary: false, path: '/favorites' },
-    { icon: LayoutGrid, title: t('mobileHome', 'dashboard'), subtitle: t('mobileHome', 'patientSpace'), isPrimary: false, path: '/citizen/dashboard' },
-    { icon: CreditCard, title: t('mobileHome', 'emergencyCard'), subtitle: t('mobileHome', 'medicalInfo'), isPrimary: true, path: '/citizen/health-card' },
-    { icon: CalendarDays, title: t('mobileHome', 'appointment'), subtitle: t('mobileHome', 'manageAppointments'), isPrimary: true, path: '/citizen/appointments' },
-    { icon: Map, title: t('mobileHome', 'bloodDonationMap'), subtitle: t('mobileHome', 'nearbyCenters'), isPrimary: false, path: '/map?mode=blood' },
-    { icon: Siren, title: t('mobileHome', 'emergencyGuideLabel'), subtitle: t('mobileHome', 'usefulNumbers'), isPrimary: true, path: '/emergency' },
-    { icon: Phone, title: t('mobileHome', 'contact'), subtitle: t('mobileHome', 'contactUs'), isPrimary: false, path: '/contact' },
-    { icon: HelpCircle, title: t('mobileHome', 'faq'), subtitle: t('mobileHome', 'frequentQuestions'), isPrimary: false, path: '/faq' },
-    { icon: SettingsIcon, title: t('mobileHome', 'settings'), subtitle: t('mobileHome', 'preferencesAccount'), isPrimary: false, path: '/settings' },
-  ];
 
   // Map real data
   const ads = (adsData ?? []).map((ad) => ({
