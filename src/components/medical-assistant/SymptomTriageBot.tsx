@@ -480,7 +480,7 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
       </div>
 
       {/* Input bar — compact, above nav */}
-      <div className="shrink-0 px-3 py-1 pb-[calc(3.5rem+env(safe-area-inset-bottom,0px))]" style={{ backgroundColor: "#F8F9FA" }}>
+      <div className="shrink-0 px-3 py-0.5 pb-[calc(3rem+env(safe-area-inset-bottom,0px))]" style={{ backgroundColor: "#F8F9FA" }}>
         <div
           className="flex items-center gap-1 h-9 px-2 rounded-lg bg-white transition-shadow duration-200"
           style={{ border: "1px solid #E5E7EB", boxShadow: input ? "0 1px 2px rgba(0,0,0,0.06)" : "none" }}
