@@ -943,6 +943,93 @@ export interface Translations {
     rdvWith: string;
     statusChange: string;
   };
+
+  // Mobile Home Screen
+  mobileHome: {
+    goodMorning: string;
+    goodAfternoon: string;
+    goodEvening: string;
+    visitor: string;
+    signIn: string;
+    searchPlaceholder: string;
+    // Quick actions
+    map: string;
+    emergencies: string;
+    appointment: string;
+    healthCard: string;
+    community: string;
+    announcements: string;
+    research: string;
+    myProfile: string;
+    // Blood donation
+    bloodDonation: string;
+    urgent: string;
+    bloodDonationDesc: string;
+    viewBloodMap: string;
+    // Emergency
+    emergencyTitle: string;
+    emergencyDesc: string;
+    call15: string;
+    emergencyMap: string;
+    emergencyGuide: string;
+    // Section headers
+    specialties: string;
+    healthServices: string;
+    viewAll: string;
+    news: string;
+    medicalAds: string;
+    publications: string;
+    medicalResearch: string;
+    explore: string;
+    discussions: string;
+    communityLabel: string;
+    join: string;
+    solidarity: string;
+    citizenAid: string;
+    navigation: string;
+    quickAccess: string;
+    // Health services
+    pharmacyOnDuty: string;
+    openNow: string;
+    cardiology: string;
+    specialists: string;
+    pediatrics: string;
+    doctors: string;
+    ophthalmology: string;
+    // Quick access items
+    aiAssistant: string;
+    askQuestions: string;
+    favorites: string;
+    savedDoctors: string;
+    dashboard: string;
+    patientSpace: string;
+    emergencyCard: string;
+    medicalInfo: string;
+    manageAppointments: string;
+    bloodDonationMap: string;
+    nearbyCenters: string;
+    emergencyGuideLabel: string;
+    usefulNumbers: string;
+    contact: string;
+    contactUs: string;
+    faq: string;
+    frequentQuestions: string;
+    settings: string;
+    preferencesAccount: string;
+    // Entraide
+    medications: string;
+    donationsAvailable: string;
+    transport: string;
+    accompaniment: string;
+    medicalEquipment: string;
+    loanDonation: string;
+    food: string;
+    foodAid: string;
+    // Articles
+    reads: string;
+    // Community
+    comments: string;
+  };
 }
 
 export const translations: Record<Language, Translations> = {
@@ -1803,6 +1890,82 @@ export const translations: Record<Language, Translations> = {
       rdvWith: 'RDV avec',
       statusChange: 'Changement de statut',
     },
+    mobileHome: {
+      goodMorning: 'Bonjour',
+      goodAfternoon: 'Bon après-midi',
+      goodEvening: 'Bonsoir',
+      visitor: 'Visiteur',
+      signIn: 'Se connecter',
+      searchPlaceholder: 'Rechercher un médecin, spécialité, ville…',
+      map: 'Carte',
+      emergencies: 'Urgences',
+      appointment: 'RDV',
+      healthCard: 'Carte Santé',
+      community: 'Communauté',
+      announcements: 'Annonces',
+      research: 'Recherche',
+      myProfile: 'Mon Profil',
+      bloodDonation: 'Don de sang',
+      urgent: 'URGENT',
+      bloodDonationDesc: 'Trouvez un centre de don près de vous',
+      viewBloodMap: 'Voir la carte des centres',
+      emergencyTitle: 'Urgences',
+      emergencyDesc: "En cas d'urgence, appelez immédiatement le SAMU ou trouvez l'hôpital le plus proche.",
+      call15: 'Appeler le 15',
+      emergencyMap: 'Carte urgences',
+      emergencyGuide: 'Guide des urgences',
+      specialties: 'Spécialités',
+      healthServices: 'Services de santé',
+      viewAll: 'Tout voir',
+      news: 'Actualités',
+      medicalAds: 'Annonces médicales',
+      publications: 'Publications',
+      medicalResearch: 'Recherche médicale',
+      explore: 'Explorer',
+      discussions: 'Discussions',
+      communityLabel: 'Communauté',
+      join: 'Rejoindre',
+      solidarity: 'Solidarité',
+      citizenAid: 'Entraide citoyenne',
+      navigation: 'Navigation',
+      quickAccess: 'Accès rapide',
+      pharmacyOnDuty: 'Pharmacies de garde',
+      openNow: 'Ouvertes maintenant',
+      cardiology: 'Cardiologie',
+      specialists: 'spécialistes',
+      pediatrics: 'Pédiatrie',
+      doctors: 'médecins',
+      ophthalmology: 'Ophtalmologie',
+      aiAssistant: 'Assistant IA',
+      askQuestions: 'Posez vos questions',
+      favorites: 'Favoris',
+      savedDoctors: 'Médecins sauvegardés',
+      dashboard: 'Tableau de bord',
+      patientSpace: 'Votre espace patient',
+      emergencyCard: "Carte d'urgence",
+      medicalInfo: 'Vos infos médicales',
+      manageAppointments: 'Gérer vos RDV',
+      bloodDonationMap: 'Carte don de sang',
+      nearbyCenters: 'Centres à proximité',
+      emergencyGuideLabel: 'Urgences',
+      usefulNumbers: 'Guide & numéros utiles',
+      contact: 'Contact',
+      contactUs: 'Nous contacter',
+      faq: 'FAQ',
+      frequentQuestions: 'Questions fréquentes',
+      settings: 'Réglages',
+      preferencesAccount: 'Préférences & compte',
+      medications: 'Médicaments',
+      donationsAvailable: 'Dons disponibles',
+      transport: 'Transport',
+      accompaniment: 'Accompagnement',
+      medicalEquipment: 'Matériel médical',
+      loanDonation: 'Prêt & don',
+      food: 'Alimentation',
+      foodAid: 'Aide alimentaire',
+      reads: 'lectures',
+      comments: 'commentaires',
+    },
   },
 
   ar: {
@@ -2662,6 +2825,82 @@ export const translations: Record<Language, Translations> = {
       rdvWith: 'موعد مع',
       statusChange: 'تغيير الحالة',
     },
+    mobileHome: {
+      goodMorning: 'صباح الخير',
+      goodAfternoon: 'مساء الخير',
+      goodEvening: 'مساء الخير',
+      visitor: 'زائر',
+      signIn: 'تسجيل الدخول',
+      searchPlaceholder: 'ابحث عن طبيب، تخصص، مدينة…',
+      map: 'خريطة',
+      emergencies: 'طوارئ',
+      appointment: 'موعد',
+      healthCard: 'بطاقة صحية',
+      community: 'مجتمع',
+      announcements: 'إعلانات',
+      research: 'بحث',
+      myProfile: 'ملفي',
+      bloodDonation: 'التبرع بالدم',
+      urgent: 'عاجل',
+      bloodDonationDesc: 'ابحث عن مركز تبرع قريب منك',
+      viewBloodMap: 'عرض خريطة المراكز',
+      emergencyTitle: 'طوارئ',
+      emergencyDesc: 'في حالة الطوارئ، اتصل فوراً بالإسعاف أو ابحث عن أقرب مستشفى.',
+      call15: 'اتصل بـ 15',
+      emergencyMap: 'خريطة الطوارئ',
+      emergencyGuide: 'دليل الطوارئ',
+      specialties: 'التخصصات',
+      healthServices: 'الخدمات الصحية',
+      viewAll: 'عرض الكل',
+      news: 'أخبار',
+      medicalAds: 'إعلانات طبية',
+      publications: 'منشورات',
+      medicalResearch: 'البحث الطبي',
+      explore: 'استكشاف',
+      discussions: 'نقاشات',
+      communityLabel: 'المجتمع',
+      join: 'انضم',
+      solidarity: 'تضامن',
+      citizenAid: 'التعاون المواطني',
+      navigation: 'التنقل',
+      quickAccess: 'وصول سريع',
+      pharmacyOnDuty: 'صيدليات المناوبة',
+      openNow: 'مفتوحة الآن',
+      cardiology: 'أمراض القلب',
+      specialists: 'أخصائي',
+      pediatrics: 'طب الأطفال',
+      doctors: 'أطباء',
+      ophthalmology: 'طب العيون',
+      aiAssistant: 'مساعد ذكي',
+      askQuestions: 'اطرح أسئلتك',
+      favorites: 'المفضلة',
+      savedDoctors: 'الأطباء المحفوظون',
+      dashboard: 'لوحة التحكم',
+      patientSpace: 'مساحة المريض',
+      emergencyCard: 'بطاقة الطوارئ',
+      medicalInfo: 'معلوماتك الطبية',
+      manageAppointments: 'إدارة المواعيد',
+      bloodDonationMap: 'خريطة التبرع بالدم',
+      nearbyCenters: 'مراكز قريبة',
+      emergencyGuideLabel: 'طوارئ',
+      usefulNumbers: 'دليل وأرقام مفيدة',
+      contact: 'اتصال',
+      contactUs: 'اتصل بنا',
+      faq: 'الأسئلة الشائعة',
+      frequentQuestions: 'أسئلة متكررة',
+      settings: 'الإعدادات',
+      preferencesAccount: 'التفضيلات والحساب',
+      medications: 'أدوية',
+      donationsAvailable: 'تبرعات متاحة',
+      transport: 'نقل',
+      accompaniment: 'مرافقة',
+      medicalEquipment: 'معدات طبية',
+      loanDonation: 'إعارة وتبرع',
+      food: 'تغذية',
+      foodAid: 'مساعدة غذائية',
+      reads: 'قراءات',
+      comments: 'تعليقات',
+    },
   },
 
   en: {
@@ -3520,6 +3759,82 @@ export const translations: Record<Language, Translations> = {
       noFilterResults: 'No appointments with this filter',
       rdvWith: 'Appointment with',
       statusChange: 'Status change',
+    },
+    mobileHome: {
+      goodMorning: 'Good morning',
+      goodAfternoon: 'Good afternoon',
+      goodEvening: 'Good evening',
+      visitor: 'Visitor',
+      signIn: 'Sign in',
+      searchPlaceholder: 'Search for a doctor, specialty, city…',
+      map: 'Map',
+      emergencies: 'Emergency',
+      appointment: 'Appt.',
+      healthCard: 'Health Card',
+      community: 'Community',
+      announcements: 'Ads',
+      research: 'Research',
+      myProfile: 'My Profile',
+      bloodDonation: 'Blood donation',
+      urgent: 'URGENT',
+      bloodDonationDesc: 'Find a donation center near you',
+      viewBloodMap: 'View center map',
+      emergencyTitle: 'Emergency',
+      emergencyDesc: 'In case of emergency, call SAMU immediately or find the nearest hospital.',
+      call15: 'Call 15',
+      emergencyMap: 'Emergency map',
+      emergencyGuide: 'Emergency guide',
+      specialties: 'Specialties',
+      healthServices: 'Health services',
+      viewAll: 'View all',
+      news: 'News',
+      medicalAds: 'Medical announcements',
+      publications: 'Publications',
+      medicalResearch: 'Medical research',
+      explore: 'Explore',
+      discussions: 'Discussions',
+      communityLabel: 'Community',
+      join: 'Join',
+      solidarity: 'Solidarity',
+      citizenAid: 'Citizen aid',
+      navigation: 'Navigation',
+      quickAccess: 'Quick access',
+      pharmacyOnDuty: 'On-duty pharmacies',
+      openNow: 'Open now',
+      cardiology: 'Cardiology',
+      specialists: 'specialists',
+      pediatrics: 'Pediatrics',
+      doctors: 'doctors',
+      ophthalmology: 'Ophthalmology',
+      aiAssistant: 'AI Assistant',
+      askQuestions: 'Ask your questions',
+      favorites: 'Favorites',
+      savedDoctors: 'Saved doctors',
+      dashboard: 'Dashboard',
+      patientSpace: 'Your patient space',
+      emergencyCard: 'Emergency card',
+      medicalInfo: 'Your medical info',
+      manageAppointments: 'Manage appointments',
+      bloodDonationMap: 'Blood donation map',
+      nearbyCenters: 'Nearby centers',
+      emergencyGuideLabel: 'Emergency',
+      usefulNumbers: 'Guide & useful numbers',
+      contact: 'Contact',
+      contactUs: 'Contact us',
+      faq: 'FAQ',
+      frequentQuestions: 'Frequent questions',
+      settings: 'Settings',
+      preferencesAccount: 'Preferences & account',
+      medications: 'Medications',
+      donationsAvailable: 'Donations available',
+      transport: 'Transport',
+      accompaniment: 'Accompaniment',
+      medicalEquipment: 'Medical equipment',
+      loanDonation: 'Loan & donation',
+      food: 'Food',
+      foodAid: 'Food aid',
+      reads: 'reads',
+      comments: 'comments',
     },
   },
 };
