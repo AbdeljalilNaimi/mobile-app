@@ -47,12 +47,12 @@ export const QuickSearchSection = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
               {/* Search Input */}
               <div className="relative sm:col-span-2 md:col-span-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder={t('quickSearch', 'namePlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 border-primary/20 focus:border-primary"
+                  className="ps-10 border-primary/20 focus:border-primary"
                   aria-label="Search for specialist or name"
                 />
               </div>
