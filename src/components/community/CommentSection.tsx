@@ -181,12 +181,10 @@ export const CommentSection = ({ postId, upvotedCommentIds, onUpvoteChange }: Pr
       ) : (
         <div className="mt-3 flex items-center gap-3 px-3 py-2.5 rounded-xl bg-muted/30">
           <p className="text-xs text-muted-foreground flex-1">{t('community', 'loginToParticipate')}</p>
-          <Link to="/citizen-login">
-            <Button size="sm" variant="outline" className="gap-1.5 rounded-full text-xs">
-              <LogIn className="h-3.5 w-3.5" />
-              {t('header', 'signin')}
-            </Button>
-          </Link>
+          <Button size="sm" variant="outline" className="gap-1.5 rounded-full text-xs" onClick={() => requireAuth()}>
+            <LogIn className="h-3.5 w-3.5" />
+            {t('header', 'signin')}
+          </Button>
         </div>
       )}
 
