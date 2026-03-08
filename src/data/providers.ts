@@ -422,7 +422,7 @@ export function generateMockProviders(count = 50): CityHealthProvider[] {
       city: 'Sidi Bel Abbès',
       area,
       phone: genPhone(i),
-      image: '/placeholder.svg',
+      image: getDefaultProviderImage(type, i),
       lat,
       lng,
       languages,
