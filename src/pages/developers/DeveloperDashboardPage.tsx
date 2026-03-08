@@ -95,8 +95,9 @@ export default function DeveloperDashboardPage() {
   };
 
   const handleDeactivate = async (id: string) => {
+    if (!user?.uid) return;
     try {
-      await deactivateApiKey(id);
+      await deactivateApiKey(id, user.uid);
       toast({ title: 'Clé désactivée' });
       await loadKeys();
     } catch {
