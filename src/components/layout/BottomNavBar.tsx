@@ -41,8 +41,8 @@ export const BottomNavBar = () => {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50">
       <div className="mx-auto max-w-[430px] px-4 pb-[env(safe-area-inset-bottom,6px)] mb-2">
-        <div className="bg-background/80 backdrop-blur-xl shadow-[0_-4px_24px_rgba(0,0,0,0.10)] rounded-2xl">
-          <div className="flex items-center justify-around h-16 px-1">
+        <div className="bg-background/80 backdrop-blur-xl shadow-[0_-4px_24px_rgba(0,0,0,0.10)] rounded-[20px]">
+          <div className="flex items-center justify-around h-14 px-1">
             {tabs.map((tab) => {
               const active = isActive(tab);
               const Icon = tab.icon;
