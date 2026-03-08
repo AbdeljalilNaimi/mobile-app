@@ -19,7 +19,7 @@ const tabs: NavTab[] = [
   { key: 'search', label: 'Recherche', icon: Search, path: '/search' },
   { key: 'map', label: 'Carte', icon: Map, path: '/map/providers', badge: 'location' },
   { key: 'ai', label: 'IA Chat', icon: Bot, path: '/medical-assistant', badge: 'notification' },
-  { key: 'profile', label: 'Profil', path: '/profile', isProfile: true },
+  { key: 'profile', label: 'Settings', path: '/profile', isProfile: true },
 ];
 
 export const BottomNavBar = () => {
