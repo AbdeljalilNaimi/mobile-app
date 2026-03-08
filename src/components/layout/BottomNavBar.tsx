@@ -17,7 +17,7 @@ interface NavTab {
 const tabs: NavTab[] = [
   { key: 'home', label: 'Accueil', icon: Home, path: '/' },
   { key: 'search', label: 'Recherche', icon: Search, path: '/search' },
-  { key: 'map', label: 'Carte', icon: Map, path: '/map/providers', badge: 'location' },
+  { key: 'map', label: 'Carte', icon: Map, path: '/map', badge: 'location' },
   { key: 'ai', label: 'IA Chat', icon: Bot, path: '/medical-assistant', badge: 'notification' },
   { key: 'profile', label: 'Settings', path: '/settings', isProfile: true },
 ];
