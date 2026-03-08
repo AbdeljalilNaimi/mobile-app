@@ -422,15 +422,17 @@ export default function BloodDonationPage() {
         
         {/* Main Tabs */}
         <Tabs defaultValue="donate" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 h-auto p-1 bg-muted/50">
+          <TabsList className={cn("grid w-full h-auto p-1 bg-muted/50", isAuthenticated ? "grid-cols-3" : "grid-cols-2")}>
             <TabsTrigger value="donate" className="flex flex-col sm:flex-row items-center gap-2 py-3">
               <Heart className="h-4 w-4" />
               <span className="text-xs sm:text-sm">{tx.donateBlood}</span>
             </TabsTrigger>
-            <TabsTrigger value="reminders" className="flex flex-col sm:flex-row items-center gap-2 py-3">
-              <Bell className="h-4 w-4" />
-              <span className="text-xs sm:text-sm">{tx.reminders}</span>
-            </TabsTrigger>
+            {isAuthenticated && (
+              <TabsTrigger value="reminders" className="flex flex-col sm:flex-row items-center gap-2 py-3">
+                <Bell className="h-4 w-4" />
+                <span className="text-xs sm:text-sm">{tx.reminders}</span>
+              </TabsTrigger>
+            )}
             <TabsTrigger value="info" className="flex flex-col sm:flex-row items-center gap-2 py-3">
               <Info className="h-4 w-4" />
               <span className="text-xs sm:text-sm">{tx.info}</span>
