@@ -404,6 +404,7 @@ export const SearchResults = ({ providers, viewMode, searchQuery }: SearchResult
           ))}
         </div>
       )}
+      <AuthRequiredModal />
     </div>
   );
 };

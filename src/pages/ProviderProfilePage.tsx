@@ -2661,6 +2661,7 @@ const ProviderProfilePage = () => {
           providerId={provider.id}
         />
       )}
+    <FavAuthModal />
     </main>
   );
 };
