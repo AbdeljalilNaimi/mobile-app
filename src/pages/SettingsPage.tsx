@@ -237,6 +237,8 @@ export default function SettingsPage() {
           </motion.div>
         ))}
       </div>
+
+      <ChangePasswordDialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen} />
     </div>
   );
 }
