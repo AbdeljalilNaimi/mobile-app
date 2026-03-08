@@ -11,7 +11,7 @@ import {
   MessageSquare, TrendingUp, LayoutGrid,
   Phone, HelpCircle, Settings as SettingsIcon, Handshake, Map,
   CreditCard, Newspaper, FlaskConical, UserCircle,
-  Building2, ArrowRight,
+  Building2, ArrowRight, Shield,
   Brain, Frown, Thermometer, Moon, Wind, HeartPulse, Menu,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -71,12 +71,21 @@ export const MobileHomeScreen = () => {
       ? t('mobileHome', 'goodAfternoon')
       : t('mobileHome', 'goodMorning');
 
-  // Top doctors
+  // Top providers
   const allProviders = getProviders();
-  const topDoctors = allProviders
-    .filter((p) => p.type === 'doctor')
+  const dbTopProviders = allProviders
     .sort((a, b) => b.rating - a.rating)
     .slice(0, 3);
+
+  const exampleProviders = [
+    { id: 'ex-1', name: 'Dr. Amina Belkacem', specialty: 'Cardiologie', rating: 4.9, reviewsCount: 128, image: '', type: 'doctor', isPremium: true },
+    { id: 'ex-2', name: 'Dr. Youcef Hamdani', specialty: 'Pédiatrie', rating: 4.8, reviewsCount: 95, image: '', type: 'doctor', isPremium: true },
+    { id: 'ex-3', name: 'Dr. Sara Medjdoub', specialty: 'Dermatologie', rating: 4.7, reviewsCount: 72, image: '', type: 'doctor', isPremium: false },
+  ];
+
+  const topProviders = dbTopProviders.length >= 3
+    ? dbTopProviders.map(p => ({ ...p, isPremium: p.rating >= 4.5 }))
+    : exampleProviders;
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -242,14 +251,14 @@ export const MobileHomeScreen = () => {
         </div>
       </motion.div>
 
-      {/* ── Top Docteurs ── */}
+      {/* ── Top Providers ── */}
       <motion.div variants={fadeUp}>
-        <SectionHeader label="Recommended" title="Top Docteurs" actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/search?type=doctor')} />
+        <SectionHeader label="Premium" title="Top Providers" actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/search')} />
         <div className="space-y-3 mt-3">
-          {topDoctors.length > 0 ? topDoctors.map((doc) => (
+          {topProviders.map((doc) => (
             <button
               key={doc.id}
-              onClick={() => navigate(`/provider/${doc.id}`)}
+              onClick={() => navigate(doc.id.startsWith('ex-') ? '/search' : `/provider/${doc.id}`)}
               className="w-full rounded-2xl bg-card border border-border shadow-sm p-4 flex items-center gap-4 text-left active:scale-[0.98] transition-transform"
             >
               <Avatar className="h-14 w-14 flex-shrink-0 ring-2 ring-primary/10">
@@ -259,7 +268,14 @@ export const MobileHomeScreen = () => {
                 </AvatarFallback>
               </Avatar>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-foreground truncate">{doc.name}</p>
+                <div className="flex items-center gap-1.5">
+                  <p className="text-sm font-semibold text-foreground truncate">{doc.name}</p>
+                  {doc.isPremium && (
+                    <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[9px] font-bold flex-shrink-0">
+                      <Shield className="h-2.5 w-2.5" /> Premium
+                    </span>
+                  )}
+                </div>
                 <p className="text-xs text-muted-foreground truncate">{doc.specialty || 'Médecin'}</p>
                 <div className="flex items-center gap-1 mt-1">
                   <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
@@ -274,18 +290,7 @@ export const MobileHomeScreen = () => {
                 <Heart className="h-4 w-4 text-muted-foreground" />
               </div>
             </button>
-          )) : (
-            [1, 2, 3].map((i) => (
-              <div key={i} className="w-full rounded-2xl bg-card border border-border shadow-sm p-4 flex items-center gap-4">
-                <div className="h-14 w-14 rounded-full bg-muted animate-pulse flex-shrink-0" />
-                <div className="flex-1 space-y-2">
-                  <div className="h-4 w-28 bg-muted rounded animate-pulse" />
-                  <div className="h-3 w-20 bg-muted rounded animate-pulse" />
-                  <div className="h-3 w-16 bg-muted rounded animate-pulse" />
-                </div>
-              </div>
-            ))
-          )}
+          ))}
         </div>
       </motion.div>
 
