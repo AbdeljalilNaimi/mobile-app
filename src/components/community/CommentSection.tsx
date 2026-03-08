@@ -31,6 +31,7 @@ interface Props {
 export const CommentSection = ({ postId, upvotedCommentIds, onUpvoteChange }: Props) => {
   const { t } = useLanguage();
   const { user, profile, isAdmin } = useAuth();
+  const { requireAuth, AuthRequiredModal } = useAuthRequired();
   const [comments, setComments] = useState<CommunityComment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(false);
