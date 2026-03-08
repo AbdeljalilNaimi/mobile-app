@@ -11,7 +11,7 @@ import {
   MessageSquare, TrendingUp, LayoutGrid,
   Phone, HelpCircle, Settings as SettingsIcon, Handshake, Map,
   CreditCard, Newspaper, FlaskConical, UserCircle,
-  Building2, ArrowRight,
+  Building2, ArrowRight, Shield,
   Brain, Frown, Thermometer, Moon, Wind, HeartPulse, Menu,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
