@@ -199,7 +199,7 @@ export const MobileHomeScreen = () => {
       </motion.div>
 
       {/* 6. Annonces médicales */}
-      <SectionHeader label="Actualités" title="Annonces médicales" actionLabel="Voir tout" <SectionHeader label="Actualités" title="Annonces médicales" actionLabel="Voir tout" onAction={() => navigate('/annonces')} /> />
+      <SectionHeader label="Actualités" title="Annonces médicales" actionLabel="Voir tout" onAction={() => navigate('/annonces')} />
       <motion.div variants={fadeUp} className="grid grid-cols-2 gap-3">
         {ads.map((ad, i) => (
           <button
