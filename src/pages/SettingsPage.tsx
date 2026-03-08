@@ -35,7 +35,7 @@ interface SettingsGroup {
 }
 
 export default function SettingsPage() {
-  console.log('[SettingsPage] rendering');
+  
   const { profile, logout, isAuthenticated } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
