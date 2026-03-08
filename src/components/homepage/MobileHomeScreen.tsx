@@ -289,7 +289,7 @@ export const MobileHomeScreen = () => {
       <motion.div variants={fadeUp} className="w-full rounded-xl bg-card border border-border border-s-4 border-s-destructive shadow-sm p-4 space-y-3">
         <button
           onClick={() => navigate('/blood-donation')}
-          className="w-full flex items-center gap-3 text-left active:scale-[0.98] transition-transform"
+          className="w-full flex items-center gap-3 text-start active:scale-[0.98] transition-transform"
           aria-label={t('mobileHome', 'bloodDonation')}
         >
           <div className="w-10 h-10 rounded-lg bg-destructive/10 flex items-center justify-center flex-shrink-0">
