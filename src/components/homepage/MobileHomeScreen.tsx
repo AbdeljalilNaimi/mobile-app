@@ -182,7 +182,7 @@ export const MobileHomeScreen = () => {
         {/* Greeting + hero text */}
         <p className="text-primary-foreground/70 text-sm mb-1">👋 {greeting}, {displayName}</p>
         <h1 className="text-3xl md:text-4xl font-extrabold text-primary-foreground leading-tight">
-          Let's find your<br /><span className="text-primary-foreground">Docteur !</span>
+          {t('mobileHome', 'heroLine1')}<br /><span className="text-primary-foreground">{t('mobileHome', 'heroLine2')}</span>
         </h1>
 
         {/* Search bar inside header */}
