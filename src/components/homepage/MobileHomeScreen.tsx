@@ -6,9 +6,10 @@ import {
   CalendarDays, Heart, MessageSquare, Stethoscope,
   ChevronRight, Star, ArrowRight,
   Bot, Pill, Activity, BookOpen, Megaphone,
-  Users, Clock, Flame, TrendingUp,
+  Users, Clock, Flame, TrendingUp, Bell,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useNotifications } from '@/hooks/useNotifications';
 
 const stagger = {
   hidden: {},
