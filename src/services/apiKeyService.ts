@@ -76,12 +76,13 @@ export async function getApiKeys(developerId: string): Promise<ApiKey[]> {
   return (data || []) as ApiKey[];
 }
 
-// Deactivate an API key
-export async function deactivateApiKey(keyId: string): Promise<void> {
+// Deactivate an API key (owner-scoped)
+export async function deactivateApiKey(keyId: string, developerId: string): Promise<void> {
   const { error } = await supabase
     .from("api_keys")
     .update({ is_active: false })
-    .eq("id", keyId);
+    .eq("id", keyId)
+    .eq("developer_id", developerId);
   if (error) throw error;
 }
 
