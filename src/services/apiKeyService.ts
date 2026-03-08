@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { auth } from "@/lib/firebase";
 
 export interface ApiKey {
   id: string;
@@ -36,7 +37,36 @@ async function hashKey(key: string): Promise<string> {
     .join("");
 }
 
-// Generate a new API key
+// Get Firebase ID token for authenticated requests
+async function getFirebaseToken(): Promise<string> {
+  const user = auth.currentUser;
+  if (!user) throw new Error("Not authenticated");
+  return user.getIdToken();
+}
+
+// Call the api-keys-manage edge function
+async function callEdgeFunction(body: Record<string, unknown>): Promise<unknown> {
+  const token = await getFirebaseToken();
+  const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+  const res = await fetch(
+    `https://${projectId}.supabase.co/functions/v1/api-keys-manage`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    }
+  );
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || "Edge function error");
+  }
+  return res.json();
+}
+
+// Generate a new API key (via edge function)
 export async function generateApiKey(
   developerId: string,
   appName: string,
@@ -46,25 +76,18 @@ export async function generateApiKey(
   const keyHash = await hashKey(rawKey);
   const keySuffix = `ch_live_****${rawKey.slice(-4)}`;
 
-  const { data, error } = await supabase
-    .from("api_keys")
-    .insert({
-      developer_id: developerId,
-      key_hash: keyHash,
-      key_suffix: keySuffix,
-      app_name: appName,
-      app_description: appDescription,
-      plan: "free",
-      rate_limit_per_day: 100,
-    })
-    .select()
-    .single();
+  const data = await callEdgeFunction({
+    action: "create",
+    key_hash: keyHash,
+    key_suffix: keySuffix,
+    app_name: appName,
+    app_description: appDescription,
+  });
 
-  if (error) throw error;
   return { rawKey, apiKey: data as ApiKey };
 }
 
-// Get developer's API keys
+// Get developer's API keys (read-only, still uses anon client)
 export async function getApiKeys(developerId: string): Promise<ApiKey[]> {
   const { data, error } = await supabase
     .from("api_keys")
@@ -76,33 +99,31 @@ export async function getApiKeys(developerId: string): Promise<ApiKey[]> {
   return (data || []) as ApiKey[];
 }
 
-// Deactivate an API key (owner-scoped)
-export async function deactivateApiKey(keyId: string, developerId: string): Promise<void> {
-  const { error } = await supabase
-    .from("api_keys")
-    .update({ is_active: false })
-    .eq("id", keyId)
-    .eq("developer_id", developerId);
-  if (error) throw error;
+// Deactivate an API key (via edge function)
+export async function deactivateApiKey(keyId: string, _developerId: string): Promise<void> {
+  await callEdgeFunction({
+    action: "deactivate",
+    key_id: keyId,
+  });
 }
 
-// Regenerate an API key (owner-scoped)
-export async function regenerateApiKey(keyId: string, developerId: string): Promise<{ rawKey: string }> {
+// Regenerate an API key (via edge function)
+export async function regenerateApiKey(keyId: string, _developerId: string): Promise<{ rawKey: string }> {
   const rawKey = `ch_live_${crypto.randomUUID().replace(/-/g, "")}`;
   const keyHash = await hashKey(rawKey);
   const keySuffix = `ch_live_****${rawKey.slice(-4)}`;
 
-  const { error } = await supabase
-    .from("api_keys")
-    .update({ key_hash: keyHash, key_suffix: keySuffix, is_active: true })
-    .eq("id", keyId)
-    .eq("developer_id", developerId);
+  await callEdgeFunction({
+    action: "regenerate",
+    key_id: keyId,
+    key_hash: keyHash,
+    key_suffix: keySuffix,
+  });
 
-  if (error) throw error;
   return { rawKey };
 }
 
-// Get usage for a key (last 7 days)
+// Get usage for a key (last 7 days) — read-only
 export async function getKeyUsage(apiKeyId: string): Promise<ApiUsage[]> {
   const sevenDaysAgo = new Date();
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
@@ -118,7 +139,7 @@ export async function getKeyUsage(apiKeyId: string): Promise<ApiUsage[]> {
   return (data || []) as ApiUsage[];
 }
 
-// Get today's total usage for a key
+// Get today's total usage for a key — read-only
 export async function getTodayUsage(apiKeyId: string): Promise<number> {
   const today = new Date().toISOString().split("T")[0];
   const { data, error } = await supabase
@@ -131,7 +152,7 @@ export async function getTodayUsage(apiKeyId: string): Promise<number> {
   return (data || []).reduce((sum, r) => sum + (r.request_count || 0), 0);
 }
 
-// Get recent logs for a key
+// Get recent logs for a key — read-only
 export async function getKeyLogs(apiKeyId: string, limit = 50): Promise<ApiLog[]> {
   const { data, error } = await supabase
     .from("api_logs")
