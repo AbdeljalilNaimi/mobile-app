@@ -388,7 +388,7 @@ export const MobileHomeScreen = () => {
               <button
                 key={ad.id}
                 onClick={() => navigate('/ads')}
-                className="rounded-xl bg-card border border-border shadow-sm p-3.5 text-left active:scale-[0.97] transition-transform flex flex-col justify-between min-h-[100px]"
+                className="rounded-xl bg-card border border-border shadow-sm p-3.5 text-start active:scale-[0.97] transition-transform flex flex-col justify-between min-h-[100px]"
               >
                 <span className={`self-start text-[9px] font-bold px-2 py-0.5 rounded-full ${ad.isPrimary ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
                   {ad.tag}
