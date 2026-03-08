@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabaseClient';
+import { secureUpload } from '@/services/storageUploadService';
 import { containsProfanity } from '@/utils/profanityFilter';
 
 export interface Ad {
