@@ -33,9 +33,7 @@ export const MobileStatusBar = () => {
       {/* Safe area top */}
       <div className="h-[env(safe-area-inset-top,0px)] bg-background/90 backdrop-blur-xl" />
 
-      <div className="h-11 flex items-center justify-center bg-background/90 backdrop-blur-xl border-b border-border/30">
-        <span className="text-[15px] font-semibold text-foreground tracking-tight">{title}</span>
-      </div>
+      {/* Title bar removed */}
     </header>
   );
 };
