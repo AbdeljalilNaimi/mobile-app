@@ -91,7 +91,7 @@ export const QuickSearchSection = () => {
               className="w-full md:w-auto px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg bg-gradient-to-r from-primary to-accent hover:opacity-90 text-white rounded-lg shadow-md hover:shadow-lg transition-all"
               aria-label="Launch search"
             >
-              <Search className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+              <Search className="me-2 h-4 w-4 sm:h-5 sm:w-5" />
               {t('quickSearch', 'launchSearch')}
             </Button>
           </CardContent>
