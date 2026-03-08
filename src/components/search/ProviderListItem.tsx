@@ -91,7 +91,7 @@ export const ProviderListItem = memo(({
             image={provider.image}
             name={provider.name}
             type={provider.type}
-            className="w-12 h-12 rounded-xl"
+            className="w-14 h-14 rounded-xl"
             iconSize={24}
           />
           {provider.phone && (

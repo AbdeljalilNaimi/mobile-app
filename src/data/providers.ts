@@ -314,6 +314,39 @@ function genPhone(i: number) {
   return `+213 ${a} ${b.toString().padStart(2, '0')} ${c.toString().padStart(2, '0')} ${d.toString().padStart(2, '0')}`
 }
 
+const PROVIDER_IMAGES: Record<string, string[]> = {
+  doctor: [
+    'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=200&h=200&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=200&h=200&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=200&h=200&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1651008376811-b90baee60c1f?w=200&h=200&fit=crop&crop=face',
+    'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=200&h=200&fit=crop&crop=face',
+  ],
+  clinic: [
+    'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=200&h=200&fit=crop',
+    'https://images.unsplash.com/photo-1586773860418-d37222d8fce3?w=200&h=200&fit=crop',
+    'https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=200&h=200&fit=crop',
+  ],
+  pharmacy: [
+    'https://images.unsplash.com/photo-1585435557343-3b092031a831?w=200&h=200&fit=crop',
+    'https://images.unsplash.com/photo-1576602976047-174e57a47881?w=200&h=200&fit=crop',
+    'https://images.unsplash.com/photo-1631549916768-4b9518a96b02?w=200&h=200&fit=crop',
+  ],
+  lab: [
+    'https://images.unsplash.com/photo-1579165466741-7f35e4755660?w=200&h=200&fit=crop',
+    'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=200&h=200&fit=crop',
+  ],
+  hospital: [
+    'https://images.unsplash.com/photo-1538108149393-fbbd81895907?w=200&h=200&fit=crop',
+    'https://images.unsplash.com/photo-1587351021759-3e566b6af7cc?w=200&h=200&fit=crop',
+  ],
+};
+
+function getDefaultProviderImage(type: string, index: number): string {
+  const images = PROVIDER_IMAGES[type] || PROVIDER_IMAGES.doctor;
+  return images[index % images.length];
+}
+
 function makeName(type: ProviderType, specialty: string | undefined, i: number) {
   switch (type) {
     case 'doctor':
@@ -378,7 +411,7 @@ export function generateMockProviders(count = 50): CityHealthProvider[] {
       city: 'Sidi Bel Abbès',
       area: doc.area,
       phone: genPhone(i),
-      image: '/placeholder.svg',
+      image: getDefaultProviderImage('doctor', i),
       lat,
       lng,
       languages: ['fr', 'ar'],
@@ -422,7 +455,7 @@ export function generateMockProviders(count = 50): CityHealthProvider[] {
       city: 'Sidi Bel Abbès',
       area,
       phone: genPhone(i),
-      image: '/placeholder.svg',
+      image: getDefaultProviderImage(type, i),
       lat,
       lng,
       languages,

@@ -372,7 +372,7 @@ function ProviderCard({ provider }: { provider: CityHealthProvider }) {
           </div>
 
           {/* Right: Avatar */}
-          <div className="w-14 h-14 rounded-2xl bg-muted/60 flex-shrink-0 overflow-hidden">
+          <div className="w-16 h-16 rounded-2xl bg-muted/60 flex-shrink-0 overflow-hidden">
             {provider.image ? (
               <img src={provider.image} alt={provider.name} className="w-full h-full object-cover" />
             ) : (

@@ -161,7 +161,7 @@ const ProviderCard = memo(({ provider, isGrid, isFavorite, onToggleFavorite }: P
           </div>
 
           {/* Right: Avatar/Photo */}
-          <div className="w-16 h-16 rounded-2xl bg-muted/60 flex-shrink-0 overflow-hidden">
+          <div className="w-20 h-20 rounded-2xl bg-muted/60 flex-shrink-0 overflow-hidden">
             {provider.image && provider.image !== '/placeholder.svg' ? (
               <img
                 src={provider.image}
