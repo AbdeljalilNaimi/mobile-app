@@ -783,6 +783,36 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_preferences: {
+        Row: {
+          appointments: boolean
+          blood_emergencies: boolean
+          created_at: string
+          id: string
+          messages: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          appointments?: boolean
+          blood_emergencies?: boolean
+          created_at?: string
+          id?: string
+          messages?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          appointments?: boolean
+          blood_emergencies?: boolean
+          created_at?: string
+          id?: string
+          messages?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       provider_reports: {
         Row: {
           created_at: string

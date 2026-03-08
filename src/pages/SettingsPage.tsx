@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChangePasswordDialog } from '@/components/settings/ChangePasswordDialog';
 import { useAuth } from '@/contexts/AuthContext';
+import { useNotificationPreferences } from '@/hooks/useNotificationPreferences';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -38,9 +39,7 @@ export default function SettingsPage() {
   const { theme, toggleTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
   const navigate = useNavigate();
-  const [notifAppointments, setNotifAppointments] = useState(true);
-  const [notifEmergency, setNotifEmergency] = useState(true);
-  const [notifMessages, setNotifMessages] = useState(true);
+  const { prefs, updatePref } = useNotificationPreferences();
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
 
   const initials = profile?.full_name
@@ -82,9 +81,9 @@ export default function SettingsPage() {
     {
       title: 'Notifications',
       items: [
-        { icon: Calendar, label: 'Rendez-vous', description: 'Rappels et confirmations', rightElement: <Switch checked={notifAppointments} onCheckedChange={setNotifAppointments} />, iconColor: 'text-indigo-500 bg-indigo-500/10' },
-        { icon: Droplet, label: 'Urgences sang', description: 'Alertes don de sang', rightElement: <Switch checked={notifEmergency} onCheckedChange={setNotifEmergency} />, iconColor: 'text-red-500 bg-red-500/10' },
-        { icon: MessageSquare, label: 'Messages', description: 'Notifications de messages', rightElement: <Switch checked={notifMessages} onCheckedChange={setNotifMessages} />, iconColor: 'text-green-500 bg-green-500/10' },
+        { icon: Calendar, label: 'Rendez-vous', description: 'Rappels et confirmations', rightElement: <Switch checked={prefs.appointments} onCheckedChange={(v) => updatePref('appointments', v)} />, iconColor: 'text-indigo-500 bg-indigo-500/10' },
+        { icon: Droplet, label: 'Urgences sang', description: 'Alertes don de sang', rightElement: <Switch checked={prefs.blood_emergencies} onCheckedChange={(v) => updatePref('blood_emergencies', v)} />, iconColor: 'text-red-500 bg-red-500/10' },
+        { icon: MessageSquare, label: 'Messages', description: 'Notifications de messages', rightElement: <Switch checked={prefs.messages} onCheckedChange={(v) => updatePref('messages', v)} />, iconColor: 'text-green-500 bg-green-500/10' },
       ],
     },
     {
