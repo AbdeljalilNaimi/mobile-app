@@ -75,7 +75,7 @@ export default function SettingsPage() {
       title: 'Compte',
       items: [
         { icon: User, label: 'Mon Profil', onClick: () => navigate('/profile'), iconColor: 'text-blue-500 bg-blue-500/10' },
-        { icon: Lock, label: 'Changer le mot de passe', onClick: () => toast.info('Fonctionnalité à venir'), iconColor: 'text-slate-500 bg-slate-500/10' },
+        { icon: Lock, label: 'Changer le mot de passe', onClick: () => setPasswordDialogOpen(true), iconColor: 'text-slate-500 bg-slate-500/10' },
         { icon: LogOut, label: 'Se déconnecter', onClick: handleLogout, destructive: true },
       ],
     },
