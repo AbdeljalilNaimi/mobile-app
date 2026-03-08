@@ -289,13 +289,17 @@ export const SearchResults = ({ providers, viewMode, searchQuery }: SearchResult
     return () => window.removeEventListener('resize', updateSize);
   }, []);
 
+  const { requireAuth, AuthRequiredModal } = useAuthRequired();
+
   const toggleFavorite = useCallback((providerId: string) => {
-    setFavorites(prev =>
-      prev.includes(providerId)
-        ? prev.filter(id => id !== providerId)
-        : [...prev, providerId]
-    );
-  }, []);
+    requireAuth(() => {
+      setFavorites(prev =>
+        prev.includes(providerId)
+          ? prev.filter(id => id !== providerId)
+          : [...prev, providerId]
+      );
+    });
+  }, [requireAuth]);
 
   // Calculate grid columns based on container width
   const columnCount = Math.max(1, Math.floor(containerSize.width / GRID_ITEM_MIN_WIDTH));
