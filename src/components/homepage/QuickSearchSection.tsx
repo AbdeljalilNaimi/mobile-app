@@ -74,12 +74,12 @@ export const QuickSearchSection = () => {
 
               {/* Location */}
               <div className="relative sm:col-span-2 md:col-span-1">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <MapPin className="absolute start-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder={t('quickSearch', 'locationPlaceholder')}
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  className="pl-10 border-primary/20 focus:border-primary"
+                  className="ps-10 border-primary/20 focus:border-primary"
                   aria-label="Enter location"
                 />
               </div>
