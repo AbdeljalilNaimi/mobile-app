@@ -4,7 +4,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
-import { MapProvider, useMapContext, MapMode } from '@/contexts/MapContext';
+import { MapProvider, useMapContext } from '@/contexts/MapContext';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { createUserLocationMarker, createRouteStartMarker } from './MapMarkers';
