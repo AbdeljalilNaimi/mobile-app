@@ -276,7 +276,7 @@ export const MobileHomeScreen = () => {
               </div>
               <div className="flex flex-col items-center gap-2 flex-shrink-0">
                 <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-primary text-primary-foreground text-[11px] font-semibold shadow-sm">
-                  RDV <ArrowRight className="h-3 w-3" />
+                  {t('mobileHome', 'bookAppointment')} <ArrowRight className="h-3 w-3" />
                 </span>
                 <Heart className="h-4 w-4 text-muted-foreground" />
               </div>
