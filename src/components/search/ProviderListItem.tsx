@@ -39,8 +39,8 @@ export const ProviderListItem = memo(({
     <div
       ref={ref}
       className={cn(
-        "p-3 border-b border-border cursor-pointer transition-colors",
-        isSelected && "bg-primary/5 border-l-2 border-l-primary",
+        "p-3 mx-1.5 my-1 rounded-xl cursor-pointer transition-all duration-200",
+        isSelected && "bg-primary/5 ring-1 ring-primary/30 shadow-sm",
         isHovered && !isSelected && "bg-muted/50",
         !isSelected && !isHovered && "hover:bg-muted/30"
       )}
@@ -48,70 +48,64 @@ export const ProviderListItem = memo(({
       onMouseEnter={() => onHover(provider.id)}
       onMouseLeave={() => onHover(null)}
     >
-      <div className="flex items-start gap-3">
-        {/* Avatar/Image */}
-        <ProviderAvatar
-          image={provider.image}
-          name={provider.name}
-          type={provider.type}
-          className="w-12 h-12 rounded-lg"
-          iconSize={24}
-        />
-
+      <div className="flex gap-3">
         {/* Content */}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1.5 mb-0.5">
-            <h4 className="font-medium text-sm truncate">{provider.name}</h4>
+          {/* Badge row */}
+          <div className="flex items-center gap-1.5 mb-1">
             {isVerified && (
-              <CheckCircle size={14} className="text-primary flex-shrink-0" />
+              <span className="inline-flex items-center gap-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800">
+                <CheckCircle size={10} />
+                Vérifié
+              </span>
+            )}
+            {provider.emergency && (
+              <span className="inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-destructive/10 text-destructive border border-destructive/20">
+                {t('provider', 'emergency')}
+              </span>
             )}
           </div>
-          
-          <p className="text-xs text-muted-foreground truncate mb-1.5">
+
+          <h4 className="font-semibold text-sm truncate text-foreground">{provider.name}</h4>
+          <p className="text-xs text-muted-foreground truncate mt-0.5">
             {provider.specialty || provider.type}
           </p>
 
-          <div className="flex items-center gap-3 text-xs">
-            {/* Rating */}
-            <div className="flex items-center gap-1">
-              <Star size={12} className="fill-yellow-400 text-yellow-400" />
-              <span className="font-medium">{provider.rating}</span>
+          <div className="flex items-center gap-3 mt-1.5 text-xs">
+            <div className="flex items-center gap-0.5">
+              <Star size={11} className="fill-amber-400 text-amber-400" />
+              <span className="font-medium text-foreground">{provider.rating}</span>
               <span className="text-muted-foreground">({provider.reviewsCount})</span>
             </div>
-
-            {/* Distance */}
             {distance && (
-              <span className="text-muted-foreground">
-                {distance} km
-              </span>
-            )}
-
-            {/* Emergency indicator */}
-            {provider.emergency && (
-              <span className="text-red-500 font-medium">{t('provider', 'emergency')}</span>
+              <span className="text-muted-foreground">{distance} km</span>
             )}
           </div>
+
+          <p className="text-[11px] text-muted-foreground mt-1 truncate">{provider.address}</p>
         </div>
 
-        {/* Quick actions */}
-        <div className="flex flex-col gap-1">
+        {/* Right: Avatar */}
+        <div className="flex flex-col items-center gap-1.5">
+          <ProviderAvatar
+            image={provider.image}
+            name={provider.name}
+            type={provider.type}
+            className="w-12 h-12 rounded-xl"
+            iconSize={24}
+          />
           {provider.phone && (
-            <a 
+            <a
               href={`tel:${provider.phone}`}
               onClick={(e) => e.stopPropagation()}
-              className="p-1.5 rounded-md hover:bg-muted transition-colors"
+              className="p-1 rounded-full hover:bg-muted transition-colors"
               title={t('provider', 'callNow')}
             >
-              <Phone size={14} className="text-muted-foreground" />
+              <Phone size={13} className="text-muted-foreground" />
             </a>
           )}
         </div>
       </div>
-
-      {/* Address */}
-      <p className="text-xs text-muted-foreground mt-2 pl-[60px] truncate">
-        {provider.address}
-      </p>
     </div>
   );
 });

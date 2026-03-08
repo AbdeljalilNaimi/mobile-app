@@ -1,5 +1,5 @@
 import React, { useState, memo, useCallback, useRef, useEffect } from 'react';
-import { Heart, Phone, Star, MapPin, Clock, Navigation, Calendar, Share2, Loader2 } from 'lucide-react';
+import { Heart, Phone, Star, MapPin, Clock, Navigation, Calendar, Share2, Loader2, CheckCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Provider, ViewMode } from '@/pages/SearchPage';
@@ -68,124 +68,110 @@ interface ProviderCardProps {
 // Memoized ProviderCard component to prevent unnecessary re-renders
 const ProviderCard = memo(({ provider, isGrid, isFavorite, onToggleFavorite }: ProviderCardProps) => {
   const { t } = useLanguage();
-  
+  const verified = isProviderVerified(provider);
+
   return (
-    <Card className={`hover:shadow-lg transition-all duration-300 cursor-pointer group animate-fade-in hover-scale ${isGrid ? 'h-full' : ''}`}>
-      <CardContent className={`p-4 ${isGrid ? 'h-full flex flex-col' : ''}`}>
-        <div className={`${isGrid ? 'flex flex-col h-full' : 'flex gap-4'}`}>
-          {/* Provider Image */}
-          <div className={`${isGrid ? 'w-full mb-4' : 'w-20 h-20'} flex-shrink-0 relative`}>
+    <Card className="rounded-2xl border-border/40 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group animate-fade-in overflow-hidden">
+      <CardContent className="p-4">
+        <div className="flex gap-4">
+          {/* Left: Info */}
+          <div className="flex-1 min-w-0 flex flex-col">
+            {/* Badge row */}
+            <div className="flex items-center gap-2 mb-2">
+              {verified ? (
+                <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800">
+                  <CheckCircle size={12} />
+                  {t('provider', 'verified') || 'Vérifié'}
+                </span>
+              ) : (
+                <span className="inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                  {provider.specialty || provider.type}
+                </span>
+              )}
+              {provider.isOpen !== undefined && (
+                <span className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full ${
+                  provider.isOpen
+                    ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400'
+                    : 'bg-destructive/10 text-destructive'
+                }`}>
+                  <Clock size={11} />
+                  {provider.isOpen ? t('provider', 'openNow') : t('provider', 'closed')}
+                </span>
+              )}
+            </div>
+
+            {/* Name */}
+            <Link to={`/provider/${provider.id}`} className="hover:text-primary transition-colors">
+              <h3 className="font-semibold text-base text-foreground group-hover:text-primary transition-colors line-clamp-1">
+                {provider.name}
+              </h3>
+            </Link>
+            <p className="text-sm text-muted-foreground mt-0.5">{provider.specialty || provider.type}</p>
+
+            {/* Details */}
+            <div className="flex flex-col gap-1 mt-2.5 text-sm text-muted-foreground">
+              <div className="flex items-center gap-1.5">
+                <MapPin size={13} className="flex-shrink-0" />
+                <span className="truncate">{provider.address}</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <Star size={13} className="fill-amber-400 text-amber-400 flex-shrink-0" />
+                <span className="font-medium text-foreground">{provider.rating}</span>
+                <span className="text-muted-foreground">({provider.reviewsCount})</span>
+              </div>
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex items-center gap-2 mt-auto pt-3">
+              {provider.phone && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="rounded-full text-xs h-8 px-3"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    window.open(`tel:${provider.phone}`, '_self');
+                  }}
+                >
+                  <Phone size={13} className="mr-1" />
+                  {t('provider', 'callNow')}
+                </Button>
+              )}
+              <Link to={`/provider/${provider.id}`} onClick={(e) => e.stopPropagation()}>
+                <Button size="sm" variant="outline" className="rounded-full text-xs h-8 px-3">
+                  <Calendar size={13} className="mr-1" />
+                  {t('provider', 'bookAppointment')}
+                </Button>
+              </Link>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 rounded-full ml-auto"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onToggleFavorite(provider.id);
+                }}
+              >
+                <Heart
+                  size={15}
+                  className={isFavorite ? 'fill-destructive text-destructive' : 'text-muted-foreground'}
+                />
+              </Button>
+            </div>
+          </div>
+
+          {/* Right: Avatar/Photo */}
+          <div className="w-16 h-16 rounded-2xl bg-muted/60 flex-shrink-0 overflow-hidden">
             {provider.image && provider.image !== '/placeholder.svg' ? (
               <img
                 src={provider.image}
                 alt={provider.name}
-                className={`${isGrid ? 'w-full h-32' : 'w-20 h-20'} object-cover rounded-lg`}
+                className="w-full h-full object-cover"
                 loading="lazy"
               />
             ) : (
-              <div className={`${isGrid ? 'w-full h-32' : 'w-20 h-20'} rounded-lg bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center`}>
-                <MapPin size={isGrid ? 32 : 24} className="text-primary/40" />
-              </div>
-            )}
-          </div>
-
-          {/* Provider Info */}
-          <div className={`${isGrid ? 'flex-1' : 'flex-1 min-w-0'}`}>
-            <div className={`${isGrid ? 'text-center' : 'flex justify-between items-start mb-2'}`}>
-              <div className={isGrid ? 'mb-2' : ''}>
-                <Link to={`/provider/${provider.id}`} className="hover:text-primary transition-colors">
-                  <h3 className="font-semibold text-lg group-hover:text-primary transition-colors line-clamp-1">
-                    {provider.name}
-                  </h3>
-                </Link>
-                <p className="text-muted-foreground text-sm">{provider.specialty}</p>
-                {isProviderVerified(provider) && (
-                  <VerifiedBadge type={(provider as any).planType === 'premium' ? 'premium' : 'verified'} size="sm" showTooltip={false} />
-                )}
-              </div>
-
-              {!isGrid && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onToggleFavorite(provider.id);
-                  }}
-                  className="text-muted-foreground hover:text-destructive"
-                >
-                  <Heart
-                    size={18}
-                    className={isFavorite ? 'fill-destructive text-destructive' : ''}
-                  />
-                </Button>
-              )}
-            </div>
-
-            {/* Rating and Stats */}
-            <div className={`flex items-center gap-4 mb-3 ${isGrid ? 'justify-center' : ''}`}>
-              <div className="flex items-center gap-1">
-                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                <span className="text-sm font-medium">{provider.rating}</span>
-                <span className="text-xs text-muted-foreground">({provider.reviewsCount})</span>
-              </div>
-              {provider.distance && (
-                <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                  <MapPin size={14} />
-                  <span>{provider.distance}km</span>
-                </div>
-              )}
-            </div>
-
-            {/* Location and Hours */}
-            <div className="space-y-2 mb-4">
-              <div className={`flex items-start gap-2 text-sm text-muted-foreground ${isGrid ? 'justify-center' : ''}`}>
-                <MapPin size={14} className="mt-0.5 flex-shrink-0" />
-                <span className={isGrid ? 'text-center' : ''}>{provider.address}</span>
-              </div>
-              <div className={`flex items-center gap-2 text-sm ${isGrid ? 'justify-center' : ''}`}>
-                <Clock size={14} />
-                <span className={provider.isOpen ? 'text-green-600' : 'text-destructive'}>
-                  {provider.isOpen ? t('provider', 'openNow') : t('provider', 'closed')}
-                </span>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className={`grid grid-cols-2 gap-2 mt-auto ${isGrid ? 'mt-4' : ''}`}>
-              <Button size="sm" variant="outline" onClick={() => window.open(`tel:${provider.phone}`, '_self')}>
-                <Phone size={14} className="mr-1" />
-                {t('provider', 'callNow')}
-              </Button>
-              <Link to={`/provider/${provider.id}`}>
-                <Button size="sm" className="w-full">
-                  <Calendar size={14} className="mr-1" />
-                  {t('provider', 'bookAppointment')}
-                </Button>
-              </Link>
-            </div>
-
-            {isGrid && (
-              <div className="flex justify-between mt-3">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onToggleFavorite(provider.id);
-                  }}
-                >
-                  <Heart
-                    size={16}
-                    className={isFavorite ? 'fill-destructive text-destructive' : ''}
-                  />
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <Share2 size={16} />
-                </Button>
-                <Button variant="ghost" size="sm">
-                  <Navigation size={16} />
-                </Button>
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-primary/10 to-primary/5">
+                <MapPin size={24} className="text-primary/40" />
               </div>
             )}
           </div>
