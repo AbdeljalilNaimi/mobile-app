@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -6,18 +7,21 @@ import {
   Search, MapPin, Siren, Droplets,
   CalendarDays, ChevronRight, Bot, Pill, Activity,
   BookOpen, Megaphone, Users, Heart,
-  Bell, SlidersHorizontal, Stethoscope, Star,
+  Bell, Stethoscope, Star,
   MessageSquare, TrendingUp, LayoutGrid,
   Phone, HelpCircle, Settings as SettingsIcon, Handshake, Map,
   CreditCard, Newspaper, FlaskConical, UserCircle,
+  Building2, ArrowRight,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Input } from '@/components/ui/input';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useHomepageAds, useHomepageArticles, useHomepageCommunity, useHomepageProviderCounts } from '@/hooks/useHomepageData';
+import { getProviders } from '@/data/providers';
 
 const stagger = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.1 } },
+  show: { transition: { staggerChildren: 0.08 } },
 };
 
 const fadeUp = {
@@ -25,11 +29,32 @@ const fadeUp = {
   show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } },
 };
 
+/* ── Categories ── */
+const categories = [
+  { label: 'Doctors', icon: Stethoscope, type: 'doctor' },
+  { label: 'Pharmacy', icon: Pill, type: 'pharmacy' },
+  { label: 'Hospitals', icon: Building2, type: 'hospital' },
+  { label: 'Labs', icon: FlaskConical, type: 'lab' },
+  { label: 'Clinics', icon: Activity, type: 'clinic' },
+];
+
+/* ── Symptoms ── */
+const symptoms = [
+  { emoji: '🤕', label: 'Headache' },
+  { emoji: '🤢', label: 'Nausea' },
+  { emoji: '🤒', label: 'Fever' },
+  { emoji: '😴', label: 'Fatigue' },
+  { emoji: '💊', label: 'Allergy' },
+  { emoji: '🫁', label: 'Breathing' },
+  { emoji: '💔', label: 'Chest pain' },
+];
+
 export const MobileHomeScreen = () => {
   const { user, profile } = useAuth();
   const { t } = useLanguage();
   const navigate = useNavigate();
   const { unreadCount } = useNotifications(user?.uid);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const { data: adsData } = useHomepageAds();
   const { data: articlesData } = useHomepageArticles();
@@ -44,6 +69,21 @@ export const MobileHomeScreen = () => {
     : hour >= 12
       ? t('mobileHome', 'goodAfternoon')
       : t('mobileHome', 'goodMorning');
+
+  // Top doctors
+  const allProviders = getProviders();
+  const topDoctors = allProviders
+    .filter((p) => p.type === 'doctor')
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, 5);
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      navigate('/search');
+    }
+  };
 
   const quickActions = [
     { icon: MapPin, label: t('mobileHome', 'map'), path: '/map' },
@@ -83,28 +123,19 @@ export const MobileHomeScreen = () => {
     { icon: SettingsIcon, title: t('mobileHome', 'settings'), subtitle: t('mobileHome', 'preferencesAccount'), isPrimary: false, path: '/settings' },
   ];
 
-  // Map real data to display format
+  // Map real data
   const ads = (adsData ?? []).map((ad) => ({
-    id: ad.id,
-    title: ad.title,
-    provider: ad.provider_name,
-    tag: ad.is_featured ? '⭐' : 'Promo',
-    isPrimary: ad.is_featured,
+    id: ad.id, title: ad.title, provider: ad.provider_name,
+    tag: ad.is_featured ? '⭐' : 'Promo', isPrimary: ad.is_featured,
   }));
 
   const articles = (articlesData ?? []).map((a) => ({
-    id: a.id,
-    title: a.title,
-    author: a.provider_name,
-    reads: a.views_count,
+    id: a.id, title: a.title, author: a.provider_name, reads: a.views_count,
   }));
 
   const communityPosts = (communityData ?? []).map((p) => ({
-    id: p.id,
-    title: p.title,
-    category: p.category,
-    comments: p.comments_count,
-    isPrimary: p.category === 'experience',
+    id: p.id, title: p.title, category: p.category,
+    comments: p.comments_count, isPrimary: p.category === 'experience',
   }));
 
   return (
@@ -112,10 +143,10 @@ export const MobileHomeScreen = () => {
       variants={stagger}
       initial="hidden"
       animate="show"
-      className="bg-background min-h-screen px-4 pb-20 space-y-6"
+      className="bg-background min-h-screen px-4 pb-20 space-y-5"
     >
-      {/* Header */}
-      <motion.div variants={fadeUp} className="-mx-4 px-4 pt-2 pb-3">
+      {/* ── Header ── */}
+      <motion.div variants={fadeUp} className="-mx-4 px-4 pt-2 pb-1">
         <div className="flex items-center justify-between">
           <div className="min-w-0">
             <p className="text-[10px] text-muted-foreground tracking-wide uppercase">{greeting}</p>
@@ -158,19 +189,108 @@ export const MobileHomeScreen = () => {
         </div>
       </motion.div>
 
-      {/* Search bar */}
-      <motion.button
-        variants={fadeUp}
-        onClick={() => navigate('/search')}
-        className="w-full flex items-center gap-3 rounded-xl bg-card border border-border px-4 py-3 shadow-sm active:scale-[0.98] transition-transform"
-        aria-label={t('mobileHome', 'searchPlaceholder')}
-      >
-        <Search className="h-4 w-4 text-muted-foreground" />
-        <span className="text-sm text-muted-foreground flex-1 text-left">{t('mobileHome', 'searchPlaceholder')}</span>
-        <SlidersHorizontal className="h-4 w-4 text-muted-foreground" />
-      </motion.button>
+      {/* ── Hero text ── */}
+      <motion.div variants={fadeUp}>
+        <h2 className="text-2xl font-bold text-foreground leading-tight">
+          Let's find your <span className="text-primary">Docteur</span> !
+        </h2>
+      </motion.div>
 
-      {/* Quick actions */}
+      {/* ── Search bar (functional) ── */}
+      <motion.form
+        variants={fadeUp}
+        onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
+        className="relative"
+      >
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+        <Input
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder={t('mobileHome', 'searchPlaceholder')}
+          className="pl-10 pr-4 h-12 rounded-xl bg-card border-border shadow-sm text-sm"
+        />
+      </motion.form>
+
+      {/* ── Categories (scrollable) ── */}
+      <motion.div variants={fadeUp}>
+        <SectionHeader label={t('mobileHome', 'specialties')} title="Categories" />
+        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory -mx-4 px-4 mt-3">
+          {categories.map((cat, i) => (
+            <motion.button
+              key={cat.type}
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.06, duration: 0.35 }}
+              onClick={() => navigate(`/search?type=${cat.type}`)}
+              className="flex flex-col items-center gap-2 flex-shrink-0 snap-start active:scale-95 transition-transform min-w-[72px]"
+            >
+              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center shadow-sm">
+                <cat.icon className="h-6 w-6 text-primary" strokeWidth={1.8} />
+              </div>
+              <span className="text-[11px] font-medium text-foreground whitespace-nowrap">{cat.label}</span>
+            </motion.button>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ── Symptoms (scrollable → AI assistant) ── */}
+      <motion.div variants={fadeUp}>
+        <SectionHeader label="Health" title="Symptoms" />
+        <div className="flex gap-2.5 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory -mx-4 px-4 mt-3">
+          {symptoms.map((s, i) => (
+            <motion.button
+              key={s.label}
+              initial={{ opacity: 0, x: 16 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: i * 0.05, duration: 0.3 }}
+              onClick={() => navigate(`/medical-assistant?symptom=${encodeURIComponent(s.label)}`)}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-card border border-border shadow-sm flex-shrink-0 snap-start active:scale-95 transition-transform"
+            >
+              <span className="text-base">{s.emoji}</span>
+              <span className="text-xs font-medium text-foreground whitespace-nowrap">{s.label}</span>
+            </motion.button>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ── Top Doctors ── */}
+      {topDoctors.length > 0 && (
+        <motion.div variants={fadeUp}>
+          <SectionHeader label="Recommended" title="Top Doctors" actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/search?type=doctor')} />
+          <div className="space-y-2.5 mt-3">
+            {topDoctors.map((doc) => (
+              <button
+                key={doc.id}
+                onClick={() => navigate(`/provider/${doc.id}`)}
+                className="w-full rounded-xl bg-card border border-border shadow-sm p-3 flex items-center gap-3 text-left active:scale-[0.98] transition-transform"
+              >
+                <Avatar className="h-12 w-12 flex-shrink-0">
+                  <AvatarImage src={doc.image} className="object-cover" />
+                  <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">
+                    {doc.name.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-foreground truncate">{doc.name}</p>
+                  <p className="text-xs text-muted-foreground truncate">{doc.specialty || 'Médecin'}</p>
+                  <div className="flex items-center gap-1 mt-0.5">
+                    <Star className="h-3 w-3 text-amber-500 fill-amber-500" />
+                    <span className="text-[11px] font-medium text-foreground">{doc.rating.toFixed(1)}</span>
+                    <span className="text-[10px] text-muted-foreground">({doc.reviewsCount})</span>
+                  </div>
+                </div>
+                <div className="flex-shrink-0">
+                  <span className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-[11px] font-semibold">
+                    Appointment <ArrowRight className="h-3 w-3" />
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
+        </motion.div>
+      )}
+
+      {/* ── Quick actions grid ── */}
       <motion.div variants={fadeUp} className="grid grid-cols-4 gap-3" role="navigation" aria-label={t('mobileHome', 'quickAccess')}>
         {quickActions.map((a) => (
           <button
@@ -187,7 +307,7 @@ export const MobileHomeScreen = () => {
         ))}
       </motion.div>
 
-      {/* Urgent banner */}
+      {/* ── Urgent banner ── */}
       <motion.div variants={fadeUp} className="w-full rounded-xl bg-card border border-border border-l-4 border-l-destructive shadow-sm p-4 space-y-3">
         <button
           onClick={() => navigate('/blood-donation')}
@@ -218,7 +338,7 @@ export const MobileHomeScreen = () => {
         </button>
       </motion.div>
 
-      {/* Emergency section */}
+      {/* ── Emergency section ── */}
       <motion.div variants={fadeUp} className="w-full rounded-xl bg-card border border-border shadow-sm overflow-hidden">
         <div className="p-4 space-y-3">
           <div className="flex items-center gap-2">
@@ -256,7 +376,7 @@ export const MobileHomeScreen = () => {
         </div>
       </motion.div>
 
-      {/* Health services */}
+      {/* ── Health services ── */}
       <SectionHeader label={t('mobileHome', 'specialties')} title={t('mobileHome', 'healthServices')} actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/search')} />
       <motion.div variants={fadeUp} className="-mx-4 px-4">
         <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide">
@@ -281,7 +401,7 @@ export const MobileHomeScreen = () => {
         </div>
       </motion.div>
 
-      {/* Medical ads (real data) */}
+      {/* ── Medical ads ── */}
       {ads.length > 0 && (
         <>
           <SectionHeader label={t('mobileHome', 'news')} title={t('mobileHome', 'medicalAds')} actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/annonces')} />
@@ -292,9 +412,7 @@ export const MobileHomeScreen = () => {
                 onClick={() => navigate('/ads')}
                 className="rounded-xl bg-card border border-border shadow-sm p-3.5 text-left active:scale-[0.97] transition-transform flex flex-col justify-between min-h-[100px]"
               >
-                <span className={`self-start text-[9px] font-bold px-2 py-0.5 rounded-full ${
-                  ad.isPrimary ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
-                }`}>
+                <span className={`self-start text-[9px] font-bold px-2 py-0.5 rounded-full ${ad.isPrimary ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
                   {ad.tag}
                 </span>
                 <div className="mt-auto space-y-1">
@@ -307,7 +425,7 @@ export const MobileHomeScreen = () => {
         </>
       )}
 
-      {/* Research articles (real data) */}
+      {/* ── Research articles ── */}
       {articles.length > 0 && (
         <>
           <SectionHeader label={t('mobileHome', 'publications')} title={t('mobileHome', 'medicalResearch')} actionLabel={t('mobileHome', 'explore')} onAction={() => navigate('/research')} />
@@ -337,7 +455,7 @@ export const MobileHomeScreen = () => {
         </>
       )}
 
-      {/* Community (real data) */}
+      {/* ── Community ── */}
       {communityPosts.length > 0 && (
         <>
           <SectionHeader label={t('mobileHome', 'discussions')} title={t('mobileHome', 'communityLabel')} actionLabel={t('mobileHome', 'join')} onAction={() => navigate('/community')} />
@@ -348,9 +466,7 @@ export const MobileHomeScreen = () => {
                 onClick={() => navigate('/community')}
                 className="rounded-xl bg-card border border-border shadow-sm p-3.5 text-left active:scale-[0.97] transition-transform flex flex-col justify-between min-h-[100px]"
               >
-                <span className={`self-start text-[9px] font-semibold border px-2 py-0.5 rounded-full ${
-                  post.isPrimary ? 'border-primary text-primary' : 'border-border text-muted-foreground'
-                }`}>
+                <span className={`self-start text-[9px] font-semibold border px-2 py-0.5 rounded-full ${post.isPrimary ? 'border-primary text-primary' : 'border-border text-muted-foreground'}`}>
                   {post.category}
                 </span>
                 <div className="mt-auto space-y-1.5">
@@ -366,7 +482,7 @@ export const MobileHomeScreen = () => {
         </>
       )}
 
-      {/* Entraide citoyenne */}
+      {/* ── Entraide citoyenne ── */}
       <SectionHeader label={t('mobileHome', 'solidarity')} title={t('mobileHome', 'citizenAid')} actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/citizen/provide')} />
       <motion.div variants={fadeUp} className="-mx-4 px-4">
         <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide">
@@ -391,16 +507,14 @@ export const MobileHomeScreen = () => {
         </div>
       </motion.div>
 
-      {/* Quick access */}
+      {/* ── Quick access ── */}
       <SectionHeader label={t('mobileHome', 'navigation')} title={t('mobileHome', 'quickAccess')} />
       <motion.div variants={fadeUp} className="space-y-2.5" role="navigation" aria-label={t('mobileHome', 'quickAccess')}>
         {quickAccess.map((item, i) => (
           <button
             key={i}
             onClick={() => navigate(item.path)}
-            className={`w-full rounded-xl bg-card border border-border border-l-4 ${
-              item.isPrimary ? 'border-l-primary' : 'border-l-muted-foreground/30'
-            } shadow-sm p-4 flex items-center gap-3 text-left active:scale-[0.98] transition-transform`}
+            className={`w-full rounded-xl bg-card border border-border border-l-4 ${item.isPrimary ? 'border-l-primary' : 'border-l-muted-foreground/30'} shadow-sm p-4 flex items-center gap-3 text-left active:scale-[0.98] transition-transform`}
             aria-label={item.title}
           >
             <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
