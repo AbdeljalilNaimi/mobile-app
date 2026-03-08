@@ -24,7 +24,6 @@ const fadeUp = {
 };
 
 const quickActions = [
-  { icon: Search, label: 'Chercher', path: '/search' },
   { icon: MapPin, label: 'Carte', path: '/map' },
   { icon: Siren, label: 'Urgences', path: '/map?mode=emergency' },
   { icon: CalendarDays, label: 'RDV', path: '/citizen/appointments' },
