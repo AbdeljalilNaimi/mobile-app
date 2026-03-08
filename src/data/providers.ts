@@ -378,7 +378,7 @@ export function generateMockProviders(count = 50): CityHealthProvider[] {
       city: 'Sidi Bel Abbès',
       area: doc.area,
       phone: genPhone(i),
-      image: '/placeholder.svg',
+      image: getDefaultProviderImage('doctor', i),
       lat,
       lng,
       languages: ['fr', 'ar'],
