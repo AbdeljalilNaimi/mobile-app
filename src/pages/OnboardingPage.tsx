@@ -6,40 +6,53 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 import slideWelcome from '@/assets/onboarding/slide-welcome.png';
-import slideDoctorSearch from '@/assets/onboarding/slide-doctor-search.png';
+import slideDoctorSearch from '@/assets/onboarding/slide-doctor-search-256.webp';
+import slideDoctorSearch2x from '@/assets/onboarding/slide-doctor-search-512.webp';
 import slideEmergency from '@/assets/onboarding/slide-emergency.png';
 import slideAiChat from '@/assets/onboarding/slide-ai-chat.png';
 
 /* ─── Slide Data ─── */
 
-const slides = [
+type OnboardingSlide = {
+  image: string;
+  title: string;
+  subtitle: string;
+  chip: string | null;
+  accent: 'primary' | 'destructive';
+  imageSrcSet?: string;
+  imageSizes?: string;
+};
+
+const slides: OnboardingSlide[] = [
   {
     image: slideWelcome,
     title: 'Bienvenue sur CityHealth',
     subtitle: 'Votre plateforme de santé digitale pour Sidi Bel Abbès et toute l\'Algérie',
     chip: null,
-    accent: 'primary' as const,
+    accent: 'primary',
   },
   {
     image: slideDoctorSearch,
+    imageSrcSet: `${slideDoctorSearch} 1x, ${slideDoctorSearch2x} 2x`,
+    imageSizes: '(max-width: 430px) 224px, 224px',
     title: 'Trouvez le bon médecin',
     subtitle: 'Recherchez par spécialité, consultez les profils et prenez rendez-vous en quelques clics',
     chip: '🔍 500+ médecins référencés',
-    accent: 'primary' as const,
+    accent: 'primary',
   },
   {
     image: slideEmergency,
     title: 'Soyez prêt pour les urgences',
     subtitle: 'Créez votre carte d\'urgence médicale et rejoignez le réseau de donneurs de sang',
     chip: '❤️ Sauvez des vies près de chez vous',
-    accent: 'destructive' as const,
+    accent: 'destructive',
   },
   {
     image: slideAiChat,
     title: 'Un assistant santé intelligent',
     subtitle: 'Posez vos questions médicales à notre IA, lisez des recherches et échangez avec la communauté',
     chip: '🤖 Disponible 24h/24',
-    accent: 'primary' as const,
+    accent: 'primary',
   },
 ];
 
