@@ -74,6 +74,7 @@ export const MobileHomeScreen = () => {
   // Top providers — always use real providers from data
   const allProviders = getProviders();
   const topProviders = allProviders
+    .filter(p => p.name) // safety: skip providers without name
     .sort((a, b) => b.rating - a.rating)
     .slice(0, 3)
     .map(p => ({ ...p, isPremium: p.planType === 'premium' || p.rating >= 4.5 }));
