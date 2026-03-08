@@ -282,6 +282,7 @@ const SearchPage = () => {
             </div>
           </SheetContent>
         </Sheet>
+        </div>
       </div>
 
       {/* Results count */}
