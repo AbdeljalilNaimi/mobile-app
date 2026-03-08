@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { SUPABASE_URL } from '@/lib/supabaseClient';
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 import { secureUpload, secureDelete } from '@/services/storageUploadService';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';

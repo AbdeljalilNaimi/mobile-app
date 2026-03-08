@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabaseClient';
+import { supabase } from '@/integrations/supabase/client';
 import { secureUpload } from '@/services/storageUploadService';
 import { containsProfanity } from '@/utils/profanityFilter';
 
