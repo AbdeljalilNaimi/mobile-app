@@ -1,25 +1,28 @@
 import { Link } from 'react-router-dom';
 import { User, Lock, CheckCircle2, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
-const lockedFeatures = [
-  'Mon dossier médical',
-  'Mes rendez-vous',
-  'Ma carte d\'urgence',
-  'Mon profil sanguin',
-  'Mes médecins favoris',
-  'Historique IA Chat',
-];
-
-const freeFeatures = [
-  'Rechercher un médecin',
-  'Voir la carte',
-  'Assistant IA (session uniquement)',
-  'Annonces médicales',
-  'Recherche médicale',
-];
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function GuestProfilePage() {
+  const { t } = useLanguage();
+
+  const lockedFeatures = [
+    t('guest', 'medicalRecord'),
+    t('guest', 'myAppointments'),
+    t('guest', 'emergencyCard'),
+    t('guest', 'bloodProfile'),
+    t('guest', 'favoriteDoctors'),
+    t('guest', 'aiChatHistory'),
+  ];
+
+  const freeFeatures = [
+    t('guest', 'searchDoctor'),
+    t('guest', 'viewMap'),
+    t('guest', 'aiSessionOnly'),
+    t('guest', 'medicalAds'),
+    t('guest', 'medicalResearch'),
+  ];
+
   return (
     <div className="min-h-screen bg-background pb-24">
       <div className="max-w-md mx-auto px-4 pt-8 space-y-6">
@@ -30,15 +33,15 @@ export default function GuestProfilePage() {
             <User className="h-7 w-7 text-muted-foreground" />
           </div>
           <div className="text-center">
-            <p className="text-lg font-bold text-foreground">Visiteur</p>
-            <p className="text-sm text-muted-foreground">Non connecté</p>
+            <p className="text-lg font-bold text-foreground">{t('guest', 'visitor')}</p>
+            <p className="text-sm text-muted-foreground">{t('guest', 'notConnected')}</p>
           </div>
           <div className="flex gap-3 w-full">
             <Button asChild className="flex-1">
-              <Link to="/citizen/login">Se connecter</Link>
+              <Link to="/citizen/login">{t('guest', 'signIn')}</Link>
             </Button>
             <Button asChild variant="outline" className="flex-1">
-              <Link to="/citizen/register">S'inscrire</Link>
+              <Link to="/citizen/register">{t('guest', 'register')}</Link>
             </Button>
           </div>
         </div>
@@ -46,8 +49,8 @@ export default function GuestProfilePage() {
         {/* Locked Features */}
         <div className="space-y-3">
           <div>
-            <h2 className="text-base font-semibold text-foreground">Débloquez votre espace santé</h2>
-            <p className="text-sm text-muted-foreground">Connectez-vous pour accéder à :</p>
+            <h2 className="text-base font-semibold text-foreground">{t('guest', 'unlockTitle')}</h2>
+            <p className="text-sm text-muted-foreground">{t('guest', 'unlockDesc')}</p>
           </div>
           <div className="space-y-2">
             {lockedFeatures.map((feat) => (
@@ -64,7 +67,7 @@ export default function GuestProfilePage() {
 
         {/* Free Features */}
         <div className="space-y-3">
-          <h2 className="text-base font-semibold text-foreground">Accessible sans compte</h2>
+          <h2 className="text-base font-semibold text-foreground">{t('guest', 'freeTitle')}</h2>
           <div className="space-y-2">
             {freeFeatures.map((feat) => (
               <div
@@ -82,7 +85,7 @@ export default function GuestProfilePage() {
         <div className="text-center pt-2">
           <Link to="/settings" className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5">
             <Settings className="h-4 w-4" />
-            Réglages · Langue · Mode sombre
+            {t('guest', 'settingsLink')}
           </Link>
         </div>
       </div>

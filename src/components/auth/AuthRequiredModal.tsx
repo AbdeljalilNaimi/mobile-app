@@ -10,6 +10,7 @@ import {
   DrawerFooter,
   DrawerClose,
 } from '@/components/ui/drawer';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface AuthRequiredModalProps {
   open: boolean;
@@ -17,6 +18,8 @@ interface AuthRequiredModalProps {
 }
 
 export function AuthRequiredModal({ open, onOpenChange }: AuthRequiredModalProps) {
+  const { t } = useLanguage();
+
   return (
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent>
@@ -24,21 +27,21 @@ export function AuthRequiredModal({ open, onOpenChange }: AuthRequiredModalProps
           <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center">
             <Lock className="h-7 w-7 text-primary" />
           </div>
-          <DrawerTitle className="text-lg">Connexion requise</DrawerTitle>
+          <DrawerTitle className="text-lg">{t('authRequired', 'title')}</DrawerTitle>
           <DrawerDescription className="text-center">
-            Créez un compte gratuit pour accéder à cette fonctionnalité
+            {t('authRequired', 'description')}
           </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter className="gap-2 pb-6">
           <Button asChild className="w-full">
-            <Link to="/citizen/login">Se connecter</Link>
+            <Link to="/citizen/login">{t('authRequired', 'signIn')}</Link>
           </Button>
           <Button asChild variant="ghost" className="w-full">
-            <Link to="/citizen/register">Créer un compte</Link>
+            <Link to="/citizen/register">{t('authRequired', 'createAccount')}</Link>
           </Button>
           <DrawerClose asChild>
             <button className="text-sm text-muted-foreground hover:text-foreground pt-1">
-              Continuer sans compte
+              {t('authRequired', 'continueWithout')}
             </button>
           </DrawerClose>
         </DrawerFooter>

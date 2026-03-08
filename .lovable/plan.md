@@ -1,63 +1,110 @@
 
 
-## Plan: French as default + Translate all pages + Language shortcut in Settings
+## Plan: CityHealth Public API System
 
-### Scope Assessment
+This is a large feature spanning database tables, an edge function router, 3 frontend pages, and admin panel additions. The project uses **Firebase Auth** (not Supabase Auth), so the developer portal auth will use the existing Firebase auth system.
 
-The translation infrastructure (`src/i18n/translations.ts`) already has **fr**, **ar**, and **en** translations for ~25 sections covering most of the app. French is already the default language. The main gaps are:
+### 1. Database Migration (3 new tables)
 
-1. **Hardcoded French strings** in several pages/components that bypass the `t()` translation system
-2. **Missing `settings` translation section** for the Settings page labels
-3. **Language shortcut** improvement in Settings (currently cycles — needs a proper selector)
+**`api_keys`** — stores hashed API keys linked to Firebase user IDs (developer_id as TEXT, not UUID FK to auth.users since auth is Firebase-based).
 
-### Changes
+**`api_usage`** — daily per-endpoint usage counters with UNIQUE(api_key_id, date, endpoint).
 
-#### 1. Add `settingsPage` section to translation types and all 3 languages (~80 keys)
+**`api_logs`** — request logs with auto-cleanup guidance (pg_cron note in migration comments).
 
-In `src/i18n/translations.ts`, add a new `settingsPage` section covering:
-- Page title ("Paramètres" / "الإعدادات" / "Settings")
-- Account group: "Compte", "Mon Profil", "Changer le mot de passe", "Se déconnecter"
-- Notifications group: "Notifications", "Rendez-vous", "Urgences sang", "Messages" + descriptions
-- Health services group: "Services de santé", "Carte d'urgence", "Don de sang"
-- Preferences group: "Préférences", "Langue", "Mode sombre"
-- Resources group: all labels
-- Legal group: all labels
-- About group: all labels
-- Guest state: "Visiteur", "Non connecté", "Se connecter", "Vérifié"
-- Toast messages: "Déconnexion réussie", "Signaler un bug" message
+RLS policies:
+- `api_keys`: Users can SELECT/INSERT/UPDATE/DELETE their own keys (where `developer_id = user_id text`). Since Firebase auth is used, RLS will use permissive policies scoped by the app logic. Admin reads all.
+- `api_usage`: Read own usage. Edge function inserts via service role.
+- `api_logs`: Read own logs. Edge function inserts via service role.
 
-#### 2. Update `src/pages/SettingsPage.tsx`
-- Import `useLanguage` and use `t('settingsPage', ...)` for all hardcoded strings
-- Replace the `cycleLanguage` click with a **language picker dropdown** showing all 3 options (Français, العربية, English) with flag indicators, so users can directly select their language
+Since the app uses Firebase Auth (not Supabase Auth), RLS policies will be permissive for edge function operations (using service role key), and frontend queries will filter by the Firebase user ID.
 
-#### 3. Translate hardcoded strings in key components
-- `src/components/guest/GuestBlockMessage.tsx`: "Se connecter", "Créer un compte" → use `t('auth', ...)`
-- `src/components/guest/GuestProfilePage.tsx`: hardcoded French labels
-- `src/components/settings/ChangePasswordDialog.tsx`: "Changer le mot de passe" title
-- `src/pages/AuthGatewayPage.tsx`: "Se connecter", "Créer un compte"
-- `src/pages/CitizenRegisterPage.tsx`: hardcoded form labels
+### 2. Edge Function: `supabase/functions/public-api/index.ts`
 
-#### 4. Translate `src/pages/FAQPage.tsx`
-- Add `faqPage` section to translations with all category labels and FAQ Q&A content in fr/ar/en
-- Replace hardcoded `faqCategories` and `faqData` arrays with translated versions
+Single Hono-based router handling:
 
-#### 5. Translate remaining pages with hardcoded French
-- `src/pages/TermsPage.tsx`, `src/pages/PrivacyPage.tsx`, `src/pages/DocsPage.tsx` — these are content-heavy legal pages. Add translation sections or use the `t()` system for their content.
+| Route | Auth | Description |
+|-------|------|-------------|
+| `GET /v1/categories` | None | Returns provider type labels |
+| `GET /v1/providers` | API Key | Query providers with filters |
+| `GET /v1/providers/:id` | API Key | Single provider detail |
+| `GET /v1/emergency` | API Key (no rate limit) | 24/7 verified providers |
+| `GET /v1/pharmacies` | API Key | Verified pharmacies |
+| `GET /v1/search` | API Key | Full-text search |
 
-### Technical Details
+Middleware flow:
+1. Extract `x-api-key` header
+2. SHA-256 hash → lookup in `api_keys.key_hash`
+3. Check `is_active`
+4. Check daily usage in `api_usage` vs `rate_limit_per_day`
+5. Upsert usage count, insert log entry
+6. Add `X-RateLimit-Limit` and `X-RateLimit-Remaining` headers
 
-- **Translation file**: Will grow by ~300-400 lines to add `settingsPage` and `faqPage` sections across 3 languages
-- **Language picker**: Replace `cycleLanguage` with a `DropdownMenu` from Radix (already installed) showing 3 language options with labels
-- **Default language**: Already `'fr'` in `LanguageContext.tsx` — no change needed
-- **Pattern**: Follow existing pattern of `t('section', 'key')` used throughout the app
+Response format: `{ success, data, meta }` or `{ success: false, error: { code, message } }`
 
-### Files to modify
-1. `src/i18n/translations.ts` — Add `settingsPage` and `faqPage` sections (fr/ar/en)
-2. `src/pages/SettingsPage.tsx` — Replace all hardcoded French with `t()` calls + add language dropdown
-3. `src/components/guest/GuestBlockMessage.tsx` — Translate button labels
-4. `src/components/guest/GuestProfilePage.tsx` — Translate labels
-5. `src/components/settings/ChangePasswordDialog.tsx` — Translate title/labels
-6. `src/pages/AuthGatewayPage.tsx` — Translate buttons
-7. `src/pages/CitizenRegisterPage.tsx` — Translate form labels
-8. `src/pages/FAQPage.tsx` — Full translation of categories and Q&A content
+Note: Provider data comes from localStorage/mock data on frontend, but the API will query the Firestore-sourced data. Since providers are stored in Firestore (not Supabase), the edge function will need to either:
+- Query a Supabase `providers` table (if we mirror data), OR
+- Return from a static/cached dataset
+
+Given the current architecture uses Firestore for providers, the edge function will create a lightweight `providers_public` Supabase table that mirrors public provider data, or query Firestore directly. **Recommended**: Create a `providers_public` view/table in Supabase seeded from existing data, keeping the API self-contained.
+
+Actually, looking more carefully at the codebase, providers are in localStorage mock data. The API will query this mock dataset server-side. We'll embed a reference dataset in the edge function or create a `providers_public` table. **Decision**: Create a `providers_public` Supabase table so the API has real queryable data.
+
+### 3. Additional Migration: `providers_public` table
+
+Minimal table with public-safe fields only:
+- id, name, type, specialty, address, city, area, phone, lat, lng, is_verified, is_24h, is_open, rating, reviews_count, description, languages, image_url, created_at
+
+### 4. Frontend Pages
+
+#### `/developers` — Landing Page
+- Hero: "Build with CityHealth API"
+- 3 plan cards (Free/Basic/Pro)
+- CTAs to login and docs
+- No auth required
+
+#### `/developers/dashboard` — Protected (Firebase Auth)
+- App registration form (name, description)
+- Key generation: `ch_live_` + `crypto.randomUUID()`, show once in modal
+- Display: key_suffix, usage progress bar, 7-day chart (recharts), regenerate/deactivate buttons
+
+#### `/developers/docs` — Public
+- Sidebar nav documentation page
+- Sections: Auth, Rate Limits, Endpoints, Error Codes
+- Dark code blocks with curl/JS examples
+
+### 5. Admin Dashboard Addition
+
+New tab `api` in AdminSidebar with 3 sub-sections:
+- **API Keys**: Table of developers, plan, usage, status
+- **Usage Stats**: Global request charts
+- **Logs**: Searchable log table
+
+### 6. Config Updates
+
+- `supabase/config.toml`: Add `[functions.public-api]` with `verify_jwt = false`
+- `src/App.tsx`: Add routes for `/developers`, `/developers/dashboard`, `/developers/docs`
+
+### Files to Create/Edit
+
+| File | Action |
+|------|--------|
+| Migration SQL | Create (4 tables + RLS) |
+| `supabase/functions/public-api/index.ts` | Create |
+| `src/pages/developers/DeveloperLandingPage.tsx` | Create |
+| `src/pages/developers/DeveloperDashboardPage.tsx` | Create |
+| `src/pages/developers/DeveloperDocsPage.tsx` | Create |
+| `src/services/apiKeyService.ts` | Create |
+| `src/components/admin/ApiManagementPanel.tsx` | Create |
+| `src/components/admin/AdminSidebar.tsx` | Edit (add API tab) |
+| `src/pages/AdminDashboard.tsx` | Edit (add API case) |
+| `src/App.tsx` | Edit (add /developers routes) |
+
+### Implementation Order
+1. Database migration (4 tables)
+2. Edge function with Hono router
+3. API key service (frontend)
+4. Developer portal pages (3 pages)
+5. Admin API management panel
+6. Route wiring in App.tsx + AdminSidebar
 

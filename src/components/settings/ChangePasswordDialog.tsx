@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { useAuth } from '@/contexts/AuthContext';
 import { updatePassword, EmailAuthProvider, reauthenticateWithCredential } from 'firebase/auth';
 import { Lock, Eye, EyeOff, ShieldCheck } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface ChangePasswordDialogProps {
   open: boolean;
@@ -15,6 +16,7 @@ interface ChangePasswordDialogProps {
 
 export const ChangePasswordDialog = ({ open, onOpenChange }: ChangePasswordDialogProps) => {
   const { user } = useAuth();
+  const { t } = useLanguage();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -36,22 +38,22 @@ export const ChangePasswordDialog = ({ open, onOpenChange }: ChangePasswordDialo
     e.preventDefault();
 
     if (!user?.email) {
-      toast.error('Vous devez être connecté pour changer votre mot de passe');
+      toast.error(t('changePasswordDialog', 'errorNotConnected'));
       return;
     }
 
     if (newPassword.length < 6) {
-      toast.error('Le nouveau mot de passe doit contenir au moins 6 caractères');
+      toast.error(t('changePasswordDialog', 'errorMinLength'));
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      toast.error('Les mots de passe ne correspondent pas');
+      toast.error(t('changePasswordDialog', 'errorMismatch'));
       return;
     }
 
     if (currentPassword === newPassword) {
-      toast.error('Le nouveau mot de passe doit être différent de l\'ancien');
+      toast.error(t('changePasswordDialog', 'errorSamePassword'));
       return;
     }
 
@@ -61,18 +63,18 @@ export const ChangePasswordDialog = ({ open, onOpenChange }: ChangePasswordDialo
       await reauthenticateWithCredential(user, credential);
       await updatePassword(user, newPassword);
 
-      toast.success('Mot de passe modifié avec succès');
+      toast.success(t('changePasswordDialog', 'success'));
       resetForm();
       onOpenChange(false);
     } catch (error: any) {
       if (error?.code === 'auth/wrong-password' || error?.code === 'auth/invalid-credential') {
-        toast.error('Mot de passe actuel incorrect');
+        toast.error(t('changePasswordDialog', 'errorWrongPassword'));
       } else if (error?.code === 'auth/weak-password') {
-        toast.error('Le mot de passe est trop faible. Utilisez au moins 6 caractères.');
+        toast.error(t('changePasswordDialog', 'errorWeakPassword'));
       } else if (error?.code === 'auth/too-many-requests') {
-        toast.error('Trop de tentatives. Veuillez réessayer plus tard.');
+        toast.error(t('changePasswordDialog', 'errorTooMany'));
       } else {
-        toast.error('Erreur lors du changement de mot de passe');
+        toast.error(t('changePasswordDialog', 'errorGeneric'));
       }
     } finally {
       setIsLoading(false);
@@ -88,16 +90,16 @@ export const ChangePasswordDialog = ({ open, onOpenChange }: ChangePasswordDialo
           <div className="mx-auto w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mb-2">
             <ShieldCheck className="h-6 w-6 text-primary" />
           </div>
-          <DialogTitle className="text-center text-lg">Changer le mot de passe</DialogTitle>
+          <DialogTitle className="text-center text-lg">{t('changePasswordDialog', 'title')}</DialogTitle>
           <DialogDescription className="text-center text-xs">
-            Saisissez votre mot de passe actuel puis choisissez un nouveau mot de passe sécurisé.
+            {t('changePasswordDialog', 'description')}
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 mt-2">
           {/* Current password */}
           <div className="space-y-1.5">
-            <Label htmlFor="current-password" className="text-xs font-medium">Mot de passe actuel</Label>
+            <Label htmlFor="current-password" className="text-xs font-medium">{t('changePasswordDialog', 'currentPassword')}</Label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -121,7 +123,7 @@ export const ChangePasswordDialog = ({ open, onOpenChange }: ChangePasswordDialo
 
           {/* New password */}
           <div className="space-y-1.5">
-            <Label htmlFor="new-password" className="text-xs font-medium">Nouveau mot de passe</Label>
+            <Label htmlFor="new-password" className="text-xs font-medium">{t('changePasswordDialog', 'newPassword')}</Label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -142,13 +144,13 @@ export const ChangePasswordDialog = ({ open, onOpenChange }: ChangePasswordDialo
               </button>
             </div>
             {newPassword.length > 0 && newPassword.length < 6 && (
-              <p className="text-[10px] text-destructive">Minimum 6 caractères requis</p>
+              <p className="text-[10px] text-destructive">{t('changePasswordDialog', 'minChars')}</p>
             )}
           </div>
 
           {/* Confirm password */}
           <div className="space-y-1.5">
-            <Label htmlFor="confirm-password" className="text-xs font-medium">Confirmer le mot de passe</Label>
+            <Label htmlFor="confirm-password" className="text-xs font-medium">{t('changePasswordDialog', 'confirmPassword')}</Label>
             <div className="relative">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -157,7 +159,7 @@ export const ChangePasswordDialog = ({ open, onOpenChange }: ChangePasswordDialo
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 className="pl-9 pr-9 h-11 rounded-xl"
-                placeholder="Répéter le mot de passe"
+                placeholder="••••••••"
                 autoComplete="new-password"
               />
               <button
@@ -169,7 +171,7 @@ export const ChangePasswordDialog = ({ open, onOpenChange }: ChangePasswordDialo
               </button>
             </div>
             {confirmPassword.length > 0 && confirmPassword !== newPassword && (
-              <p className="text-[10px] text-destructive">Les mots de passe ne correspondent pas</p>
+              <p className="text-[10px] text-destructive">{t('changePasswordDialog', 'mismatch')}</p>
             )}
           </div>
 
@@ -178,7 +180,7 @@ export const ChangePasswordDialog = ({ open, onOpenChange }: ChangePasswordDialo
             disabled={!isValid || isLoading}
             className="w-full h-11 rounded-xl font-semibold"
           >
-            {isLoading ? 'Modification…' : 'Modifier le mot de passe'}
+            {isLoading ? t('changePasswordDialog', 'submitting') : t('changePasswordDialog', 'submit')}
           </Button>
         </form>
       </DialogContent>

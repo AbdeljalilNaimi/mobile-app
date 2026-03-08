@@ -1030,6 +1030,191 @@ export interface Translations {
     // Community
     comments: string;
   };
+
+  // Settings Page
+  settingsPage: {
+    title: string;
+    account: string;
+    myProfile: string;
+    changePassword: string;
+    logout: string;
+    notifications: string;
+    appointmentsNotif: string;
+    appointmentsNotifDesc: string;
+    bloodEmergencies: string;
+    bloodEmergenciesDesc: string;
+    messages: string;
+    messagesDesc: string;
+    healthServices: string;
+    emergencyCard: string;
+    bloodDonation: string;
+    preferences: string;
+    language: string;
+    darkMode: string;
+    resources: string;
+    howItWorks: string;
+    whyCityHealth: string;
+    faq: string;
+    documentation: string;
+    developerSpace: string;
+    legal: string;
+    termsOfUse: string;
+    privacyPolicy: string;
+    about: string;
+    visitWebsite: string;
+    appVersion: string;
+    helpCenter: string;
+    contactSupport: string;
+    reportBug: string;
+    reportBugMsg: string;
+    visitor: string;
+    notConnected: string;
+    signIn: string;
+    verified: string;
+    logoutSuccess: string;
+    logoutError: string;
+  };
+
+  // FAQ Page
+  faqPage: {
+    title: string;
+    subtitle: string;
+    searchPlaceholder: string;
+    resultsFor: string;
+    back: string;
+    questions: string;
+    all: string;
+    citizens: string;
+    providers: string;
+    technical: string;
+    emergency: string;
+    security: string;
+    noResults: string;
+    noResultsHint: string;
+    reset: string;
+    notFound: string;
+    notFoundHint: string;
+    contactUs: string;
+    docs: string;
+    privacy: string;
+    terms: string;
+    emergencies: string;
+  };
+
+  // Change Password Dialog
+  changePasswordDialog: {
+    title: string;
+    description: string;
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+    minChars: string;
+    mismatch: string;
+    submit: string;
+    submitting: string;
+    success: string;
+    errorNotConnected: string;
+    errorMinLength: string;
+    errorMismatch: string;
+    errorSamePassword: string;
+    errorWrongPassword: string;
+    errorWeakPassword: string;
+    errorTooMany: string;
+    errorGeneric: string;
+  };
+
+  // Auth Gateway
+  authGateway: {
+    tagline: string;
+    signIn: string;
+    createAccount: string;
+    continueAsGuest: string;
+    termsPrefix: string;
+    terms: string;
+    and: string;
+    privacy: string;
+  };
+
+  // Guest
+  guest: {
+    signIn: string;
+    createAccount: string;
+    visitor: string;
+    notConnected: string;
+    register: string;
+    unlockTitle: string;
+    unlockDesc: string;
+    freeTitle: string;
+    settingsLink: string;
+    // Locked features
+    medicalRecord: string;
+    myAppointments: string;
+    emergencyCard: string;
+    bloodProfile: string;
+    favoriteDoctors: string;
+    aiChatHistory: string;
+    // Free features
+    searchDoctor: string;
+    viewMap: string;
+    aiSessionOnly: string;
+    medicalAds: string;
+    medicalResearch: string;
+  };
+
+  // Register Page
+  registerPage: {
+    createAccount: string;
+    joinCityHealth: string;
+    continueGoogle: string;
+    orWithEmail: string;
+    fullName: string;
+    email: string;
+    phone: string;
+    phoneOptional: string;
+    password: string;
+    creating: string;
+    create: string;
+    alreadyHaveAccount: string;
+    signIn: string;
+    backToHome: string;
+    confirmEmail: string;
+    thankYou: string;
+    confirmDesc: string;
+    noEmail: string;
+    checkSpam: string;
+    resend: string;
+    resendIn: string;
+    goToLogin: string;
+    // Features
+    healthcareAccess: string;
+    healthcareAccessDesc: string;
+    interactiveMap: string;
+    interactiveMapDesc: string;
+    secureData: string;
+    secureDataDesc: string;
+    // Stats
+    professionals: string;
+    citizensCount: string;
+    satisfaction: string;
+    // Branding
+    yourHealth: string;
+    ourPriority: string;
+    joinThousands: string;
+    // Strength
+    weak: string;
+    medium: string;
+    good: string;
+    strong: string;
+  };
+
+  // Auth Required Modal
+  authRequired: {
+    title: string;
+    description: string;
+    signIn: string;
+    createAccount: string;
+    continueWithout: string;
+  };
 }
 
 export const translations: Record<Language, Translations> = {
@@ -1966,6 +2151,171 @@ export const translations: Record<Language, Translations> = {
       reads: 'lectures',
       comments: 'commentaires',
     },
+    settingsPage: {
+      title: 'Paramètres',
+      account: 'Compte',
+      myProfile: 'Mon Profil',
+      changePassword: 'Changer le mot de passe',
+      logout: 'Se déconnecter',
+      notifications: 'Notifications',
+      appointmentsNotif: 'Rendez-vous',
+      appointmentsNotifDesc: 'Rappels et confirmations',
+      bloodEmergencies: 'Urgences sang',
+      bloodEmergenciesDesc: 'Alertes don de sang',
+      messages: 'Messages',
+      messagesDesc: 'Notifications de messages',
+      healthServices: 'Services de santé',
+      emergencyCard: 'Carte d\'urgence',
+      bloodDonation: 'Don de sang',
+      preferences: 'Préférences',
+      language: 'Langue',
+      darkMode: 'Mode sombre',
+      resources: 'Ressources',
+      howItWorks: 'Comment ça marche',
+      whyCityHealth: 'Pourquoi CityHealth',
+      faq: 'FAQ',
+      documentation: 'Documentation',
+      developerSpace: 'Espace développeurs',
+      legal: 'Légal',
+      termsOfUse: 'Conditions d\'utilisation',
+      privacyPolicy: 'Politique de confidentialité',
+      about: 'À propos',
+      visitWebsite: 'Visiter notre site web',
+      appVersion: 'Version de l\'app',
+      helpCenter: 'Centre d\'aide',
+      contactSupport: 'Contacter le support',
+      reportBug: 'Signaler un bug',
+      reportBugMsg: 'Merci ! Envoyez un email à support@cityhealth.dz',
+      visitor: 'Visiteur',
+      notConnected: 'Non connecté',
+      signIn: 'Se connecter',
+      verified: 'Vérifié',
+      logoutSuccess: 'Déconnexion réussie',
+      logoutError: 'Erreur lors de la déconnexion',
+    },
+    faqPage: {
+      title: 'Foire aux Questions',
+      subtitle: 'Recherchez ou parcourez les catégories pour trouver votre réponse.',
+      searchPlaceholder: 'Rechercher une question…',
+      resultsFor: 'résultat(s) pour',
+      back: 'Retour',
+      questions: 'questions',
+      all: 'Tous',
+      citizens: 'Citoyens',
+      providers: 'Prestataires',
+      technical: 'Technique',
+      emergency: 'Urgences',
+      security: 'Sécurité',
+      noResults: 'Aucun résultat',
+      noResultsHint: 'Essayez d\'autres termes ou parcourez les catégories.',
+      reset: 'Réinitialiser',
+      notFound: 'Pas trouvé votre réponse ?',
+      notFoundHint: 'Notre équipe est là pour vous aider',
+      contactUs: 'Nous contacter',
+      docs: 'Documentation',
+      privacy: 'Confidentialité',
+      terms: 'CGU',
+      emergencies: 'Urgences',
+    },
+    changePasswordDialog: {
+      title: 'Changer le mot de passe',
+      description: 'Saisissez votre mot de passe actuel puis choisissez un nouveau mot de passe sécurisé.',
+      currentPassword: 'Mot de passe actuel',
+      newPassword: 'Nouveau mot de passe',
+      confirmPassword: 'Confirmer le mot de passe',
+      minChars: 'Minimum 6 caractères requis',
+      mismatch: 'Les mots de passe ne correspondent pas',
+      submit: 'Modifier le mot de passe',
+      submitting: 'Modification…',
+      success: 'Mot de passe modifié avec succès',
+      errorNotConnected: 'Vous devez être connecté pour changer votre mot de passe',
+      errorMinLength: 'Le nouveau mot de passe doit contenir au moins 6 caractères',
+      errorMismatch: 'Les mots de passe ne correspondent pas',
+      errorSamePassword: 'Le nouveau mot de passe doit être différent de l\'ancien',
+      errorWrongPassword: 'Mot de passe actuel incorrect',
+      errorWeakPassword: 'Le mot de passe est trop faible. Utilisez au moins 6 caractères.',
+      errorTooMany: 'Trop de tentatives. Veuillez réessayer plus tard.',
+      errorGeneric: 'Erreur lors du changement de mot de passe',
+    },
+    authGateway: {
+      tagline: 'Votre santé, simplifiée. Connectez-vous pour accéder à tous les services.',
+      signIn: 'Se connecter',
+      createAccount: 'Créer un compte',
+      continueAsGuest: 'Continuer en tant qu\'invité',
+      termsPrefix: 'En continuant, vous acceptez nos',
+      terms: 'Conditions',
+      and: 'et',
+      privacy: 'Politique de confidentialité',
+    },
+    guest: {
+      signIn: 'Se connecter',
+      createAccount: 'Créer un compte',
+      visitor: 'Visiteur',
+      notConnected: 'Non connecté',
+      register: 'S\'inscrire',
+      unlockTitle: 'Débloquez votre espace santé',
+      unlockDesc: 'Connectez-vous pour accéder à :',
+      freeTitle: 'Accessible sans compte',
+      settingsLink: 'Réglages · Langue · Mode sombre',
+      medicalRecord: 'Mon dossier médical',
+      myAppointments: 'Mes rendez-vous',
+      emergencyCard: 'Ma carte d\'urgence',
+      bloodProfile: 'Mon profil sanguin',
+      favoriteDoctors: 'Mes médecins favoris',
+      aiChatHistory: 'Historique IA Chat',
+      searchDoctor: 'Rechercher un médecin',
+      viewMap: 'Voir la carte',
+      aiSessionOnly: 'Assistant IA (session uniquement)',
+      medicalAds: 'Annonces médicales',
+      medicalResearch: 'Recherche médicale',
+    },
+    registerPage: {
+      createAccount: 'Créer un compte',
+      joinCityHealth: 'Rejoignez CityHealth pour accéder aux services de santé',
+      continueGoogle: 'Continuer avec Google',
+      orWithEmail: 'ou avec email',
+      fullName: 'Nom complet',
+      email: 'Email',
+      phone: 'Téléphone',
+      phoneOptional: 'optionnel',
+      password: 'Mot de passe',
+      creating: 'Création en cours...',
+      create: 'Créer mon compte',
+      alreadyHaveAccount: 'Déjà un compte?',
+      signIn: 'Se connecter',
+      backToHome: 'Retour à l\'accueil',
+      confirmEmail: 'Confirmez votre email',
+      thankYou: 'Merci de vous être inscrit sur',
+      confirmDesc: 'Veuillez confirmer votre adresse email',
+      noEmail: 'Vous n\'avez pas reçu l\'email ? Vérifiez votre dossier spam.',
+      checkSpam: 'en cliquant sur le bouton dans l\'email que nous venons de vous envoyer.',
+      resend: 'Renvoyer l\'email de vérification',
+      resendIn: 'Renvoyer dans',
+      goToLogin: 'Aller à la page de connexion',
+      healthcareAccess: 'Accès aux soins',
+      healthcareAccessDesc: 'Trouvez les meilleurs professionnels de santé près de chez vous',
+      interactiveMap: 'Carte interactive',
+      interactiveMapDesc: 'Localisez pharmacies, cliniques et hôpitaux en temps réel',
+      secureData: 'Données sécurisées',
+      secureDataDesc: 'Vos informations médicales sont protégées et chiffrées',
+      professionals: 'Professionnels',
+      citizensCount: 'Citoyens',
+      satisfaction: 'Satisfaction',
+      yourHealth: 'Votre santé,',
+      ourPriority: 'notre priorité.',
+      joinThousands: 'Rejoignez des milliers de citoyens qui font confiance à CityHealth pour leur parcours de santé.',
+      weak: 'Faible',
+      medium: 'Moyen',
+      good: 'Bon',
+      strong: 'Fort',
+    },
+    authRequired: {
+      title: 'Connexion requise',
+      description: 'Créez un compte gratuit pour accéder à cette fonctionnalité',
+      signIn: 'Se connecter',
+      createAccount: 'Créer un compte',
+      continueWithout: 'Continuer sans compte',
+    },
   },
 
   ar: {
@@ -2901,6 +3251,171 @@ export const translations: Record<Language, Translations> = {
       reads: 'قراءات',
       comments: 'تعليقات',
     },
+    settingsPage: {
+      title: 'الإعدادات',
+      account: 'الحساب',
+      myProfile: 'ملفي الشخصي',
+      changePassword: 'تغيير كلمة المرور',
+      logout: 'تسجيل الخروج',
+      notifications: 'الإشعارات',
+      appointmentsNotif: 'المواعيد',
+      appointmentsNotifDesc: 'تذكيرات وتأكيدات',
+      bloodEmergencies: 'طوارئ الدم',
+      bloodEmergenciesDesc: 'تنبيهات التبرع بالدم',
+      messages: 'الرسائل',
+      messagesDesc: 'إشعارات الرسائل',
+      healthServices: 'الخدمات الصحية',
+      emergencyCard: 'بطاقة الطوارئ',
+      bloodDonation: 'التبرع بالدم',
+      preferences: 'التفضيلات',
+      language: 'اللغة',
+      darkMode: 'الوضع الداكن',
+      resources: 'الموارد',
+      howItWorks: 'كيف يعمل',
+      whyCityHealth: 'لماذا CityHealth',
+      faq: 'الأسئلة الشائعة',
+      documentation: 'التوثيق',
+      developerSpace: 'مساحة المطورين',
+      legal: 'قانوني',
+      termsOfUse: 'شروط الاستخدام',
+      privacyPolicy: 'سياسة الخصوصية',
+      about: 'حول',
+      visitWebsite: 'زيارة موقعنا',
+      appVersion: 'إصدار التطبيق',
+      helpCenter: 'مركز المساعدة',
+      contactSupport: 'الاتصال بالدعم',
+      reportBug: 'الإبلاغ عن خطأ',
+      reportBugMsg: 'شكراً! أرسل بريداً إلى support@cityhealth.dz',
+      visitor: 'زائر',
+      notConnected: 'غير متصل',
+      signIn: 'تسجيل الدخول',
+      verified: 'موثق',
+      logoutSuccess: 'تم تسجيل الخروج بنجاح',
+      logoutError: 'خطأ أثناء تسجيل الخروج',
+    },
+    faqPage: {
+      title: 'الأسئلة الشائعة',
+      subtitle: 'ابحث أو تصفح الفئات للعثور على إجابتك.',
+      searchPlaceholder: 'ابحث عن سؤال…',
+      resultsFor: 'نتيجة لـ',
+      back: 'رجوع',
+      questions: 'أسئلة',
+      all: 'الكل',
+      citizens: 'المواطنون',
+      providers: 'مقدمو الخدمات',
+      technical: 'تقني',
+      emergency: 'طوارئ',
+      security: 'الأمان',
+      noResults: 'لا توجد نتائج',
+      noResultsHint: 'جرب مصطلحات أخرى أو تصفح الفئات.',
+      reset: 'إعادة تعيين',
+      notFound: 'لم تجد إجابتك؟',
+      notFoundHint: 'فريقنا هنا لمساعدتك',
+      contactUs: 'اتصل بنا',
+      docs: 'التوثيق',
+      privacy: 'الخصوصية',
+      terms: 'الشروط',
+      emergencies: 'الطوارئ',
+    },
+    changePasswordDialog: {
+      title: 'تغيير كلمة المرور',
+      description: 'أدخل كلمة المرور الحالية ثم اختر كلمة مرور جديدة آمنة.',
+      currentPassword: 'كلمة المرور الحالية',
+      newPassword: 'كلمة المرور الجديدة',
+      confirmPassword: 'تأكيد كلمة المرور',
+      minChars: '6 أحرف على الأقل مطلوبة',
+      mismatch: 'كلمات المرور غير متطابقة',
+      submit: 'تغيير كلمة المرور',
+      submitting: 'جاري التغيير…',
+      success: 'تم تغيير كلمة المرور بنجاح',
+      errorNotConnected: 'يجب أن تكون متصلاً لتغيير كلمة المرور',
+      errorMinLength: 'يجب أن تحتوي كلمة المرور الجديدة على 6 أحرف على الأقل',
+      errorMismatch: 'كلمات المرور غير متطابقة',
+      errorSamePassword: 'يجب أن تكون كلمة المرور الجديدة مختلفة عن القديمة',
+      errorWrongPassword: 'كلمة المرور الحالية غير صحيحة',
+      errorWeakPassword: 'كلمة المرور ضعيفة جداً. استخدم 6 أحرف على الأقل.',
+      errorTooMany: 'محاولات كثيرة. يرجى المحاولة لاحقاً.',
+      errorGeneric: 'خطأ أثناء تغيير كلمة المرور',
+    },
+    authGateway: {
+      tagline: 'صحتك، مبسطة. سجل الدخول للوصول إلى جميع الخدمات.',
+      signIn: 'تسجيل الدخول',
+      createAccount: 'إنشاء حساب',
+      continueAsGuest: 'المتابعة كزائر',
+      termsPrefix: 'بالمتابعة، أنت توافق على',
+      terms: 'الشروط',
+      and: 'و',
+      privacy: 'سياسة الخصوصية',
+    },
+    guest: {
+      signIn: 'تسجيل الدخول',
+      createAccount: 'إنشاء حساب',
+      visitor: 'زائر',
+      notConnected: 'غير متصل',
+      register: 'التسجيل',
+      unlockTitle: 'افتح مساحتك الصحية',
+      unlockDesc: 'سجل الدخول للوصول إلى:',
+      freeTitle: 'متاح بدون حساب',
+      settingsLink: 'الإعدادات · اللغة · الوضع الداكن',
+      medicalRecord: 'ملفي الطبي',
+      myAppointments: 'مواعيدي',
+      emergencyCard: 'بطاقة الطوارئ',
+      bloodProfile: 'ملفي الدموي',
+      favoriteDoctors: 'أطبائي المفضلون',
+      aiChatHistory: 'سجل محادثة الذكاء الاصطناعي',
+      searchDoctor: 'البحث عن طبيب',
+      viewMap: 'عرض الخريطة',
+      aiSessionOnly: 'المساعد الذكي (الجلسة فقط)',
+      medicalAds: 'الإعلانات الطبية',
+      medicalResearch: 'البحث الطبي',
+    },
+    registerPage: {
+      createAccount: 'إنشاء حساب',
+      joinCityHealth: 'انضم إلى CityHealth للوصول إلى الخدمات الصحية',
+      continueGoogle: 'المتابعة مع جوجل',
+      orWithEmail: 'أو عبر البريد الإلكتروني',
+      fullName: 'الاسم الكامل',
+      email: 'البريد الإلكتروني',
+      phone: 'الهاتف',
+      phoneOptional: 'اختياري',
+      password: 'كلمة المرور',
+      creating: 'جاري الإنشاء...',
+      create: 'إنشاء حسابي',
+      alreadyHaveAccount: 'لديك حساب؟',
+      signIn: 'تسجيل الدخول',
+      backToHome: 'العودة للرئيسية',
+      confirmEmail: 'أكد بريدك الإلكتروني',
+      thankYou: 'شكراً لتسجيلك في',
+      confirmDesc: 'يرجى تأكيد عنوان بريدك الإلكتروني',
+      noEmail: 'لم تتلق البريد؟ تحقق من مجلد الرسائل غير المرغوبة.',
+      checkSpam: 'بالنقر على الزر في البريد الذي أرسلناه لك.',
+      resend: 'إعادة إرسال بريد التحقق',
+      resendIn: 'إعادة الإرسال خلال',
+      goToLogin: 'الذهاب لصفحة تسجيل الدخول',
+      healthcareAccess: 'الوصول للرعاية',
+      healthcareAccessDesc: 'ابحث عن أفضل المتخصصين الصحيين بالقرب منك',
+      interactiveMap: 'خريطة تفاعلية',
+      interactiveMapDesc: 'حدد الصيدليات والعيادات والمستشفيات في الوقت الحقيقي',
+      secureData: 'بيانات آمنة',
+      secureDataDesc: 'معلوماتك الطبية محمية ومشفرة',
+      professionals: 'مهنيون',
+      citizensCount: 'مواطنون',
+      satisfaction: 'رضا',
+      yourHealth: 'صحتك،',
+      ourPriority: 'أولويتنا.',
+      joinThousands: 'انضم إلى آلاف المواطنين الذين يثقون في CityHealth لمسيرتهم الصحية.',
+      weak: 'ضعيف',
+      medium: 'متوسط',
+      good: 'جيد',
+      strong: 'قوي',
+    },
+    authRequired: {
+      title: 'تسجيل الدخول مطلوب',
+      description: 'أنشئ حساباً مجانياً للوصول إلى هذه الميزة',
+      signIn: 'تسجيل الدخول',
+      createAccount: 'إنشاء حساب',
+      continueWithout: 'المتابعة بدون حساب',
+    },
   },
 
   en: {
@@ -3835,6 +4350,171 @@ export const translations: Record<Language, Translations> = {
       foodAid: 'Food aid',
       reads: 'reads',
       comments: 'comments',
+    },
+    settingsPage: {
+      title: 'Settings',
+      account: 'Account',
+      myProfile: 'My Profile',
+      changePassword: 'Change password',
+      logout: 'Log out',
+      notifications: 'Notifications',
+      appointmentsNotif: 'Appointments',
+      appointmentsNotifDesc: 'Reminders and confirmations',
+      bloodEmergencies: 'Blood emergencies',
+      bloodEmergenciesDesc: 'Blood donation alerts',
+      messages: 'Messages',
+      messagesDesc: 'Message notifications',
+      healthServices: 'Health services',
+      emergencyCard: 'Emergency card',
+      bloodDonation: 'Blood donation',
+      preferences: 'Preferences',
+      language: 'Language',
+      darkMode: 'Dark mode',
+      resources: 'Resources',
+      howItWorks: 'How it works',
+      whyCityHealth: 'Why CityHealth',
+      faq: 'FAQ',
+      documentation: 'Documentation',
+      developerSpace: 'Developer space',
+      legal: 'Legal',
+      termsOfUse: 'Terms of use',
+      privacyPolicy: 'Privacy policy',
+      about: 'About',
+      visitWebsite: 'Visit our website',
+      appVersion: 'App version',
+      helpCenter: 'Help center',
+      contactSupport: 'Contact support',
+      reportBug: 'Report a bug',
+      reportBugMsg: 'Thank you! Send an email to support@cityhealth.dz',
+      visitor: 'Visitor',
+      notConnected: 'Not connected',
+      signIn: 'Sign in',
+      verified: 'Verified',
+      logoutSuccess: 'Logged out successfully',
+      logoutError: 'Error during logout',
+    },
+    faqPage: {
+      title: 'Frequently Asked Questions',
+      subtitle: 'Search or browse categories to find your answer.',
+      searchPlaceholder: 'Search for a question…',
+      resultsFor: 'result(s) for',
+      back: 'Back',
+      questions: 'questions',
+      all: 'All',
+      citizens: 'Citizens',
+      providers: 'Providers',
+      technical: 'Technical',
+      emergency: 'Emergency',
+      security: 'Security',
+      noResults: 'No results',
+      noResultsHint: 'Try other terms or browse categories.',
+      reset: 'Reset',
+      notFound: 'Didn\'t find your answer?',
+      notFoundHint: 'Our team is here to help',
+      contactUs: 'Contact us',
+      docs: 'Documentation',
+      privacy: 'Privacy',
+      terms: 'Terms',
+      emergencies: 'Emergencies',
+    },
+    changePasswordDialog: {
+      title: 'Change password',
+      description: 'Enter your current password then choose a new secure password.',
+      currentPassword: 'Current password',
+      newPassword: 'New password',
+      confirmPassword: 'Confirm password',
+      minChars: 'Minimum 6 characters required',
+      mismatch: 'Passwords do not match',
+      submit: 'Change password',
+      submitting: 'Changing…',
+      success: 'Password changed successfully',
+      errorNotConnected: 'You must be logged in to change your password',
+      errorMinLength: 'New password must be at least 6 characters',
+      errorMismatch: 'Passwords do not match',
+      errorSamePassword: 'New password must be different from the old one',
+      errorWrongPassword: 'Current password is incorrect',
+      errorWeakPassword: 'Password is too weak. Use at least 6 characters.',
+      errorTooMany: 'Too many attempts. Please try again later.',
+      errorGeneric: 'Error changing password',
+    },
+    authGateway: {
+      tagline: 'Your health, simplified. Sign in to access all services.',
+      signIn: 'Sign in',
+      createAccount: 'Create account',
+      continueAsGuest: 'Continue as guest',
+      termsPrefix: 'By continuing, you agree to our',
+      terms: 'Terms',
+      and: 'and',
+      privacy: 'Privacy Policy',
+    },
+    guest: {
+      signIn: 'Sign in',
+      createAccount: 'Create account',
+      visitor: 'Visitor',
+      notConnected: 'Not connected',
+      register: 'Register',
+      unlockTitle: 'Unlock your health space',
+      unlockDesc: 'Sign in to access:',
+      freeTitle: 'Available without account',
+      settingsLink: 'Settings · Language · Dark mode',
+      medicalRecord: 'My medical record',
+      myAppointments: 'My appointments',
+      emergencyCard: 'My emergency card',
+      bloodProfile: 'My blood profile',
+      favoriteDoctors: 'My favorite doctors',
+      aiChatHistory: 'AI Chat history',
+      searchDoctor: 'Search for a doctor',
+      viewMap: 'View the map',
+      aiSessionOnly: 'AI Assistant (session only)',
+      medicalAds: 'Medical announcements',
+      medicalResearch: 'Medical research',
+    },
+    registerPage: {
+      createAccount: 'Create account',
+      joinCityHealth: 'Join CityHealth to access health services',
+      continueGoogle: 'Continue with Google',
+      orWithEmail: 'or with email',
+      fullName: 'Full name',
+      email: 'Email',
+      phone: 'Phone',
+      phoneOptional: 'optional',
+      password: 'Password',
+      creating: 'Creating...',
+      create: 'Create my account',
+      alreadyHaveAccount: 'Already have an account?',
+      signIn: 'Sign in',
+      backToHome: 'Back to home',
+      confirmEmail: 'Confirm your email',
+      thankYou: 'Thank you for signing up on',
+      confirmDesc: 'Please confirm your email address',
+      noEmail: 'Didn\'t receive the email? Check your spam folder.',
+      checkSpam: 'by clicking the button in the email we just sent you.',
+      resend: 'Resend verification email',
+      resendIn: 'Resend in',
+      goToLogin: 'Go to login page',
+      healthcareAccess: 'Healthcare access',
+      healthcareAccessDesc: 'Find the best healthcare professionals near you',
+      interactiveMap: 'Interactive map',
+      interactiveMapDesc: 'Locate pharmacies, clinics and hospitals in real time',
+      secureData: 'Secure data',
+      secureDataDesc: 'Your medical information is protected and encrypted',
+      professionals: 'Professionals',
+      citizensCount: 'Citizens',
+      satisfaction: 'Satisfaction',
+      yourHealth: 'Your health,',
+      ourPriority: 'our priority.',
+      joinThousands: 'Join thousands of citizens who trust CityHealth for their health journey.',
+      weak: 'Weak',
+      medium: 'Medium',
+      good: 'Good',
+      strong: 'Strong',
+    },
+    authRequired: {
+      title: 'Login required',
+      description: 'Create a free account to access this feature',
+      signIn: 'Sign in',
+      createAccount: 'Create account',
+      continueWithout: 'Continue without account',
     },
   },
 };

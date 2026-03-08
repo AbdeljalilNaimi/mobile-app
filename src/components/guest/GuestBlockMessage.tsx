@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 interface GuestBlockMessageProps {
   title: string;
@@ -9,6 +10,8 @@ interface GuestBlockMessageProps {
 }
 
 export function GuestBlockMessage({ title, description }: GuestBlockMessageProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="container-wide section-spacing-sm flex items-center justify-center min-h-[60vh]">
       <Card className="max-w-md w-full">
@@ -20,10 +23,10 @@ export function GuestBlockMessage({ title, description }: GuestBlockMessageProps
           <p className="text-sm text-muted-foreground mb-6">{description}</p>
           <div className="flex flex-col gap-2 w-full">
             <Button asChild className="w-full">
-              <Link to="/citizen/login">Se connecter</Link>
+              <Link to="/citizen/login">{t('guest', 'signIn')}</Link>
             </Button>
             <Button asChild variant="outline" className="w-full">
-              <Link to="/citizen/register">Créer un compte</Link>
+              <Link to="/citizen/register">{t('guest', 'createAccount')}</Link>
             </Button>
           </div>
         </CardContent>

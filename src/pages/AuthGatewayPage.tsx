@@ -2,9 +2,11 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { LogIn, UserPlus, ArrowRight } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function AuthGatewayPage() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   return (
     <div className="min-h-[100dvh] max-w-[430px] mx-auto bg-background flex flex-col relative overflow-hidden">
@@ -41,7 +43,7 @@ export default function AuthGatewayPage() {
             CityHealth
           </h1>
           <p className="text-[15px] text-muted-foreground leading-relaxed max-w-[280px] mx-auto">
-            Votre santé, simplifiée. Connectez-vous pour accéder à tous les services.
+            {t('authGateway', 'tagline')}
           </p>
         </motion.div>
 
@@ -77,7 +79,7 @@ export default function AuthGatewayPage() {
           size="lg"
         >
           <LogIn className="h-5 w-5" />
-          Se connecter
+          {t('authGateway', 'signIn')}
         </Button>
 
         {/* Sign up */}
@@ -88,7 +90,7 @@ export default function AuthGatewayPage() {
           size="lg"
         >
           <UserPlus className="h-5 w-5" />
-          Créer un compte
+          {t('authGateway', 'createAccount')}
         </Button>
 
         {/* Guest */}
@@ -99,19 +101,19 @@ export default function AuthGatewayPage() {
           }}
           className="w-full flex items-center justify-center gap-2 text-sm font-medium text-muted-foreground/60 py-3.5 hover:text-muted-foreground transition-colors group"
         >
-          Continuer en tant qu'invité
+          {t('authGateway', 'continueAsGuest')}
           <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
         </button>
 
         {/* Legal */}
         <p className="text-[10px] text-muted-foreground/40 text-center leading-relaxed pt-1">
-          En continuant, vous acceptez nos{' '}
+          {t('authGateway', 'termsPrefix')}{' '}
           <button onClick={() => navigate('/terms')} className="underline hover:text-muted-foreground/60">
-            Conditions
+            {t('authGateway', 'terms')}
           </button>{' '}
-          et{' '}
+          {t('authGateway', 'and')}{' '}
           <button onClick={() => navigate('/privacy')} className="underline hover:text-muted-foreground/60">
-            Politique de confidentialité
+            {t('authGateway', 'privacy')}
           </button>
         </p>
       </motion.div>

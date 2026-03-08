@@ -9,6 +9,7 @@ import { Loader2, User, ArrowLeft, Mail, Lock, Phone, Eye, EyeOff, Heart, Shield
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const formatPhoneInput = (value: string) => {
   const digits = value.replace(/\D/g, '');
@@ -34,13 +35,17 @@ const signupSchema = z.object({
     .optional(),
 });
 
-const features = [
-  { icon: Heart, title: 'Accès aux soins', desc: 'Trouvez les meilleurs professionnels de santé près de chez vous' },
-  { icon: MapPin, title: 'Carte interactive', desc: 'Localisez pharmacies, cliniques et hôpitaux en temps réel' },
-  { icon: Shield, title: 'Données sécurisées', desc: 'Vos informations médicales sont protégées et chiffrées' },
-];
-
 const CitizenRegisterPage = () => {
+  const { t } = useLanguage();
+
+  const features = [
+    { icon: Heart, title: t('registerPage', 'healthcareAccess'), desc: t('registerPage', 'healthcareAccessDesc') },
+    { icon: MapPin, title: t('registerPage', 'interactiveMap'), desc: t('registerPage', 'interactiveMapDesc') },
+    { icon: Shield, title: t('registerPage', 'secureData'), desc: t('registerPage', 'secureDataDesc') },
+  ];
+
+  const strengthLabels = [t('registerPage', 'weak'), t('registerPage', 'medium'), t('registerPage', 'good'), t('registerPage', 'strong')];
+
   const navigate = useNavigate();
   const { signupAsCitizen, loginWithGoogle, isAuthenticated, profile, isLoading: authLoading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
@@ -109,7 +114,7 @@ const CitizenRegisterPage = () => {
   };
   const strength = getPasswordStrength();
   const strengthColors = ['bg-destructive', 'bg-orange-500', 'bg-yellow-500', 'bg-emerald-500'];
-  const strengthLabels = ['Faible', 'Moyen', 'Bon', 'Fort'];
+  // strengthLabels defined above via t()
 
   if (authLoading) {
     return (
