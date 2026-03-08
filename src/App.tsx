@@ -72,6 +72,8 @@ const VerifyEmailPage = lazy(() => import("./pages/VerifyEmailPage"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 const OnboardingPage = lazy(() => import("./pages/OnboardingPage"));
 const AuthGatewayPage = lazy(() => import("./pages/AuthGatewayPage"));
+const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
 const DeveloperLandingPage = lazy(() => import("./pages/developers/DeveloperLandingPage"));
 const DeveloperDashboardPage = lazy(() => import("./pages/developers/DeveloperDashboardPage"));
 const DeveloperDocsPage = lazy(() => import("./pages/developers/DeveloperDocsPage"));
@@ -206,6 +208,8 @@ const AppRoutes = () => {
         <Route path="/citizen/register" element={<CitizenRegisterPage />} />
         <Route path="/email-verified" element={<EmailVerifiedPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/provider/login" element={<ProviderLoginPage />} />
         <Route path="/admin/login" element={<AdminLoginPage />} />
 
