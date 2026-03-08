@@ -250,7 +250,7 @@ export const MobileHomeScreen = () => {
             <button
               key={doc.id}
               onClick={() => navigate(`/provider/${doc.id}`)}
-              className="w-full rounded-2xl bg-card border border-border shadow-sm p-4 flex items-center gap-4 text-left active:scale-[0.98] transition-transform"
+              className="w-full rounded-2xl bg-card border border-border shadow-sm p-4 flex items-center gap-4 text-start active:scale-[0.98] transition-transform"
             >
               <Avatar className="h-14 w-14 flex-shrink-0 ring-2 ring-primary/10">
                 <AvatarImage src={doc.image} className="object-cover" />
