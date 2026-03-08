@@ -52,7 +52,7 @@ export const BottomNavBar = () => {
                   key={tab.key}
                   onClick={() => navigate(tab.path)}
                   className={cn(
-                    'flex flex-col items-center justify-center gap-1 min-w-[48px] min-h-[48px] rounded-2xl transition-colors duration-200 active:scale-90 relative',
+                    'flex flex-col items-center justify-center gap-1 min-w-[48px] min-h-[48px] rounded-2xl transition-colors duration-200 active:scale-90 relative px-2 py-1.5',
                     active
                       ? 'text-primary'
                       : 'text-muted-foreground'
@@ -62,8 +62,8 @@ export const BottomNavBar = () => {
                   {active && (
                     <motion.div
                       layoutId="bottomNavIndicator"
-                      className="absolute inset-0 bg-primary/10 rounded-2xl"
-                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                      className="absolute top-1 left-1/2 -translate-x-1/2 w-10 h-8 bg-primary/8 rounded-xl"
+                      transition={{ type: 'spring', stiffness: 400, damping: 28 }}
                     />
                   )}
                   <div className="relative z-10">
