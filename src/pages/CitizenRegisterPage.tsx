@@ -114,7 +114,7 @@ const CitizenRegisterPage = () => {
   };
   const strength = getPasswordStrength();
   const strengthColors = ['bg-destructive', 'bg-orange-500', 'bg-yellow-500', 'bg-emerald-500'];
-  const strengthLabels = ['Faible', 'Moyen', 'Bon', 'Fort'];
+  // strengthLabels defined above via t()
 
   if (authLoading) {
     return (
