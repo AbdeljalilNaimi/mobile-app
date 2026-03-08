@@ -8,10 +8,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Send, EyeOff, User, LogIn } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAuthRequired } from '@/hooks/useAuthRequired';
 import { CommunityCategory } from '@/services/communityService';
 import { containsProfanity } from '@/utils/profanityFilter';
 import { toast } from 'sonner';
-import { Link } from 'react-router-dom';
 
 interface Props {
   onSubmit: (data: { title: string; content: string; category: CommunityCategory; is_anonymous: boolean }) => Promise<void>;
