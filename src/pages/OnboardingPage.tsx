@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
@@ -59,13 +59,83 @@ const textVariants = {
 
 const SWIPE_THRESHOLD = 50;
 
+// Confetti particle component
+const ConfettiOverlay = ({ onComplete }: { onComplete: () => void }) => {
+  const colors = [
+    'hsl(var(--primary))',
+    'hsl(217 89% 71%)',
+    'hsl(142 76% 46%)',
+    'hsl(39 100% 57%)',
+    'hsl(0 84% 65%)',
+    'hsl(280 70% 60%)',
+  ];
+
+  useEffect(() => {
+    const timer = setTimeout(onComplete, 1800);
+    return () => clearTimeout(timer);
+  }, [onComplete]);
+
+  const particles = Array.from({ length: 50 }, (_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    delay: Math.random() * 0.4,
+    duration: 1.2 + Math.random() * 0.8,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    size: 4 + Math.random() * 6,
+    rotation: Math.random() * 360,
+    shape: Math.random() > 0.5 ? 'circle' : 'rect',
+  }));
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-50 pointer-events-none overflow-hidden"
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3, delay: 1.5 }}
+    >
+      {particles.map((p) => (
+        <motion.div
+          key={p.id}
+          className="absolute"
+          style={{
+            left: `${p.x}%`,
+            top: -10,
+            width: p.size,
+            height: p.shape === 'rect' ? p.size * 1.5 : p.size,
+            backgroundColor: p.color,
+            borderRadius: p.shape === 'circle' ? '50%' : '2px',
+          }}
+          initial={{ y: -20, rotate: 0, opacity: 1 }}
+          animate={{
+            y: window.innerHeight + 40,
+            rotate: p.rotation + 720,
+            opacity: [1, 1, 0.8, 0],
+            x: [0, (Math.random() - 0.5) * 120, (Math.random() - 0.5) * 80],
+          }}
+          transition={{
+            duration: p.duration,
+            delay: p.delay,
+            ease: [0.25, 0.46, 0.45, 0.94],
+          }}
+        />
+      ))}
+    </motion.div>
+  );
+};
+
 export default function OnboardingPage() {
   const navigate = useNavigate();
   const [[page, direction], setPage] = useState([0, 0]);
   const touchRef = useRef<number | null>(null);
+  const [showConfetti, setShowConfetti] = useState(false);
 
   const finish = useCallback(() => {
     localStorage.setItem('onboarding_complete', 'true');
+    setShowConfetti(true);
+  }, []);
+
+  const handleConfettiComplete = useCallback(() => {
     navigate('/', { replace: true });
   }, [navigate]);
 
@@ -98,6 +168,10 @@ export default function OnboardingPage() {
   const isLast = page === slides.length - 1;
 
   return (
+    <>
+    <AnimatePresence>
+      {showConfetti && <ConfettiOverlay onComplete={handleConfettiComplete} />}
+    </AnimatePresence>
     <div
       className="min-h-[100dvh] max-w-[430px] mx-auto bg-background flex flex-col overflow-hidden relative select-none"
       onTouchStart={onTouchStart}
@@ -237,5 +311,6 @@ export default function OnboardingPage() {
         </Button>
       </div>
     </div>
+    </>
   );
 }
