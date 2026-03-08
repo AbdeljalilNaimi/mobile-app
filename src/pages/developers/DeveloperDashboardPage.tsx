@@ -106,8 +106,9 @@ export default function DeveloperDashboardPage() {
   };
 
   const handleRegenerate = async (id: string) => {
+    if (!user?.uid) return;
     try {
-      const { rawKey } = await regenerateApiKey(id);
+      const { rawKey } = await regenerateApiKey(id, user.uid);
       setNewRawKey(rawKey);
       setShowNewKeyModal(true);
       await loadKeys();
