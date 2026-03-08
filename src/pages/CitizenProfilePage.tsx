@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import GuestProfilePage from '@/components/guest/GuestProfilePage';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
