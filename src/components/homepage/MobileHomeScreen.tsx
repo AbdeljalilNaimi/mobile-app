@@ -196,22 +196,21 @@ export const MobileHomeScreen = () => {
         <h1 className="text-3xl md:text-4xl font-extrabold text-primary-foreground leading-tight">
           Let's find your<br /><span className="text-primary-foreground">Docteur !</span>
         </h1>
-      </motion.div>
 
-      {/* ── Search bar (overlapping header bottom) ── */}
-      <motion.form
-        variants={fadeUp}
-        onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
-        className="relative -mt-7 z-10 mx-1"
-      >
-        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-        <Input
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder={t('mobileHome', 'searchPlaceholder')}
-          className="pl-10 pr-4 h-12 rounded-xl bg-card border-border shadow-md text-sm"
-        />
-      </motion.form>
+        {/* Search bar inside header */}
+        <form
+          onSubmit={(e) => { e.preventDefault(); handleSearch(); }}
+          className="relative mt-5 mb-[-24px] z-10"
+        >
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+          <Input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={t('mobileHome', 'searchPlaceholder')}
+            className="pl-10 pr-4 h-12 rounded-xl bg-card border-border shadow-md text-sm"
+          />
+        </form>
+      </motion.div>
 
       {/* ── Categories (scrollable) ── */}
       <motion.div variants={fadeUp}>
