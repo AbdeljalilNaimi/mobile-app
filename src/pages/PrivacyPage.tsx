@@ -1,282 +1,158 @@
-import { Shield, Lock, Eye, Database, Clock, UserCheck, Cookie, Server, Mail, ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Shield, Lock, Eye, Database, Clock, UserCheck, Cookie, Server, Mail, ChevronLeft } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { Badge } from '@/components/ui/badge';
+
+const sections = [
+  {
+    id: 'introduction',
+    icon: Shield,
+    title: 'Introduction',
+    content: `CityHealth SBA ("nous", "notre", "nos") s'engage à protéger la vie privée de ses utilisateurs. Cette politique de confidentialité explique comment nous collectons, utilisons, stockons et protégeons vos données personnelles conformément à la réglementation en vigueur.\n\nNotre plateforme met en relation les citoyens de Sidi Bel Abbès avec les professionnels de santé locaux. Nous traitons vos données avec le plus grand soin et transparence.`,
+  },
+  {
+    id: 'data-collected',
+    icon: Database,
+    title: 'Données collectées',
+    content: `Nous collectons les catégories de données suivantes :\n\n• Nom, prénom, adresse email, numéro de téléphone\n• Photo de profil (optionnelle)\n• Spécialité médicale, numéro d'agrément (prestataires)\n• Adresse et coordonnées géographiques\n• Historique de recherche, rendez-vous et avis`,
+  },
+  {
+    id: 'purposes',
+    icon: Eye,
+    title: 'Finalités du traitement',
+    content: `Vos données sont utilisées pour :\n\n• Mise en relation patients-praticiens\n• Gestion des rendez-vous et affichage cartographique\n• Analyse statistique anonymisée\n• Vérification des identités professionnelles\n• Notifications de rendez-vous et mises à jour du service`,
+  },
+  {
+    id: 'legal-basis',
+    icon: UserCheck,
+    title: 'Base légale',
+    content: `Le traitement repose sur :\n\n• Consentement — création de compte, géolocalisation, communications marketing\n• Exécution du contrat — fourniture du service et gestion des rendez-vous\n• Obligation légale — conservation des données de santé, vérification des qualifications\n• Intérêt légitime — sécurité de la plateforme et amélioration du service`,
+  },
+  {
+    id: 'retention',
+    icon: Clock,
+    title: 'Durée de conservation',
+    content: `• Compte actif — durée de l'utilisation\n• Compte inactif — 3 ans après dernière connexion\n• Données de santé — 10 ans (obligation légale)\n• Logs de connexion — 1 an\n• Données de facturation — 10 ans\n\nAprès ces délais, vos données sont supprimées ou anonymisées de manière irréversible.`,
+  },
+  {
+    id: 'rights',
+    icon: UserCheck,
+    title: 'Vos droits',
+    content: `Vous disposez des droits suivants :\n\n• Accès — obtenir une copie de vos données\n• Rectification — corriger des données inexactes\n• Effacement — demander la suppression (sous conditions)\n• Portabilité — recevoir vos données dans un format structuré\n• Opposition — vous opposer au traitement\n• Limitation — restreindre le traitement\n\nContact : privacy@cityhealth-sba.dz`,
+  },
+  {
+    id: 'cookies',
+    icon: Cookie,
+    title: 'Cookies',
+    content: `Notre site utilise des cookies :\n\n• Essentiels — authentification, sécurité, session\n• Analytiques — statistiques d'utilisation anonymisées\n• Fonctionnels — mémorisation des préférences\n\nVous pouvez gérer vos préférences dans les paramètres de votre navigateur.`,
+  },
+  {
+    id: 'security',
+    icon: Server,
+    title: 'Sécurité',
+    content: `Mesures de protection :\n\n• Chiffrement SSL/TLS pour toutes les communications\n• Chiffrement des données sensibles au repos\n• Authentification sécurisée avec hachage des mots de passe\n• Accès limité aux données (moindre privilège)\n• Audits de sécurité réguliers\n• Procédures de notification en cas de violation`,
+  },
+  {
+    id: 'contact',
+    icon: Mail,
+    title: 'Contact',
+    content: `CityHealth SBA\nSidi Bel Abbès, Algérie\n\nDélégué à la Protection des Données :\ndpo@cityhealth-sba.dz\n\nAdresse postale :\nCityHealth SBA - DPO\nBP 123, Sidi Bel Abbès 22000, Algérie\n\nNous répondons sous 30 jours.`,
+  },
+];
 
 const PrivacyPage = () => {
-  const sections = [
-    {
-      id: 'introduction',
-      icon: Shield,
-      title: '1. Introduction',
-      content: `CityHealth SBA ("nous", "notre", "nos") s'engage à protéger la vie privée de ses utilisateurs. Cette politique de confidentialité explique comment nous collectons, utilisons, stockons et protégeons vos données personnelles conformément à la réglementation en vigueur.
-
-Notre plateforme met en relation les citoyens de Sidi Bel Abbès avec les professionnels de santé locaux. Nous traitons vos données avec le plus grand soin et transparence.`
-    },
-    {
-      id: 'data-collected',
-      icon: Database,
-      title: '2. Données collectées',
-      content: `Nous collectons les catégories de données suivantes :
-
-**Données d'identification :**
-• Nom, prénom, adresse email
-• Numéro de téléphone
-• Photo de profil (optionnelle)
-
-**Données de santé (pour les prestataires) :**
-• Spécialité médicale
-• Numéro d'agrément professionnel
-• Diplômes et certifications
-
-**Données de localisation :**
-• Adresse du cabinet/établissement
-• Coordonnées géographiques pour la carte
-
-**Données d'utilisation :**
-• Historique de recherche
-• Rendez-vous pris
-• Avis et évaluations`
-    },
-    {
-      id: 'purposes',
-      icon: Eye,
-      title: '3. Finalités du traitement',
-      content: `Vos données sont utilisées pour :
-
-**Fourniture du service :**
-• Mise en relation patients-praticiens
-• Gestion des rendez-vous
-• Affichage sur la carte interactive
-
-**Amélioration du service :**
-• Analyse statistique anonymisée
-• Optimisation de l'expérience utilisateur
-• Développement de nouvelles fonctionnalités
-
-**Sécurité :**
-• Vérification des identités professionnelles
-• Prévention des fraudes
-• Protection contre les accès non autorisés
-
-**Communication :**
-• Notifications de rendez-vous
-• Mises à jour importantes du service
-• Newsletter (avec consentement)`
-    },
-    {
-      id: 'legal-basis',
-      icon: UserCheck,
-      title: '4. Base légale',
-      content: `Le traitement de vos données repose sur :
-
-**Consentement :** Pour la création de compte, la géolocalisation et les communications marketing.
-
-**Exécution du contrat :** Pour la fourniture du service de mise en relation et la gestion des rendez-vous.
-
-**Obligation légale :** Pour la conservation des données de santé et la vérification des qualifications professionnelles.
-
-**Intérêt légitime :** Pour la sécurité de la plateforme et l'amélioration du service.`
-    },
-    {
-      id: 'retention',
-      icon: Clock,
-      title: '5. Durée de conservation',
-      content: `Nous conservons vos données selon les durées suivantes :
-
-| Type de données | Durée de conservation |
-|-----------------|----------------------|
-| Compte actif | Durée de l'utilisation |
-| Compte inactif | 3 ans après dernière connexion |
-| Données de santé | 10 ans (obligation légale) |
-| Logs de connexion | 1 an |
-| Données de facturation | 10 ans |
-
-Après ces délais, vos données sont supprimées ou anonymisées de manière irréversible.`
-    },
-    {
-      id: 'rights',
-      icon: UserCheck,
-      title: '6. Vos droits',
-      content: `Vous disposez des droits suivants :
-
-**Droit d'accès :** Obtenir une copie de vos données personnelles.
-
-**Droit de rectification :** Corriger des données inexactes ou incomplètes.
-
-**Droit à l'effacement :** Demander la suppression de vos données (sous conditions).
-
-**Droit à la portabilité :** Recevoir vos données dans un format structuré.
-
-**Droit d'opposition :** Vous opposer au traitement pour des raisons légitimes.
-
-**Droit de limitation :** Restreindre le traitement de vos données.
-
-Pour exercer ces droits, contactez-nous à : privacy@cityhealth-sba.dz`
-    },
-    {
-      id: 'cookies',
-      icon: Cookie,
-      title: '7. Cookies',
-      content: `Notre site utilise des cookies pour :
-
-**Cookies essentiels :**
-• Authentification et sécurité
-• Préférences de langue
-• Session utilisateur
-
-**Cookies analytiques :**
-• Statistiques d'utilisation anonymisées
-• Amélioration des performances
-
-**Cookies fonctionnels :**
-• Mémorisation des préférences
-• Personnalisation de l'expérience
-
-Vous pouvez gérer vos préférences de cookies dans les paramètres de votre navigateur.`
-    },
-    {
-      id: 'security',
-      icon: Server,
-      title: '8. Sécurité',
-      content: `Nous mettons en œuvre des mesures techniques et organisationnelles pour protéger vos données :
-
-**Mesures techniques :**
-• Chiffrement SSL/TLS pour toutes les communications
-• Chiffrement des données sensibles au repos
-• Authentification sécurisée avec hachage des mots de passe
-• Pare-feu et détection d'intrusion
-
-**Mesures organisationnelles :**
-• Accès limité aux données (principe du moindre privilège)
-• Formation du personnel à la protection des données
-• Audits de sécurité réguliers
-• Procédures de notification en cas de violation`
-    },
-    {
-      id: 'contact',
-      icon: Mail,
-      title: '9. Contact',
-      content: `Pour toute question concernant cette politique ou vos données personnelles :
-
-**Responsable du traitement :**
-CityHealth SBA
-Sidi Bel Abbès, Algérie
-
-**Délégué à la Protection des Données :**
-Email : dpo@cityhealth-sba.dz
-
-**Adresse postale :**
-CityHealth SBA - DPO
-BP 123, Sidi Bel Abbès 22000
-Algérie
-
-Nous nous engageons à répondre à vos demandes dans un délai de 30 jours.`
-    }
-  ];
+  const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-[100dvh] max-w-[430px] mx-auto bg-background">
       {/* Header */}
-      <div className="bg-gradient-to-b from-primary/5 to-background border-b">
-        <div className="container mx-auto px-4 pt-20 pb-12">
-          <Link to="/">
-            <Button variant="ghost" size="sm" className="mb-6">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Retour à l'accueil
-            </Button>
-          </Link>
-          
-          <div className="flex items-center gap-4 mb-4">
-            <div className="p-3 rounded-xl bg-primary/10">
-              <Shield className="h-8 w-8 text-primary" />
-            </div>
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold">
-                Politique de <span className="text-primary">Confidentialité</span>
-              </h1>
-              <p className="text-muted-foreground mt-1">
-                Protection de vos données personnelles
-              </p>
-            </div>
-          </div>
-          
-          <Badge variant="secondary" className="mt-4">
-            <Clock className="h-3 w-3 mr-1" />
-            Dernière mise à jour : 25 janvier 2025
-          </Badge>
+      <div className="sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-border">
+        <div className="flex items-center gap-3 px-4 py-3">
+          <button
+            onClick={() => navigate(-1)}
+            className="p-2 -ml-2 rounded-xl hover:bg-muted/60 transition-colors"
+          >
+            <ChevronLeft className="h-5 w-5 text-foreground" />
+          </button>
+          <h1 className="text-lg font-bold text-foreground">Politique de confidentialité</h1>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="container mx-auto px-4 py-12">
-        <div className="max-w-4xl mx-auto">
-          {/* Quick summary */}
-          <Card className="mb-8 border-primary/20 bg-primary/5">
-            <CardContent className="p-6">
-              <div className="flex items-start gap-3">
-                <Lock className="h-5 w-5 text-primary mt-0.5" />
-                <div>
-                  <h3 className="font-semibold mb-2">En résumé</h3>
-                  <p className="text-sm text-muted-foreground">
-                    CityHealth SBA collecte uniquement les données nécessaires au fonctionnement du service. 
-                    Vos données sont protégées par des mesures de sécurité avancées et ne sont jamais vendues à des tiers. 
-                    Vous pouvez exercer vos droits à tout moment en nous contactant.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+      <div className="px-5 py-6 space-y-5">
+        {/* Hero card */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-2xl bg-primary/[0.06] border border-primary/10 p-5"
+        >
+          <div className="flex items-start gap-3.5">
+            <div className="p-2.5 rounded-xl bg-primary/10 shrink-0">
+              <Lock className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h2 className="font-bold text-foreground text-[15px] mb-1">En résumé</h2>
+              <p className="text-[13px] text-muted-foreground leading-relaxed">
+                Vos données sont protégées par des mesures de sécurité avancées et ne sont jamais vendues à des tiers.
+                Vous pouvez exercer vos droits à tout moment.
+              </p>
+            </div>
+          </div>
+        </motion.div>
 
-          {/* Sections */}
-          <Accordion type="single" collapsible className="space-y-4">
-            {sections.map((section) => (
-              <AccordionItem 
-                key={section.id} 
+        {/* Date */}
+        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground/60 font-medium">
+          <Clock className="h-3 w-3" />
+          Dernière mise à jour : 8 mars 2026
+        </div>
+
+        {/* Sections */}
+        <Accordion type="single" collapsible className="space-y-2.5">
+          {sections.map((section, idx) => (
+            <motion.div
+              key={section.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 * idx }}
+            >
+              <AccordionItem
                 value={section.id}
-                className="border rounded-lg px-4 bg-card"
+                className="border border-border rounded-xl bg-card overflow-hidden"
               >
-                <AccordionTrigger className="hover:no-underline py-4">
+                <AccordionTrigger className="hover:no-underline px-4 py-3.5 text-sm">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 rounded-lg bg-primary/10">
+                    <div className="p-1.5 rounded-lg bg-primary/8">
                       <section.icon className="h-4 w-4 text-primary" />
                     </div>
-                    <span className="font-semibold text-left">{section.title}</span>
+                    <span className="font-semibold text-foreground text-left text-[14px]">
+                      {section.title}
+                    </span>
                   </div>
                 </AccordionTrigger>
-                <AccordionContent className="pb-4">
-                  <div className="prose prose-sm max-w-none text-muted-foreground pl-11">
-                    {section.content.split('\n').map((paragraph, idx) => (
-                      <p key={idx} className="mb-2 whitespace-pre-line">
-                        {paragraph}
-                      </p>
-                    ))}
+                <AccordionContent className="px-4 pb-4">
+                  <div className="pl-[42px] text-[13px] text-muted-foreground leading-relaxed whitespace-pre-line">
+                    {section.content}
                   </div>
                 </AccordionContent>
               </AccordionItem>
-            ))}
-          </Accordion>
+            </motion.div>
+          ))}
+        </Accordion>
 
-          {/* Footer */}
-          <Card className="mt-8">
-            <CardContent className="p-6 text-center">
-              <p className="text-sm text-muted-foreground mb-4">
-                Cette politique de confidentialité fait partie intégrante de nos{' '}
-                <Link to="/terms" className="text-primary hover:underline">
-                  Conditions Générales d'Utilisation
-                </Link>
-                .
-              </p>
-              <Link to="/contact">
-                <Button variant="outline">
-                  <Mail className="h-4 w-4 mr-2" />
-                  Nous contacter
-                </Button>
-              </Link>
-            </CardContent>
-          </Card>
+        {/* Footer */}
+        <div className="text-center pt-2 pb-6 space-y-3">
+          <p className="text-[12px] text-muted-foreground/50">
+            Cette politique fait partie de nos{' '}
+            <Link to="/terms" className="text-primary font-medium hover:underline">
+              Conditions Générales
+            </Link>
+          </p>
+          <Link
+            to="/contact"
+            className="inline-flex items-center gap-1.5 text-[13px] font-medium text-primary hover:underline"
+          >
+            <Mail className="h-3.5 w-3.5" />
+            Nous contacter
+          </Link>
         </div>
       </div>
     </div>
