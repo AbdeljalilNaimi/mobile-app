@@ -311,5 +311,6 @@ export default function OnboardingPage() {
         </Button>
       </div>
     </div>
+    </>
   );
 }
