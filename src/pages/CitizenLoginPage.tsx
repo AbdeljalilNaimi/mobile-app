@@ -311,9 +311,7 @@ const CitizenLoginPage = () => {
                     {t('loginPage', 'backToHome')}
                   </Link>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          </div>
         </motion.div>
       </div>
     </div>
