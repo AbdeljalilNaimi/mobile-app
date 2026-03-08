@@ -2,3 +2,6 @@ project_id = "zcrwgcytfyecjoskxnno"
 
 [functions.send-notification]
 verify_jwt = false
+
+[functions.api-keys-manage]
+verify_jwt = false
