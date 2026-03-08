@@ -480,10 +480,10 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
       </div>
 
       {/* Input bar — compact, above nav */}
-      <div className="shrink-0 px-3 pt-1.5 pb-[calc(4.5rem+env(safe-area-inset-bottom,0px))]" style={{ backgroundColor: "#F8F9FA" }}>
+      <div className="shrink-0 px-3 py-1 pb-[calc(3.5rem+env(safe-area-inset-bottom,0px))]" style={{ backgroundColor: "#F8F9FA" }}>
         <div
-          className="flex items-center gap-1.5 h-10 px-2.5 rounded-xl bg-white transition-shadow duration-200"
-          style={{ border: "1px solid #E5E7EB", boxShadow: input ? "0 1px 3px rgba(0,0,0,0.08)" : "none" }}
+          className="flex items-center gap-1 h-9 px-2 rounded-lg bg-white transition-shadow duration-200"
+          style={{ border: "1px solid #E5E7EB", boxShadow: input ? "0 1px 2px rgba(0,0,0,0.06)" : "none" }}
         >
           <textarea
             ref={inputRef}
@@ -492,23 +492,23 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
             onKeyDown={handleKeyDown}
             placeholder={t.placeholder}
             rows={1}
-            className="flex-1 resize-none text-[13px] bg-transparent py-2 placeholder:text-muted-foreground focus:outline-none max-h-[80px] leading-normal"
+            className="flex-1 resize-none text-[13px] bg-transparent py-1.5 placeholder:text-muted-foreground focus:outline-none max-h-[72px] leading-normal"
             disabled={isLoading || isLoadingProviders}
           />
 
           <button
             onClick={() => sendMessage()}
             disabled={!input.trim() || isLoading || isLoadingProviders}
-            className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200 active:scale-90"
+            className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 active:scale-90"
             style={{
               backgroundColor: input.trim() ? "#1D4ED8" : "#E5E7EB",
               cursor: input.trim() ? "pointer" : "default",
             }}
           >
             {isLoading ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin text-white" />
+              <Loader2 className="w-3 h-3 animate-spin text-white" />
             ) : (
-              <Send className="w-3.5 h-3.5" style={{ color: input.trim() ? "white" : "#9CA3AF" }} />
+              <Send className="w-3 h-3" style={{ color: input.trim() ? "white" : "#9CA3AF" }} />
             )}
           </button>
         </div>
