@@ -41,6 +41,7 @@ export default function SettingsPage() {
   const [notifAppointments, setNotifAppointments] = useState(true);
   const [notifEmergency, setNotifEmergency] = useState(true);
   const [notifMessages, setNotifMessages] = useState(true);
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
 
   const initials = profile?.full_name
     ?.split(' ')
