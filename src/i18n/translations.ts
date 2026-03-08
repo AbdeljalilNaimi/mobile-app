@@ -1967,6 +1967,8 @@ export const translations: Record<Language, Translations> = {
       comments: 'commentaires',
     },
   },
+
+  ar: {
     common: {
       search: 'بحث',
       filters: 'فلاتر',
