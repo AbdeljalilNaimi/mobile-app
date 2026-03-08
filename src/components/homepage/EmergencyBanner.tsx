@@ -8,7 +8,7 @@ export const EmergencyBanner = () => {
 
   const quickActions = [
     { icon: Phone, label: t('homepage', 'call'), href: 'tel:115' },
-    { icon: MapPin, label: t('homepage', 'locate'), href: '/map/emergency' },
+    { icon: MapPin, label: t('homepage', 'locate'), href: '/map?mode=emergency' },
   ];
   return (
     <section className="py-8 px-4">
