@@ -438,7 +438,7 @@ export default function BloodDonationPage() {
           <TabsContent value="donate" className="space-y-6">
             <div className="grid lg:grid-cols-2 gap-6">
               {/* Eligibility Checker */}
-              <Card className="glass-card">
+              <Card className="bg-card border border-border rounded-xl shadow-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <CheckCircle2 className="h-5 w-5 text-primary" />
