@@ -150,21 +150,21 @@ export default function MedicalAssistantPage() {
 
   return (
     <div className={cn(
-      "flex flex-col overflow-hidden h-[100dvh]",
+      "flex flex-col overflow-hidden h-[100dvh] bg-muted",
       language === "ar" && "rtl"
-    )} style={{ backgroundColor: "#F8F9FA" }}>
+    )}>
       {/* Header — 56px */}
-      <header className="shrink-0 h-14 bg-white border-b" style={{ borderColor: "#E5E7EB" }}>
+      <header className="shrink-0 h-14 bg-card border-b border-border">
         <div className="h-full px-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-6 h-6 flex items-center justify-center">
-              <Bot className="w-6 h-6" style={{ color: "#1D4ED8" }} />
+              <Bot className="w-6 h-6 text-primary" />
             </div>
             <div className="leading-tight">
               <h1 className="font-bold text-[15px] text-foreground">{t.title}</h1>
               <div className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#22C55E" }} />
-                <span className="text-[12px]" style={{ color: "#9CA3AF" }}>{t.online}</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
+                <span className="text-[12px] text-muted-foreground">{t.online}</span>
               </div>
             </div>
           </div>
@@ -173,23 +173,22 @@ export default function MedicalAssistantPage() {
             {isAuthed && (
               <button
                 onClick={handleOpenHistory}
-                className="h-9 w-9 flex items-center justify-center rounded-lg transition-colors hover:bg-black/5 active:scale-95"
+                className="h-9 w-9 flex items-center justify-center rounded-lg transition-colors hover:bg-muted active:scale-95"
               >
-                <History className="w-[18px] h-[18px]" style={{ color: "#9CA3AF" }} />
+                <History className="w-[18px] h-[18px] text-muted-foreground" />
               </button>
             )}
 
             <button
               onClick={() => setShowResetDialog(true)}
-              className="h-9 w-9 flex items-center justify-center rounded-lg transition-colors hover:bg-black/5 active:scale-95"
+              className="h-9 w-9 flex items-center justify-center rounded-lg transition-colors hover:bg-muted active:scale-95"
             >
-              <PenSquare className="w-[18px] h-[18px]" style={{ color: "#9CA3AF" }} />
+              <PenSquare className="w-[18px] h-[18px] text-muted-foreground" />
             </button>
 
             <button
               onClick={() => window.location.href = "tel:15"}
-              className="flex items-center gap-1 h-7 px-2.5 rounded-full text-white text-xs font-bold transition-all active:scale-95"
-              style={{ backgroundColor: "#EF4444" }}
+              className="flex items-center gap-1 h-7 px-2.5 rounded-full bg-destructive text-destructive-foreground text-xs font-bold transition-all active:scale-95"
             >
               <span>🚨</span>
               <span>15</span>
@@ -199,16 +198,16 @@ export default function MedicalAssistantPage() {
       </header>
 
       {/* Disclaimer — 32px */}
-      <div className="shrink-0 h-8 flex items-center justify-center px-4" style={{ backgroundColor: "#F8F9FA" }}>
+      <div className="shrink-0 h-8 flex items-center justify-center px-4 bg-muted">
         <div className="flex items-center gap-1.5">
-          <AlertTriangle className="w-3 h-3 shrink-0" style={{ color: "#9CA3AF" }} />
-          <span className="text-[11px] italic" style={{ color: "#9CA3AF" }}>{t.disclaimer}</span>
+          <AlertTriangle className="w-3 h-3 shrink-0 text-muted-foreground" />
+          <span className="text-[11px] italic text-muted-foreground">{t.disclaimer}</span>
         </div>
       </div>
 
       {/* Chat area */}
       <main className="flex-1 min-h-0 overflow-hidden flex flex-col">
-        <div className="flex-1 min-h-0 overflow-hidden bg-white mx-0">
+        <div className="flex-1 min-h-0 overflow-hidden bg-card mx-0">
           <SymptomTriageBot
             resetKey={resetKey}
             onMessageSent={handleMessageSent}
@@ -218,17 +217,17 @@ export default function MedicalAssistantPage() {
 
         {/* Guest sign-in banner */}
         {!isAuthed && showGuestBanner && (
-          <div className="shrink-0 mx-4 mb-2 mt-1 rounded-[10px] px-3.5 py-2.5 flex items-center justify-between" style={{ backgroundColor: "#EFF6FF" }}>
-            <div className="flex items-center gap-2 text-[13px]" style={{ color: "#6B7280" }}>
+          <div className="shrink-0 mx-4 mb-2 mt-1 rounded-[10px] px-3.5 py-2.5 flex items-center justify-between bg-primary/10">
+            <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
               <span>💾</span>
               <span>{t.guestBanner}</span>
             </div>
             <div className="flex items-center gap-2">
-              <Link to="/citizen/login" className="text-[13px] font-bold hover:underline" style={{ color: "#1D4ED8" }}>
+              <Link to="/citizen/login" className="text-[13px] font-bold text-primary hover:underline">
                 {t.login}
               </Link>
-              <button onClick={() => setShowGuestBanner(false)} className="p-0.5 rounded hover:bg-black/5">
-                <X className="w-3.5 h-3.5" style={{ color: "#9CA3AF" }} />
+              <button onClick={() => setShowGuestBanner(false)} className="p-0.5 rounded hover:bg-muted">
+                <X className="w-3.5 h-3.5 text-muted-foreground" />
               </button>
             </div>
           </div>
@@ -244,7 +243,7 @@ export default function MedicalAssistantPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="rounded-xl">{t.cancel}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmReset} className="rounded-xl text-white" style={{ backgroundColor: "#1D4ED8" }}>
+            <AlertDialogAction onClick={handleConfirmReset} className="rounded-xl bg-primary text-primary-foreground">
               {t.confirm}
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -257,8 +256,8 @@ export default function MedicalAssistantPage() {
           <DrawerHeader className="flex items-center justify-between pb-1 px-4">
             <DrawerTitle className="text-[15px] font-bold">{t.historyTitle}</DrawerTitle>
             <DrawerClose asChild>
-              <button className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-black/5">
-                <X className="w-4 h-4" style={{ color: "#9CA3AF" }} />
+              <button className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-muted">
+                <X className="w-4 h-4 text-muted-foreground" />
               </button>
             </DrawerClose>
           </DrawerHeader>
@@ -272,11 +271,11 @@ export default function MedicalAssistantPage() {
               </div>
             ) : conversations.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-10">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3" style={{ backgroundColor: "#F3F4F6" }}>
-                  <Clock className="w-5 h-5" style={{ color: "#9CA3AF" }} />
+                <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3 bg-muted">
+                  <Clock className="w-5 h-5 text-muted-foreground" />
                 </div>
-                <p className="text-sm font-medium" style={{ color: "#6B7280" }}>{t.emptyHistory}</p>
-                <p className="text-xs mt-0.5" style={{ color: "#9CA3AF" }}>{t.emptyHistorySub}</p>
+                <p className="text-sm font-medium text-muted-foreground">{t.emptyHistory}</p>
+                <p className="text-xs mt-0.5 text-muted-foreground">{t.emptyHistorySub}</p>
               </div>
             ) : (
               <div className="space-y-1">
@@ -284,20 +283,20 @@ export default function MedicalAssistantPage() {
                   <button
                     key={conv.id}
                     onClick={() => handleSelectConversation(conv.id)}
-                    className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-black/[0.03] active:bg-black/[0.06] transition-colors text-left group"
+                    className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-muted active:bg-muted/80 transition-colors text-left group"
                   >
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: "#EFF6FF" }}>
-                      <Bot className="w-3.5 h-3.5" style={{ color: "#1D4ED8" }} />
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-primary/10">
+                      <Bot className="w-3.5 h-3.5 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-[13px] font-medium truncate text-foreground">
                         {(conv.title || "…").slice(0, 35)}
                       </p>
-                      <p className="text-[11px]" style={{ color: "#9CA3AF" }}>
+                      <p className="text-[11px] text-muted-foreground">
                         {formatRelativeDate(conv.updated_at)}
                       </p>
                     </div>
-                    <ChevronRight className="w-4 h-4 shrink-0" style={{ color: "#D1D5DB" }} />
+                    <ChevronRight className="w-4 h-4 shrink-0 text-muted-foreground/50" />
                   </button>
                 ))}
               </div>
@@ -305,11 +304,10 @@ export default function MedicalAssistantPage() {
           </div>
 
           {conversations.length > 0 && (
-            <div className="px-4 py-2.5 border-t" style={{ borderColor: "#F3F4F6" }}>
+            <div className="px-4 py-2.5 border-t border-border">
               <button
                 onClick={() => setShowDeleteDialog(true)}
-                className="flex items-center gap-1.5 text-xs mx-auto active:scale-95 transition-all"
-                style={{ color: "#EF4444" }}
+                className="flex items-center gap-1.5 text-xs mx-auto active:scale-95 transition-all text-destructive"
               >
                 <Trash2 className="w-3 h-3" />
                 {t.deleteAll}
@@ -328,7 +326,7 @@ export default function MedicalAssistantPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="rounded-xl">{t.cancel}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteAll} className="rounded-xl text-white" style={{ backgroundColor: "#EF4444" }}>
+            <AlertDialogAction onClick={handleDeleteAll} className="rounded-xl bg-destructive text-destructive-foreground">
               {t.confirm}
             </AlertDialogAction>
           </AlertDialogFooter>

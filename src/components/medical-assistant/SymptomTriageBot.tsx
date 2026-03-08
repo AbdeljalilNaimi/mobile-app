@@ -293,9 +293,9 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
           {/* Welcome state */}
           {!hasConversation && (
             <div className="flex flex-col items-center pt-8 sm:pt-16 animate-in fade-in duration-500">
-              <p className="text-sm mb-1" style={{ color: "#9CA3AF" }}>{t.greeting}</p>
+              <p className="text-sm mb-1 text-muted-foreground">{t.greeting}</p>
               <h2 className="text-[22px] font-bold text-center mb-1 text-foreground">{t.welcome}</h2>
-              <p className="text-[13px] text-center mb-6" style={{ color: "#9CA3AF" }}>{t.welcomeSub}</p>
+              <p className="text-[13px] text-center mb-6 text-muted-foreground">{t.welcomeSub}</p>
 
               {/* 2-column pill chip layout */}
               <div className="grid grid-cols-2 gap-2 w-full max-w-md">
@@ -305,14 +305,10 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
                     <button
                       key={chip.label}
                       onClick={() => handleChipClick(chip.query)}
-                      className="flex items-center gap-2.5 h-11 px-3 rounded-[10px] bg-white text-left transition-all duration-150 active:scale-[0.98] hover:shadow-sm"
-                      style={{ border: "1px solid #E5E7EB" }}
+                      className="flex items-center gap-2.5 h-11 px-3 rounded-[10px] bg-card border border-border text-left transition-all duration-150 active:scale-[0.98] hover:shadow-sm"
                     >
-                      <div
-                        className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
-                        style={{ backgroundColor: "#EFF6FF" }}
-                      >
-                        <IconComponent className="w-3.5 h-3.5" style={{ color: "#1D4ED8" }} />
+                      <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 bg-primary/10">
+                        <IconComponent className="w-3.5 h-3.5 text-primary" />
                       </div>
                       <span className="text-[13px] font-medium text-foreground truncate">{chip.label}</span>
                     </button>
@@ -332,41 +328,34 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
                 >
                   {/* AI avatar */}
                   {msg.role === "assistant" && (
-                    <div
-                      className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-1"
-                      style={{ backgroundColor: "#1D4ED8" }}
-                    >
-                      <Bot className="w-3 h-3 text-white" />
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-1 bg-primary">
+                      <Bot className="w-3 h-3 text-primary-foreground" />
                     </div>
                   )}
 
                   <div className={cn("max-w-[85%] sm:max-w-[70%] space-y-1.5", msg.role === "user" ? "order-1" : "")}>
                     {/* Message bubble */}
-                    <div
-                      className="px-3.5 py-2.5 text-[13px] leading-relaxed"
-                      style={msg.role === "user" ? {
-                        backgroundColor: "#1D4ED8",
-                        color: "white",
-                        borderRadius: "18px 18px 4px 18px",
-                      } : {
-                        backgroundColor: "white",
-                        border: "1px solid #E5E7EB",
-                        borderRadius: "18px 18px 18px 4px",
-                        boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
-                      }}
-                    >
-                      {msg.role === "assistant" ? (
+                    {msg.role === "user" ? (
+                      <div
+                        className="px-3.5 py-2.5 text-[13px] leading-relaxed bg-primary text-primary-foreground"
+                        style={{ borderRadius: "18px 18px 4px 18px" }}
+                      >
+                        <p className="whitespace-pre-wrap">{msg.content}</p>
+                      </div>
+                    ) : (
+                      <div
+                        className="px-3.5 py-2.5 text-[13px] leading-relaxed bg-card border border-border shadow-sm"
+                        style={{ borderRadius: "18px 18px 18px 4px" }}
+                      >
                         <div className="prose prose-sm dark:prose-invert max-w-none prose-p:mb-1.5 prose-p:last:mb-0 prose-ul:mb-1.5 prose-li:mb-0.5 prose-p:text-[13px] prose-li:text-[13px]">
                           <ReactMarkdown remarkPlugins={[remarkGfm]}>{msg.content}</ReactMarkdown>
                         </div>
-                      ) : (
-                        <p className="whitespace-pre-wrap">{msg.content}</p>
-                      )}
-                    </div>
+                      </div>
+                    )}
 
                     {/* Timestamp */}
                     {msg.timestamp && (
-                      <p className={cn("text-[12px] px-1", msg.role === "user" ? "text-right" : "text-left")} style={{ color: "#9CA3AF" }}>
+                      <p className={cn("text-[12px] px-1 text-muted-foreground", msg.role === "user" ? "text-right" : "text-left")}>
                         {msg.timestamp}
                       </p>
                     )}
@@ -393,7 +382,7 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
                     {/* Doctor cards */}
                     {msg.role === "assistant" && msg.doctorIds && msg.doctorIds.length > 0 && (
                       <div className="flex flex-col gap-2 mt-1.5">
-                        <p className="text-[10px] font-semibold tracking-wide uppercase px-0.5" style={{ color: "#9CA3AF" }}>{t.recommended}</p>
+                        <p className="text-[10px] font-semibold tracking-wide uppercase px-0.5 text-muted-foreground">{t.recommended}</p>
                         {msg.doctorIds.map((id, idx) => {
                           const doc = getDoctorById(id);
                           if (!doc) return null;
@@ -408,7 +397,7 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
 
                     {/* No specialist */}
                     {msg.role === "assistant" && msg.doctorIds && msg.doctorIds.length === 0 && msg.recommendedSpecialty && (
-                      <div className="rounded-[10px] p-2.5 text-[11px]" style={{ border: "1px dashed #FCD34D", backgroundColor: "#FFFBEB", color: "#92400E" }}>
+                      <div className="rounded-[10px] p-2.5 text-[11px] border border-dashed border-amber-400 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300">
                         {t.noSpecialist} <strong>{msg.recommendedSpecialty}</strong> {t.noSpecialistSuffix}
                       </div>
                     )}
@@ -427,13 +416,8 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
                             <button
                               key={q}
                               onClick={() => handleSuggestionClick(q)}
-                              className="px-3 py-1.5 text-[11px] rounded-full transition-all duration-150 active:scale-95 cursor-pointer animate-in fade-in duration-500"
-                              style={{
-                                backgroundColor: "#EFF6FF",
-                                color: "#1D4ED8",
-                                border: "1px solid #BFDBFE",
-                                animationDelay: `${idx * 100}ms`,
-                              }}
+                              className="px-3 py-1.5 text-[11px] rounded-full transition-all duration-150 active:scale-95 cursor-pointer animate-in fade-in duration-500 bg-primary/10 text-primary border border-primary/30"
+                              style={{ animationDelay: `${idx * 100}ms` }}
                             >
                               {q}
                             </button>
@@ -450,28 +434,20 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
               {/* Typing indicator */}
               {isLoading && (
                 <div className="flex items-center gap-2 animate-in fade-in duration-300">
-                  <div
-                    className="w-6 h-6 rounded-full flex items-center justify-center shrink-0"
-                    style={{ backgroundColor: "#1D4ED8" }}
-                  >
-                    <Bot className="w-3 h-3 text-white" />
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 bg-primary">
+                    <Bot className="w-3 h-3 text-primary-foreground" />
                   </div>
                   <div
-                    className="px-4 py-3"
-                    style={{
-                      backgroundColor: "white",
-                      border: "1px solid #E5E7EB",
-                      borderRadius: "18px 18px 18px 4px",
-                      boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
-                    }}
+                    className="px-4 py-3 bg-card border border-border shadow-sm"
+                    style={{ borderRadius: "18px 18px 18px 4px" }}
                   >
                     <div className="flex items-center gap-1">
-                      <span className="typing-dot w-2 h-2 rounded-full" style={{ backgroundColor: "#9CA3AF", animationDelay: "0ms" }} />
-                      <span className="typing-dot w-2 h-2 rounded-full" style={{ backgroundColor: "#9CA3AF", animationDelay: "150ms" }} />
-                      <span className="typing-dot w-2 h-2 rounded-full" style={{ backgroundColor: "#9CA3AF", animationDelay: "300ms" }} />
+                      <span className="typing-dot w-2 h-2 rounded-full bg-muted-foreground/50" style={{ animationDelay: "0ms" }} />
+                      <span className="typing-dot w-2 h-2 rounded-full bg-muted-foreground/50" style={{ animationDelay: "150ms" }} />
+                      <span className="typing-dot w-2 h-2 rounded-full bg-muted-foreground/50" style={{ animationDelay: "300ms" }} />
                     </div>
                   </div>
-                  <span className="text-[11px]" style={{ color: "#9CA3AF" }}>{t.analyzing}</span>
+                  <span className="text-[11px] text-muted-foreground">{t.analyzing}</span>
                 </div>
               )}
             </div>
@@ -480,10 +456,12 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
       </div>
 
       {/* Input bar — compact, above nav */}
-      <div className="shrink-0 px-3 py-0.5 pb-[calc(3rem+env(safe-area-inset-bottom,0px))]" style={{ backgroundColor: "#F8F9FA" }}>
+      <div className="shrink-0 px-3 py-0.5 pb-[calc(3rem+env(safe-area-inset-bottom,0px))] bg-muted">
         <div
-          className="flex items-center gap-1 h-9 px-2 rounded-lg bg-white transition-shadow duration-200"
-          style={{ border: "1px solid #E5E7EB", boxShadow: input ? "0 1px 2px rgba(0,0,0,0.06)" : "none" }}
+          className={cn(
+            "flex items-center gap-1 h-9 px-2 rounded-lg bg-card border border-border transition-shadow duration-200",
+            input && "shadow-sm"
+          )}
         >
           <textarea
             ref={inputRef}
@@ -492,23 +470,22 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages 
             onKeyDown={handleKeyDown}
             placeholder={t.placeholder}
             rows={1}
-            className="flex-1 resize-none text-[13px] bg-transparent py-1.5 placeholder:text-muted-foreground focus:outline-none max-h-[72px] leading-normal"
+            className="flex-1 resize-none text-[13px] bg-transparent py-1.5 placeholder:text-muted-foreground focus:outline-none max-h-[72px] leading-normal text-foreground"
             disabled={isLoading || isLoadingProviders}
           />
 
           <button
             onClick={() => sendMessage()}
             disabled={!input.trim() || isLoading || isLoadingProviders}
-            className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 active:scale-90"
-            style={{
-              backgroundColor: input.trim() ? "#1D4ED8" : "#E5E7EB",
-              cursor: input.trim() ? "pointer" : "default",
-            }}
+            className={cn(
+              "shrink-0 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 active:scale-90",
+              input.trim() ? "bg-primary cursor-pointer" : "bg-muted cursor-default"
+            )}
           >
             {isLoading ? (
-              <Loader2 className="w-3 h-3 animate-spin text-white" />
+              <Loader2 className="w-3 h-3 animate-spin text-primary-foreground" />
             ) : (
-              <Send className="w-3 h-3" style={{ color: input.trim() ? "white" : "#9CA3AF" }} />
+              <Send className={cn("w-3 h-3", input.trim() ? "text-primary-foreground" : "text-muted-foreground")} />
             )}
           </button>
         </div>
