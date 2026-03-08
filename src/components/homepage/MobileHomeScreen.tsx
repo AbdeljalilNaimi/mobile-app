@@ -201,7 +201,44 @@ export const MobileHomeScreen = () => {
         </button>
       </motion.div>
 
-      {/* 5. Services de santé */}
+      {/* 4b. Emergency section */}
+      <motion.div variants={fadeUp} className="w-full rounded-xl bg-card border border-border shadow-sm overflow-hidden">
+        <div className="p-4 space-y-3">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-destructive/10 flex items-center justify-center">
+              <Siren className="h-4 w-4 text-destructive" />
+            </div>
+            <h3 className="text-sm font-bold text-foreground">Urgences</h3>
+          </div>
+          <p className="text-xs text-muted-foreground">
+            En cas d'urgence, appelez immédiatement le SAMU ou trouvez l'hôpital le plus proche.
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            <a
+              href="tel:15"
+              className="flex items-center justify-center gap-2 rounded-lg bg-destructive/10 py-2.5 text-xs font-semibold text-destructive active:scale-[0.97] transition-transform"
+            >
+              <Phone className="h-3.5 w-3.5" />
+              Appeler le 15
+            </a>
+            <button
+              onClick={() => navigate('/map?mode=emergency')}
+              className="flex items-center justify-center gap-2 rounded-lg bg-primary/10 py-2.5 text-xs font-semibold text-primary active:scale-[0.97] transition-transform"
+            >
+              <Map className="h-3.5 w-3.5" />
+              Carte urgences
+            </button>
+          </div>
+          <button
+            onClick={() => navigate('/emergency')}
+            className="w-full flex items-center justify-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors pt-1"
+          >
+            <HelpCircle className="h-3 w-3" />
+            Guide des urgences
+            <ChevronRight className="h-3 w-3" />
+          </button>
+        </div>
+      </motion.div>
       <SectionHeader label="Spécialités" title="Services de santé" actionLabel="Tout voir" onAction={() => navigate('/search')} />
       <motion.div variants={fadeUp} className="-mx-4 px-4">
         <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide">

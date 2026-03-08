@@ -120,6 +120,7 @@ export default function SettingsPage() {
     {
       title: 'À propos',
       items: [
+        { icon: ExternalLink, label: 'Visiter notre site web', description: 'cityhealth-dz.lovable.app', onClick: () => window.open('https://cityhealth-dz.lovable.app/', '_blank'), external: true, iconColor: 'text-primary bg-primary/10' },
         { icon: Info, label: 'Version de l\'app', description: 'v2.4.0', iconColor: 'text-gray-400 bg-gray-400/10' },
         { icon: HelpCircle, label: 'Centre d\'aide', onClick: () => navigate('/faq'), iconColor: 'text-sky-500 bg-sky-500/10' },
         { icon: MessageSquare, label: 'Contacter le support', onClick: () => navigate('/contact'), iconColor: 'text-blue-500 bg-blue-500/10' },
