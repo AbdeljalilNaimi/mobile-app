@@ -107,9 +107,9 @@ const VerificationGuard = ({ children }: { children: React.ReactNode }) => {
 function CarteRedirect() {
   const [params] = useSearchParams();
   const mode = params.get('mode');
-  const dest = mode === 'blood' ? '/map/blood'
-             : mode === 'emergency' ? '/map/emergency'
-             : '/map/providers';
+  const dest = mode === 'blood' ? '/map?mode=blood'
+             : mode === 'emergency' ? '/map?mode=emergency'
+             : '/map';
   return <Navigate to={dest} replace />;
 }
 
