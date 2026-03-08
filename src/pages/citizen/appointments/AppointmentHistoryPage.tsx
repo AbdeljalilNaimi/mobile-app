@@ -26,6 +26,10 @@ export default function AppointmentHistoryPage() {
     return <GuestBlockMessage title="Historique" description="Connectez-vous pour consulter l'historique de vos rendez-vous." />;
   }
 
+  return <AppointmentHistoryContent />;
+}
+
+function AppointmentHistoryContent() {
   const { appointments, loading } = useRealtimePatientAppointments();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');

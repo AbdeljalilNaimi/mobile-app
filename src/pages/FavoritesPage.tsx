@@ -20,6 +20,11 @@ const FavoritesPage = () => {
   if (!isAuthenticated) {
     return <GuestBlockMessage title="Mes Favoris" description="Connectez-vous pour sauvegarder vos médecins favoris et y accéder rapidement." />;
   }
+
+  return <FavoritesPageContent />;
+};
+
+const FavoritesPageContent = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');

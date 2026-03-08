@@ -20,6 +20,11 @@ export default function CitizenAppointmentsPage() {
   if (!isAuthenticated) {
     return <GuestBlockMessage title="Mes Rendez-vous" description="Connectez-vous pour gérer vos rendez-vous médicaux." />;
   }
+
+  return <CitizenAppointmentsPageContent />;
+}
+
+function CitizenAppointmentsPageContent() {
   const { appointments, loading } = useRealtimePatientAppointments();
   const cancelMutation = useCancelAppointment();
 
