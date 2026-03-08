@@ -1029,6 +1029,35 @@ export interface Translations {
     reads: string;
     // Community
     comments: string;
+    // Categories
+    catDoctors: string;
+    catPharmacy: string;
+    catHospitals: string;
+    catLabs: string;
+    catClinics: string;
+    // Symptoms
+    headache: string;
+    nausea: string;
+    fever: string;
+    fatigue: string;
+    allergy: string;
+    breathing: string;
+    chestPain: string;
+    // Section headers
+    categoriesLabel: string;
+    healthLabel: string;
+    symptomsLabel: string;
+    premiumLabel: string;
+    topProviders: string;
+    // Provider card
+    premiumBadge: string;
+    defaultSpecialty: string;
+    reviews: string;
+    bookAppointment: string;
+    promoTag: string;
+    // Hero
+    heroLine1: string;
+    heroLine2: string;
   };
 
   // Settings Page
