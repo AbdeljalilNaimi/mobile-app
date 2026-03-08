@@ -168,6 +168,10 @@ export default function OnboardingPage() {
   const isLast = page === slides.length - 1;
 
   return (
+    <>
+    <AnimatePresence>
+      {showConfetti && <ConfettiOverlay onComplete={handleConfettiComplete} />}
+    </AnimatePresence>
     <div
       className="min-h-[100dvh] max-w-[430px] mx-auto bg-background flex flex-col overflow-hidden relative select-none"
       onTouchStart={onTouchStart}
