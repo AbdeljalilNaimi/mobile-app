@@ -6,7 +6,7 @@ import { isProviderVerified } from '@/utils/verificationUtils';
 import {
   Search, SlidersHorizontal, Star, MapPin, Phone, Clock,
   X, Stethoscope, Pill, Building, FlaskConical, ChevronRight,
-  Loader2, ShieldCheck, Heart,
+  Loader2, ShieldCheck, Heart, List, LayoutGrid, ArrowRight,
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -67,6 +67,7 @@ const SearchPage = () => {
 
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const [sortBy, setSortBy] = useState<SortOption>('relevance');
+  const [viewMode, setViewMode] = useState<'list' | 'grid'>('list');
   const [filters, setFilters] = useState<FilterState>({
     categories: getInitialCategories(initialType),
     location: '', radius: 25, availability: 'any', minRating: 0,
@@ -193,6 +194,31 @@ const SearchPage = () => {
           ))}
         </div>
 
+        <div className="flex items-center gap-1.5">
+          {/* View toggle */}
+          <div className="flex items-center bg-muted/60 rounded-lg p-0.5">
+            <button
+              onClick={() => setViewMode('list')}
+              className={`p-1.5 rounded-md transition-colors ${
+                viewMode === 'list'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <List className="h-3.5 w-3.5" />
+            </button>
+            <button
+              onClick={() => setViewMode('grid')}
+              className={`p-1.5 rounded-md transition-colors ${
+                viewMode === 'grid'
+                  ? 'bg-background text-foreground shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <LayoutGrid className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
         <Sheet>
           <SheetTrigger asChild>
             <Button variant="outline" size="sm" className="h-8 px-2.5 rounded-lg border-border/50 relative">
@@ -256,6 +282,7 @@ const SearchPage = () => {
             </div>
           </SheetContent>
         </Sheet>
+        </div>
       </div>
 
       {/* Results count */}
@@ -266,7 +293,7 @@ const SearchPage = () => {
       </div>
 
       {/* Provider list */}
-      <div className="flex-1 px-4 pb-4 space-y-3">
+      <div className={`flex-1 px-4 pb-4 ${viewMode === 'grid' ? '' : 'space-y-3'}`}>
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-16 gap-3">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -282,6 +309,22 @@ const SearchPage = () => {
             <Search className="h-10 w-10 text-muted-foreground/40" />
             <p className="text-sm text-muted-foreground">Aucun résultat trouvé</p>
             <Button variant="outline" size="sm" onClick={clearAll}>Effacer les filtres</Button>
+          </div>
+        ) : viewMode === 'grid' ? (
+          <div className="grid grid-cols-2 gap-3">
+            <AnimatePresence mode="popLayout">
+              {filteredProviders.map((provider, i) => (
+                <motion.div
+                  key={provider.id}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ delay: Math.min(i * 0.03, 0.25), duration: 0.3 }}
+                >
+                  <ProviderGridCard provider={provider} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
         ) : (
           <AnimatePresence mode="popLayout">
@@ -380,6 +423,59 @@ function ProviderCard({ provider }: { provider: CityHealthProvider }) {
                 <Stethoscope className="h-6 w-6 text-muted-foreground/40" />
               </div>
             )}
+          </div>
+        </div>
+      </Card>
+    </Link>
+  );
+}
+
+/* ── Provider Grid Card (Image 2 style) ── */
+function ProviderGridCard({ provider }: { provider: CityHealthProvider }) {
+  const verified = isProviderVerified(provider);
+
+  return (
+    <Link to={`/provider/${provider.id}`}>
+      <Card className="rounded-2xl border-border/40 shadow-sm hover:shadow-md hover:border-primary/30 active:scale-[0.97] transition-all duration-200 group overflow-hidden">
+        {/* Image section */}
+        <div className="relative aspect-[4/3] bg-muted/40 overflow-hidden">
+          {provider.image ? (
+            <img
+              src={provider.image}
+              alt={provider.name}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <Stethoscope className="h-10 w-10 text-muted-foreground/30" />
+            </div>
+          )}
+          {/* Rating badge overlay */}
+          {provider.rating > 0 && (
+            <div className="absolute bottom-2 right-2 flex items-center gap-1 px-2 py-0.5 rounded-full bg-background/90 backdrop-blur-sm shadow-sm">
+              <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+              <span className="text-xs font-semibold text-foreground">{provider.rating.toFixed(1)}</span>
+            </div>
+          )}
+          {/* Verified badge overlay */}
+          {verified && (
+            <div className="absolute top-2 left-2 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-background/90 backdrop-blur-sm shadow-sm">
+              <ShieldCheck className="h-3 w-3 text-primary" />
+              <span className="text-[10px] font-medium text-primary">Vérifié</span>
+            </div>
+          )}
+        </div>
+
+        {/* Info section */}
+        <div className="p-3 text-center">
+          <h3 className="text-sm font-semibold text-foreground truncate">{provider.name}</h3>
+          <p className="text-xs text-muted-foreground truncate mt-0.5">{provider.specialty || provider.type}</p>
+          
+          {/* Arrow button */}
+          <div className="mt-3 flex justify-center">
+            <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center group-hover:bg-primary/90 transition-colors shadow-sm">
+              <ArrowRight className="h-4 w-4 text-primary-foreground" />
+            </div>
           </div>
         </div>
       </Card>
