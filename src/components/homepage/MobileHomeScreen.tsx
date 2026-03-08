@@ -71,21 +71,12 @@ export const MobileHomeScreen = () => {
       ? t('mobileHome', 'goodAfternoon')
       : t('mobileHome', 'goodMorning');
 
-  // Top providers
+  // Top providers — always use real providers from data
   const allProviders = getProviders();
-  const dbTopProviders = allProviders
+  const topProviders = allProviders
     .sort((a, b) => b.rating - a.rating)
-    .slice(0, 3);
-
-  const exampleProviders = [
-    { id: 'ex-1', name: 'Dr. Amina Belkacem', specialty: 'Cardiologie', rating: 4.9, reviewsCount: 128, image: '', type: 'doctor', isPremium: true },
-    { id: 'ex-2', name: 'Dr. Youcef Hamdani', specialty: 'Pédiatrie', rating: 4.8, reviewsCount: 95, image: '', type: 'doctor', isPremium: true },
-    { id: 'ex-3', name: 'Dr. Sara Medjdoub', specialty: 'Dermatologie', rating: 4.7, reviewsCount: 72, image: '', type: 'doctor', isPremium: false },
-  ];
-
-  const topProviders = dbTopProviders.length >= 3
-    ? dbTopProviders.map(p => ({ ...p, isPremium: p.rating >= 4.5 }))
-    : exampleProviders;
+    .slice(0, 3)
+    .map(p => ({ ...p, isPremium: p.planType === 'premium' || p.rating >= 4.5 }));
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
