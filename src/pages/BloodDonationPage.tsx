@@ -36,6 +36,7 @@ import { cn } from '@/lib/utils';
 import { EmergencyAlertBanner } from '@/components/blood-emergency/EmergencyAlertBanner';
 import { DonationConfirmationView } from '@/components/blood-emergency/DonationConfirmationView';
 import { getDonationHistory, subscribeToEmergencies } from '@/services/bloodEmergencyService';
+import { useAuthRequired } from '@/hooks/useAuthRequired';
 import type { BloodEmergency } from '@/services/bloodEmergencyService';
 
 const BLOOD_TYPES = ['A+', 'A−', 'B+', 'B−', 'AB+', 'AB−', 'O+', 'O−'] as const;
