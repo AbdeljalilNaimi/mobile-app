@@ -80,9 +80,11 @@ const SYMPTOM_CHIPS: Record<string, SymptomChip[]> = {
 
 interface SymptomTriageBotProps {
   resetKey?: number;
+  onMessageSent?: (role: "user" | "assistant", content: string) => void;
+  initialMessages?: { role: "user" | "assistant"; content: string }[];
 }
 
-export function SymptomTriageBot({ resetKey = 0 }: SymptomTriageBotProps) {
+export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages }: SymptomTriageBotProps) {
   const { language } = useLanguage();
   const [messages, setMessages] = useState<TriageMessage[]>([]);
   const [input, setInput] = useState("");
