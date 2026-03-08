@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useProvider } from "@/hooks/useProviders";
 import { useFavorites, useToggleFavorite } from "@/hooks/useFavorites";
+import { useAuthRequired } from "@/hooks/useAuthRequired";
 import { BookingModal } from "@/components/BookingModal";
 import { ReviewSystem } from "@/components/ReviewSystem";
 import { useAuth } from "@/contexts/AuthContext";
