@@ -392,9 +392,8 @@ function makeDescription(type: ProviderType): string {
 }
 
 
-  switch (type) {
-    case 'doctor':
-      return base + ' Consultation sur rendez-vous, suivi personnalisé et prévention.'
+
+
     case 'clinic':
       return base + ' Prise en charge pluridisciplinaire et urgences mineures.'
     case 'pharmacy':
