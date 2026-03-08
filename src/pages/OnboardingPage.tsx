@@ -239,7 +239,11 @@ export default function OnboardingPage() {
             <div className="w-56 h-56 relative">
               <img
                 src={slide.image}
+                srcSet={slide.imageSrcSet}
+                sizes={slide.imageSizes}
                 alt={slide.title}
+                width={224}
+                height={224}
                 className="w-full h-full object-contain drop-shadow-lg"
                 draggable={false}
               />
