@@ -393,8 +393,6 @@ function makeDescription(type: ProviderType): string {
 
 
 
-
-    case 'clinic':
       return base + ' Prise en charge pluridisciplinaire et urgences mineures.'
     case 'pharmacy':
       return base + ' Conseils pharmaceutiques, disponibilité 24/7 pour certaines officines.'
