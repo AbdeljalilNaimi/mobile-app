@@ -42,8 +42,7 @@ export function AdminDocUpload() {
 
     setState('uploading');
     try {
-      const { error } = await supabase.storage.from(BUCKET).upload(FILE_NAME, file, { upsert: true });
-      if (error) throw error;
+      await secureUpload(BUCKET, FILE_NAME, file, true);
       setState('success');
       setHasExisting(true);
       toast.success('Documentation officielle mise à jour avec succès.');
