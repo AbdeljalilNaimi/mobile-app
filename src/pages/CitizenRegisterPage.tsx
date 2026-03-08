@@ -311,12 +311,12 @@ const CitizenRegisterPage = () => {
       </div>
 
       {/* Right Panel - Form */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-10 bg-background">
+      <div className="flex-1 flex items-start justify-center p-6 sm:p-10 bg-background overflow-y-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="w-full max-w-md space-y-8"
+          className="w-full max-w-md space-y-8 py-8 sm:py-12"
         >
           {/* Mobile logo */}
           <div className="lg:hidden text-center">
