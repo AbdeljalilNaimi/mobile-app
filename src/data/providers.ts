@@ -347,7 +347,7 @@ function getDefaultProviderImage(type: string, index: number): string {
   return images[index % images.length];
 }
 
-function makeName(type: ProviderType, specialty: string | undefined, i: number) {
+function makeName(type: ProviderType, specialty: string | undefined, i: number): string {
   switch (type) {
     case 'doctor':
       return `Dr. ${['Ahmed', 'Sara', 'Youssef', 'Imen', 'Nadia', 'Khaled', 'Rania'][i % 7]} ${['Benali', 'Bendaoud', 'Merabet', 'Saadi', 'Zerrouki'][i % 5]}${specialty ? ' - ' + specialty : ''}`
@@ -359,6 +359,16 @@ function makeName(type: ProviderType, specialty: string | undefined, i: number) 
       return `Laboratoire ${['Atlas', 'Pasteur', 'BioLab', 'El Yakine'][i % 4]}`
     case 'hospital':
       return `Hôpital ${['Universitaire', 'Régional', 'Privé Al Hayat'][i % 3]}`
+    case 'birth_hospital':
+      return `Maternité ${['El Amel', 'El Hayat', 'Ibn Rochd'][i % 3]}`
+    case 'blood_cabin':
+      return `Centre de Don ${['Central', 'Nord', 'Sud', 'Est'][i % 4]}`
+    case 'radiology_center':
+      return `Centre Radio ${['El Nour', 'Atlas', 'El Chifa'][i % 3]}`
+    case 'medical_equipment':
+      return `Équipement Médical ${['SantéPlus', 'MedEquip', 'AlgériaMed'][i % 3]}`
+    default:
+      return `Établissement ${i + 1}`
   }
 }
 
