@@ -60,7 +60,7 @@ export const QuickSearchSection = () => {
               {/* Provider Type */}
               <Select value={providerType} onValueChange={setProviderType}>
                 <SelectTrigger className="border-primary/20 focus:border-primary bg-background" aria-label="Select provider type">
-                  <Stethoscope className="mr-2 h-4 w-4 text-primary" />
+                  <Stethoscope className="me-2 h-4 w-4 text-primary" />
                   <SelectValue placeholder={t('quickSearch', 'typePlaceholder')} />
                 </SelectTrigger>
                 <SelectContent className="bg-popover/95 backdrop-blur-lg border-border/50 z-50">
