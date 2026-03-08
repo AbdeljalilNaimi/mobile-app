@@ -263,7 +263,7 @@ export const MobileHomeScreen = () => {
                   <p className="text-sm font-semibold text-foreground truncate">{doc.name}</p>
                   {doc.isPremium && (
                     <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[9px] font-bold flex-shrink-0">
-                      <Shield className="h-2.5 w-2.5" /> Premium
+                      <Shield className="h-2.5 w-2.5" /> {t('mobileHome', 'premiumBadge')}
                     </span>
                   )}
                 </div>
