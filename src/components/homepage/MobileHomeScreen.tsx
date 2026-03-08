@@ -8,6 +8,7 @@ import {
   Bell, SlidersHorizontal, Stethoscope, Star,
   MessageSquare, TrendingUp, LayoutGrid,
   Phone, HelpCircle, Settings as SettingsIcon, Handshake, Map,
+  CreditCard, Newspaper, FlaskConical, UserPlus,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useNotifications } from '@/hooks/useNotifications';
@@ -27,6 +28,10 @@ const quickActions = [
   { icon: MapPin, label: 'Carte', path: '/map/providers' },
   { icon: Siren, label: 'Urgences', path: '/map/emergency' },
   { icon: CalendarDays, label: 'RDV', path: '/citizen/appointments' },
+  { icon: CreditCard, label: 'Carte', path: '/citizen/health-card' },
+  { icon: Users, label: 'Communauté', path: '/community' },
+  { icon: Newspaper, label: 'Annonces', path: '/annonces' },
+  { icon: FlaskConical, label: 'Recherche', path: '/research' },
 ];
 
 const healthServices = [
@@ -66,6 +71,9 @@ const quickAccess = [
   { icon: Bot, title: 'Assistant IA', subtitle: 'Posez vos questions', isPrimary: true, path: '/medical-assistant' },
   { icon: Heart, title: 'Favoris', subtitle: 'Médecins sauvegardés', isPrimary: false, path: '/favorites' },
   { icon: LayoutGrid, title: 'Tableau de bord', subtitle: 'Votre espace patient', isPrimary: false, path: '/citizen/dashboard' },
+  { icon: CreditCard, title: 'Carte d\'urgence', subtitle: 'Vos infos médicales', isPrimary: true, path: '/citizen/health-card' },
+  { icon: CalendarDays, title: 'Rendez-vous', subtitle: 'Gérer vos RDV', isPrimary: true, path: '/citizen/appointments' },
+  { icon: Map, title: 'Carte don de sang', subtitle: 'Centres à proximité', isPrimary: false, path: '/map/blood' },
   { icon: Siren, title: 'Urgences', subtitle: 'Guide & numéros utiles', isPrimary: true, path: '/emergency' },
   { icon: Phone, title: 'Contact', subtitle: 'Nous contacter', isPrimary: false, path: '/contact' },
   { icon: HelpCircle, title: 'FAQ', subtitle: 'Questions fréquentes', isPrimary: false, path: '/faq' },
