@@ -55,10 +55,21 @@ const communityPosts = [
   { title: 'Expérience chirurgie laser', category: 'Expérience', comments: 15, isPrimary: true },
 ];
 
+const entraideItems = [
+  { icon: Handshake, title: 'Médicaments', subtitle: 'Dons disponibles', path: '/citizen/provide' },
+  { icon: Handshake, title: 'Transport', subtitle: 'Accompagnement', path: '/citizen/provide' },
+  { icon: Handshake, title: 'Matériel médical', subtitle: 'Prêt & don', path: '/citizen/provide' },
+  { icon: Handshake, title: 'Alimentation', subtitle: 'Aide alimentaire', path: '/citizen/provide' },
+];
+
 const quickAccess = [
   { icon: Bot, title: 'Assistant IA', subtitle: 'Posez vos questions', isPrimary: true, path: '/medical-assistant' },
   { icon: Heart, title: 'Favoris', subtitle: 'Médecins sauvegardés', isPrimary: false, path: '/favorites' },
   { icon: LayoutGrid, title: 'Tableau de bord', subtitle: 'Votre espace patient', isPrimary: false, path: '/citizen/dashboard' },
+  { icon: Siren, title: 'Urgences', subtitle: 'Guide & numéros utiles', isPrimary: true, path: '/emergency' },
+  { icon: Phone, title: 'Contact', subtitle: 'Nous contacter', isPrimary: false, path: '/contact' },
+  { icon: HelpCircle, title: 'FAQ', subtitle: 'Questions fréquentes', isPrimary: false, path: '/faq' },
+  { icon: SettingsIcon, title: 'Réglages', subtitle: 'Préférences & compte', isPrimary: false, path: '/settings' },
 ];
 
 export const MobileHomeScreen = () => {
