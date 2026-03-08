@@ -27,12 +27,22 @@ import { useChatHistory } from "@/hooks/useChatHistory";
 
 export default function MedicalAssistantPage() {
   const { language } = useLanguage();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [resetKey, setResetKey] = useState(0);
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showGuestBanner, setShowGuestBanner] = useState(true);
   const [initialMessages, setInitialMessages] = useState<{ role: "user" | "assistant"; content: string }[] | undefined>();
+
+  const symptomFromUrl = searchParams.get("symptom");
+
+  // Clear the URL param after reading it so it doesn't re-trigger on navigation
+  useEffect(() => {
+    if (symptomFromUrl) {
+      setSearchParams({}, { replace: true });
+    }
+  }, [symptomFromUrl, setSearchParams]);
 
   const {
     conversations,

@@ -96,6 +96,8 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
+  const autoSentRef = useRef(false);
+
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [suggestionsLoading, setSuggestionsLoading] = useState(false);
   const [suggestionsForIndex, setSuggestionsForIndex] = useState<number | null>(null);
