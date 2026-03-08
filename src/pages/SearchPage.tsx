@@ -309,10 +309,70 @@ function ProviderCard({ provider }: { provider: CityHealthProvider }) {
 
   return (
     <Link to={`/provider/${provider.id}`}>
-      <Card className="p-3 border-border/50 hover:border-primary/30 active:scale-[0.98] transition-all duration-200">
+      <Card className="p-3.5 rounded-2xl border-border/40 shadow-sm hover:shadow-md hover:border-primary/30 active:scale-[0.98] transition-all duration-200 group">
         <div className="flex gap-3">
-          {/* Avatar */}
-          <div className="w-14 h-14 rounded-xl bg-muted/60 flex-shrink-0 overflow-hidden">
+          {/* Info */}
+          <div className="flex-1 min-w-0">
+            {/* Badge row */}
+            <div className="flex items-center gap-1.5 mb-1.5">
+              {verified ? (
+                <span className="inline-flex items-center gap-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800">
+                  <ShieldCheck className="h-2.5 w-2.5" />
+                  Vérifié
+                </span>
+              ) : (
+                <span className="inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                  {provider.type}
+                </span>
+              )}
+              {provider.isOpen && (
+                <span className="inline-flex items-center gap-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400">
+                  <Clock className="h-2.5 w-2.5" /> Ouvert
+                </span>
+              )}
+              {provider.emergency && (
+                <span className="inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-destructive/10 text-destructive border border-destructive/20">
+                  Urgences
+                </span>
+              )}
+            </div>
+
+            {/* Name & specialty */}
+            <h3 className="text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">{provider.name}</h3>
+            <p className="text-xs text-muted-foreground truncate">{provider.specialty || provider.type}</p>
+
+            {/* Details row */}
+            <div className="flex items-center gap-3 mt-1.5">
+              {provider.rating > 0 && (
+                <span className="flex items-center gap-0.5 text-xs">
+                  <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
+                  <span className="font-medium text-foreground">{provider.rating.toFixed(1)}</span>
+                </span>
+              )}
+              <span className="flex items-center gap-0.5 text-xs text-muted-foreground">
+                <MapPin className="h-3 w-3 flex-shrink-0" />
+                <span className="truncate max-w-[140px]">{provider.address}</span>
+              </span>
+            </div>
+
+            {/* Action buttons */}
+            <div className="flex gap-1.5 mt-2">
+              {provider.phone && (
+                <button
+                  onClick={(e) => { e.preventDefault(); window.open(`tel:${provider.phone}`, '_self'); }}
+                  className="inline-flex items-center text-[10px] font-medium px-2 py-1 rounded-full border border-border hover:bg-muted transition-colors"
+                >
+                  <Phone className="h-2.5 w-2.5 mr-0.5" /> Appeler
+                </button>
+              )}
+              <span className="inline-flex items-center text-[10px] font-medium px-2 py-1 rounded-full border border-primary/30 text-primary">
+                <ChevronRight className="h-2.5 w-2.5 mr-0.5" /> Voir profil
+              </span>
+            </div>
+          </div>
+
+          {/* Right: Avatar */}
+          <div className="w-14 h-14 rounded-2xl bg-muted/60 flex-shrink-0 overflow-hidden">
             {provider.image ? (
               <img src={provider.image} alt={provider.name} className="w-full h-full object-cover" />
             ) : (
@@ -320,52 +380,6 @@ function ProviderCard({ provider }: { provider: CityHealthProvider }) {
                 <Stethoscope className="h-6 w-6 text-muted-foreground/40" />
               </div>
             )}
-          </div>
-
-          {/* Info */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <h3 className="text-sm font-semibold text-foreground truncate">{provider.name}</h3>
-                  {verified && <ShieldCheck className="h-3.5 w-3.5 text-primary flex-shrink-0" />}
-                </div>
-                <p className="text-xs text-muted-foreground truncate">{provider.specialty || provider.type}</p>
-              </div>
-              <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-0.5" />
-            </div>
-
-            <div className="flex items-center gap-3 mt-1.5">
-              {provider.rating > 0 && (
-                <span className="flex items-center gap-0.5 text-xs text-amber-500">
-                  <Star className="h-3 w-3 fill-current" />
-                  {provider.rating.toFixed(1)}
-                </span>
-              )}
-              <span className="flex items-center gap-0.5 text-xs text-muted-foreground">
-                <MapPin className="h-3 w-3" />
-                <span className="truncate max-w-[140px]">{provider.address}</span>
-              </span>
-            </div>
-
-            {/* Tags */}
-            <div className="flex gap-1.5 mt-2">
-              {provider.isOpen && (
-                <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-emerald-500/30 text-emerald-600 dark:text-emerald-400">
-                  <Clock className="h-2.5 w-2.5 mr-0.5" /> Ouvert
-                </Badge>
-              )}
-              {provider.emergency && (
-                <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-destructive/30 text-destructive">
-                  Urgences
-                </Badge>
-              )}
-              {provider.phone && (
-                <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-border/50">
-                  <Phone className="h-2.5 w-2.5 mr-0.5" /> Appeler
-                </Badge>
-              )}
-            </div>
           </div>
         </div>
       </Card>
