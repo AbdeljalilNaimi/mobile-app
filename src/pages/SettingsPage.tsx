@@ -39,9 +39,7 @@ export default function SettingsPage() {
   const { theme, toggleTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
   const navigate = useNavigate();
-  const [notifAppointments, setNotifAppointments] = useState(true);
-  const [notifEmergency, setNotifEmergency] = useState(true);
-  const [notifMessages, setNotifMessages] = useState(true);
+  const { prefs, updatePref } = useNotificationPreferences();
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
 
   const initials = profile?.full_name
