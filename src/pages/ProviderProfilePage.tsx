@@ -200,7 +200,7 @@ const ProviderProfilePage = () => {
 
   const handleOpenInMaps = () => {
     if (!provider) return;
-    navigate(`/map/providers?provider=${provider.id}`);
+    navigate(`/map?provider=${provider.id}`);
   };
 
   const handleCopyLink = async () => {

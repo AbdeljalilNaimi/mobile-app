@@ -1,17 +1,17 @@
-import { useEffect, useRef, useMemo, useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { Outlet } from 'react-router-dom';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
-import { MapProvider, useMapContext, MapMode } from '@/contexts/MapContext';
+import { MapProvider, useMapContext } from '@/contexts/MapContext';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { createUserLocationMarker, createRouteStartMarker } from './MapMarkers';
 import { MapPin, Loader2, LocateFixed, Car, Footprints, Route, Clock, X, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { MapChatWidget } from './MapChatWidget';
-import { useCallback } from 'react';
+
 
 const TILE_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 const TILE_ATTRIBUTION = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
@@ -32,14 +32,9 @@ const MapMotherInner = () => {
   const routeStartMarkerRef = useRef<L.Marker | null>(null);
   const initRef = useRef(false);
   const { language } = useLanguage();
-  const location = useLocation();
   const [isBotOpen, setIsBotOpen] = useState(false);
 
-  const mode: MapMode = useMemo(() => {
-    if (location.pathname.includes('/emergency')) return 'emergency';
-    if (location.pathname.includes('/blood')) return 'blood';
-    return 'providers';
-  }, [location.pathname]);
+  // Mode is now handled by UnifiedMapChild, not by pathname
 
   // Init map
   useEffect(() => {
@@ -114,12 +109,7 @@ const MapMotherInner = () => {
     };
   }, [mapRef, geolocation.latitude, geolocation.longitude, setUserPosition]);
 
-  const handleModeChange = useCallback((m: MapMode) => {
-    // Navigation handled by parent — we just use location-based mode
-    const paths: Record<MapMode, string> = { providers: '/map/providers', emergency: '/map/emergency', blood: '/map/blood' };
-    window.history.pushState(null, '', paths[m]);
-    window.dispatchEvent(new PopStateEvent('popstate'));
-  }, []);
+  // Mode change is now handled inside UnifiedMapChild
 
   const handleFlyToProvider = useCallback((id: string) => {
     const p = sidebarProviders.find(p => p.id === id);

@@ -25,8 +25,8 @@ const fadeUp = {
 
 const quickActions = [
   { icon: Search, label: 'Chercher', path: '/search' },
-  { icon: MapPin, label: 'Carte', path: '/map/providers' },
-  { icon: Siren, label: 'Urgences', path: '/map/emergency' },
+  { icon: MapPin, label: 'Carte', path: '/map' },
+  { icon: Siren, label: 'Urgences', path: '/map?mode=emergency' },
   { icon: CalendarDays, label: 'RDV', path: '/citizen/appointments' },
   { icon: CreditCard, label: 'Carte', path: '/citizen/health-card' },
   { icon: Users, label: 'Communauté', path: '/community' },
@@ -73,7 +73,7 @@ const quickAccess = [
   { icon: LayoutGrid, title: 'Tableau de bord', subtitle: 'Votre espace patient', isPrimary: false, path: '/citizen/dashboard' },
   { icon: CreditCard, title: 'Carte d\'urgence', subtitle: 'Vos infos médicales', isPrimary: true, path: '/citizen/health-card' },
   { icon: CalendarDays, title: 'Rendez-vous', subtitle: 'Gérer vos RDV', isPrimary: true, path: '/citizen/appointments' },
-  { icon: Map, title: 'Carte don de sang', subtitle: 'Centres à proximité', isPrimary: false, path: '/map/blood' },
+  { icon: Map, title: 'Carte don de sang', subtitle: 'Centres à proximité', isPrimary: false, path: '/map?mode=blood' },
   { icon: Siren, title: 'Urgences', subtitle: 'Guide & numéros utiles', isPrimary: true, path: '/emergency' },
   { icon: Phone, title: 'Contact', subtitle: 'Nous contacter', isPrimary: false, path: '/contact' },
   { icon: HelpCircle, title: 'FAQ', subtitle: 'Questions fréquentes', isPrimary: false, path: '/faq' },
@@ -192,7 +192,7 @@ export const MobileHomeScreen = () => {
           <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
         </button>
         <button
-          onClick={() => navigate('/map/blood')}
+          onClick={() => navigate('/map?mode=blood')}
           className="w-full flex items-center justify-center gap-1.5 rounded-lg bg-destructive/5 py-2 text-xs font-medium text-destructive active:scale-[0.97] transition-transform"
         >
           <Map className="h-3.5 w-3.5" />

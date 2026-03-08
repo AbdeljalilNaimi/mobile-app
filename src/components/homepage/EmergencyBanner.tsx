@@ -8,7 +8,7 @@ export const EmergencyBanner = () => {
 
   const quickActions = [
     { icon: Phone, label: t('homepage', 'call'), href: 'tel:115' },
-    { icon: MapPin, label: t('homepage', 'locate'), href: '/map/emergency' },
+    { icon: MapPin, label: t('homepage', 'locate'), href: '/map?mode=emergency' },
   ];
   return (
     <section className="py-8 px-4">
@@ -19,7 +19,7 @@ export const EmergencyBanner = () => {
           transition={{ duration: 0.5 }}
         >
           <Link
-            to="/map/emergency"
+            to="/map?mode=emergency"
             className="group relative block overflow-hidden rounded-2xl border border-border bg-card transition-all duration-300 hover:border-red-500/30 hover:shadow-lg hover:shadow-red-500/5"
           >
             {/* Animated background gradient */}

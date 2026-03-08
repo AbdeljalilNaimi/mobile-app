@@ -190,7 +190,7 @@ export const Header = () => {
     {
       label: texts.services,
       items: [
-        { label: texts.map, href: '/map/providers', icon: MapPin, description: texts.mapDesc },
+        { label: texts.map, href: '/map', icon: MapPin, description: texts.mapDesc },
         { label: texts.search, href: '/search', icon: Search, description: texts.searchDesc },
         { label: texts.aiAssistant, href: '/medical-assistant', icon: Bot, description: texts.aiDesc },
         { label: texts.bloodDonation, href: '/blood-donation', icon: Droplet, description: texts.bloodDesc },
@@ -202,7 +202,7 @@ export const Header = () => {
     {
       label: texts.emergency,
       items: [
-        { label: texts.emergencyServices, href: '/map/emergency', icon: AlertTriangle, description: texts.emergencyDesc },
+        { label: texts.emergencyServices, href: '/map?mode=emergency', icon: AlertTriangle, description: texts.emergencyDesc },
         { label: texts.emergencyCall, href: 'tel:15', icon: Phone, isDestructive: true },
       ]
     },

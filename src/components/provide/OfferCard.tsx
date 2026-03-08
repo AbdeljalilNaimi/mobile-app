@@ -197,7 +197,7 @@ export const OfferCard = ({ offer, isOwner, onEdit, onDelete, isDeleting }: Offe
                     size="sm"
                     variant="outline"
                     onClick={() =>
-                      navigate(`/map/providers?lat=${offer.location.lat}&lng=${offer.location.lng}`)
+                      navigate(`/map?lat=${offer.location.lat}&lng=${offer.location.lng}`)
                     }
                     className="gap-1.5 h-9"
                   >

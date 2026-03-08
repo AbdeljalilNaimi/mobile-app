@@ -74,8 +74,8 @@ export const AntigravityHeader = () => {
   // Data
   const soinsItems: MegaMenuItem[] = [
     { label: t('footer', 'searchDoctors'), description: 'Trouvez un médecin près de chez vous', href: '/search', icon: Search },
-    { label: t('footer', 'interactiveMap'), description: 'Explorez les établissements de santé', href: '/map/providers', icon: Map },
-    { label: t('footer', 'emergency247'), description: 'Accès rapide aux urgences', href: '/map/emergency', icon: Siren },
+    { label: t('footer', 'interactiveMap'), description: 'Explorez les établissements de santé', href: '/map', icon: Map },
+    { label: t('footer', 'emergency247'), description: 'Accès rapide aux urgences', href: '/map?mode=emergency', icon: Siren },
     { label: t('footer', 'aiAssistant'), description: 'Posez vos questions de santé', href: '/medical-assistant', icon: Bot },
     { label: language === 'ar' ? 'الإعلانات' : language === 'en' ? 'Announcements' : 'Annonces', description: language === 'ar' ? 'عروض المهنيين' : language === 'en' ? 'Professional offers' : 'Offres des professionnels', href: '/annonces', icon: Megaphone },
     { label: language === 'ar' ? 'البحث الطبي' : language === 'en' ? 'Medical Research' : 'Recherche Médicale', description: language === 'ar' ? 'مقالات ومنشورات علمية' : language === 'en' ? 'Articles and publications' : 'Articles et publications scientifiques', href: '/research', icon: BookOpen },
@@ -193,7 +193,7 @@ export const AntigravityHeader = () => {
             <NavTrigger label={t('footer', 'professionals')} menuKey="pro" />
             <NavTrigger label={t('footer', 'resources')} menuKey="resources" />
             <Link
-              to="/map/emergency"
+              to="/map?mode=emergency"
               className="px-4 py-2 text-sm font-semibold text-destructive hover:text-destructive/80 transition-colors rounded-lg hover:bg-destructive/5"
             >
               {t('nav', 'emergency')}
@@ -414,7 +414,7 @@ export const AntigravityHeader = () => {
                         </p>
                       </div>
                       <Link
-                        to="/map/emergency"
+                        to="/map?mode=emergency"
                         className="mt-4 inline-flex items-center gap-1.5 text-xs font-semibold text-destructive hover:underline"
                       >
                         Accéder aux urgences <ArrowRight className="h-3 w-3" />
@@ -563,7 +563,7 @@ export const AntigravityHeader = () => {
 
               {/* Emergency */}
               <Link
-                to="/map/emergency"
+                to="/map?mode=emergency"
                 className="flex items-center gap-3 px-6 py-3 text-sm font-semibold text-destructive hover:bg-destructive/10 transition-colors"
                 onClick={() => setIsMobileMenuOpen(false)}
               >

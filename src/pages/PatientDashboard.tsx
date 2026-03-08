@@ -175,7 +175,7 @@ const PatientDashboardContent = () => {
 
   const quickServices = [
     { label: d('searchProvider'), description: d('searchProviderDesc'), icon: Search, href: '/search', color: 'bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400' },
-    { label: d('interactiveMap'), description: d('interactiveMapDesc'), icon: Map, href: '/map/providers', color: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' },
+    { label: d('interactiveMap'), description: d('interactiveMapDesc'), icon: Map, href: '/map', color: 'bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' },
     { label: d('emergencies'), description: d('emergenciesDesc'), icon: Siren, href: '/emergency', color: 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' },
     { label: d('aiAssistant'), description: d('aiAssistantDesc'), icon: Bot, href: '/medical-assistant', color: 'bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400' },
     { label: d('bloodDonation'), description: d('bloodDonationDesc'), icon: Droplets, href: '/blood-donation', color: 'bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400' },

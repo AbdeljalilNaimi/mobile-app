@@ -4,9 +4,7 @@ import { Wifi, Battery, Signal } from 'lucide-react';
 const routeTitles: Record<string, string> = {
   '/': 'CityHealth',
   '/search': 'Recherche',
-  '/map/providers': 'Carte',
-  '/map/emergency': 'Urgences',
-  '/map/blood': 'Don de sang',
+  '/map': 'Carte',
   '/medical-assistant': 'Assistant IA',
   '/profile': 'Mon Profil',
   '/favorites': 'Favoris',

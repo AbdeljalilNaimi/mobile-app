@@ -17,9 +17,7 @@ import { MobileAppShell } from "@/components/layout/MobileAppShell";
 // Lazy-load heavy pages for better LCP
 const AntigravityIndex = lazy(() => import("./pages/AntigravityIndex"));
 const MapMother = lazy(() => import("./components/map/MapMother"));
-const ProvidersMapChild = lazy(() => import("./components/map/children/ProvidersMapChild"));
-const EmergencyMapChild = lazy(() => import("./components/map/children/EmergencyMapChild"));
-const BloodMapChild = lazy(() => import("./components/map/children/BloodMapChild"));
+const UnifiedMapChild = lazy(() => import("./components/map/children/UnifiedMapChild"));
 
 import LoadingSpinner from "./components/LoadingSpinner";
 
@@ -109,9 +107,9 @@ const VerificationGuard = ({ children }: { children: React.ReactNode }) => {
 function CarteRedirect() {
   const [params] = useSearchParams();
   const mode = params.get('mode');
-  const dest = mode === 'blood' ? '/map/blood'
-             : mode === 'emergency' ? '/map/emergency'
-             : '/map/providers';
+  const dest = mode === 'blood' ? '/map?mode=blood'
+             : mode === 'emergency' ? '/map?mode=emergency'
+             : '/map';
   return <Navigate to={dest} replace />;
 }
 
@@ -183,10 +181,7 @@ const AppRoutes = () => {
         {/* ============================================ */}
         <Route element={<MobileAppShell />}>
           <Route path="/map" element={<MapMother />}>
-            <Route index element={<Navigate to="/map/providers" replace />} />
-            <Route path="providers" element={<ProvidersMapChild />} />
-            <Route path="emergency" element={<EmergencyMapChild />} />
-            <Route path="blood" element={<BloodMapChild />} />
+            <Route index element={<UnifiedMapChild />} />
           </Route>
         </Route>
 
@@ -249,8 +244,11 @@ const AppRoutes = () => {
         <Route path="/why" element={<Navigate to="/docs/getting-started/why-cityhealth" replace />} />
         <Route path="/how" element={<Navigate to="/docs/getting-started/how-it-works" replace />} />
         <Route path="/carte" element={<CarteRedirect />} />
-        <Route path="/providers-map" element={<Navigate to="/map/providers" replace />} />
-        <Route path="/urgences" element={<Navigate to="/map/emergency" replace />} />
+        <Route path="/map/providers" element={<Navigate to="/map" replace />} />
+        <Route path="/map/emergency" element={<Navigate to="/map?mode=emergency" replace />} />
+        <Route path="/map/blood" element={<Navigate to="/map?mode=blood" replace />} />
+        <Route path="/providers-map" element={<Navigate to="/map" replace />} />
+        <Route path="/urgences" element={<Navigate to="/map?mode=emergency" replace />} />
         <Route path="/ai-health-chat" element={<Navigate to="/docs" replace />} />
 
         {/* DEV TOOLS */}

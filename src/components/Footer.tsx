@@ -28,8 +28,8 @@ const Footer = () => {
 
   const servicesLinks = [
     { label: t('footer', 'searchDoctors'), href: '/search', icon: Search },
-    { label: t('footer', 'interactiveMap'), href: '/map/providers', icon: Map },
-    { label: t('footer', 'emergency247'), href: '/map/emergency', icon: Siren },
+    { label: t('footer', 'interactiveMap'), href: '/map', icon: Map },
+    { label: t('footer', 'emergency247'), href: '/map?mode=emergency', icon: Siren },
     { label: t('footer', 'aiAssistant'), href: '/medical-assistant', icon: Bot },
     { label: t('footer', 'bloodDonation'), href: '/blood-donation', icon: Droplets },
   ];
