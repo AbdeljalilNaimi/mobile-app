@@ -3,7 +3,7 @@
  * Handles uploading provider logos and gallery images to cloud storage
  */
 
-import { supabase } from '@/lib/supabaseClient';
+import { secureUpload, secureDelete } from '@/services/storageUploadService';
 
 const BUCKET = 'provider-images';
 
@@ -19,22 +19,7 @@ export async function uploadProviderImage(
   const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg';
   const fileName = `${providerId}/${folder}/${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
-  const { error } = await supabase.storage
-    .from(BUCKET)
-    .upload(fileName, file, {
-      cacheControl: '3600',
-      upsert: false,
-    });
-
-  if (error) {
-    throw new Error(`Erreur d'upload: ${error.message}`);
-  }
-
-  const { data: urlData } = supabase.storage
-    .from(BUCKET)
-    .getPublicUrl(fileName);
-
-  return urlData.publicUrl;
+  return secureUpload(BUCKET, fileName, file);
 }
 
 /**
@@ -72,8 +57,9 @@ export async function deleteProviderImage(publicUrl: string): Promise<void> {
   if (pathParts.length < 2) return;
   
   const filePath = pathParts[1];
-  const { error } = await supabase.storage.from(BUCKET).remove([filePath]);
-  if (error) {
+  try {
+    await secureDelete(BUCKET, [filePath]);
+  } catch (error) {
     console.error('Failed to delete image:', error);
   }
 }

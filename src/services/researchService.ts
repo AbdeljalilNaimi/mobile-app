@@ -301,18 +301,7 @@ export async function adminToggleFeatured(articleId: string, featured: boolean):
 export async function uploadArticlePdf(file: File, providerId: string): Promise<string> {
   const ext = file.name.split('.').pop();
   const path = `${providerId}/research/${Date.now()}.${ext}`;
-
-  const { error } = await supabase.storage
-    .from('pdfs')
-    .upload(path, file, { upsert: true });
-
-  if (error) throw error;
-
-  const { data } = supabase.storage
-    .from('pdfs')
-    .getPublicUrl(path);
-
-  return data.publicUrl;
+  return secureUpload('pdfs', path, file, true);
 }
 
 // ====== CATEGORIES ======

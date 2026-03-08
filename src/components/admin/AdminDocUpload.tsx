@@ -54,8 +54,7 @@ export function AdminDocUpload() {
 
   const handleDelete = async () => {
     try {
-      const { error } = await supabase.storage.from(BUCKET).remove([FILE_NAME]);
-      if (error) throw error;
+      await secureDelete(BUCKET, [FILE_NAME]);
       setHasExisting(false);
       setState('idle');
       toast.success('Document supprimé.');

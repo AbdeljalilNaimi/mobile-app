@@ -49,7 +49,7 @@ export const ProviderPDFUpload = () => {
     if (!user?.uid) return;
     setStatus('uploading');
     try {
-      await supabase.storage.from('pdfs').remove([`${user.uid}.pdf`]);
+      await secureDelete('pdfs', [`${user.uid}.pdf`]);
       setStatus('idle');
       setFileName(null);
     } catch {
