@@ -35,7 +35,7 @@ interface SettingsGroup {
 }
 
 export default function SettingsPage() {
-  const { profile, logout } = useAuth();
+  const { profile, logout, isAuthenticated } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
   const navigate = useNavigate();
@@ -70,15 +70,15 @@ export default function SettingsPage() {
   };
 
   const groups: SettingsGroup[] = [
-    {
+    ...(isAuthenticated ? [{
       title: 'Compte',
       items: [
         { icon: User, label: 'Mon Profil', onClick: () => navigate('/profile'), iconColor: 'text-blue-500 bg-blue-500/10' },
         { icon: Lock, label: 'Changer le mot de passe', onClick: () => setPasswordDialogOpen(true), iconColor: 'text-slate-500 bg-slate-500/10' },
         { icon: LogOut, label: 'Se déconnecter', onClick: handleLogout, destructive: true },
       ],
-    },
-    {
+    }] : []),
+    ...(isAuthenticated ? [{
       title: 'Notifications',
       items: [
         { icon: Calendar, label: 'Rendez-vous', description: 'Rappels et confirmations', rightElement: <Switch checked={prefs.appointments} onCheckedChange={(v) => updatePref('appointments', v)} />, iconColor: 'text-indigo-500 bg-indigo-500/10' },
@@ -92,7 +92,7 @@ export default function SettingsPage() {
         { icon: ShieldCheck, label: 'Carte d\'urgence', onClick: () => navigate('/profile'), iconColor: 'text-teal-500 bg-teal-500/10' },
         { icon: Droplet, label: 'Don de sang', onClick: () => navigate('/blood-donation'), iconColor: 'text-rose-500 bg-rose-500/10' },
       ],
-    },
+    }] : []),
     {
       title: 'Préférences',
       items: [
@@ -138,32 +138,56 @@ export default function SettingsPage() {
 
       <div className="px-4 py-4 space-y-5">
         {/* Profile Card */}
-        <motion.button
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          onClick={() => navigate('/profile')}
-          className="w-full flex items-center gap-4 p-4 bg-card rounded-2xl border border-border/50 shadow-sm active:scale-[0.98] transition-transform text-left"
-        >
-          <Avatar className="h-14 w-14 border-2 border-primary/20">
-            <AvatarImage src={profile?.avatar_url || undefined} />
-            <AvatarFallback className="text-lg font-semibold bg-primary/10 text-primary">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex-1 min-w-0">
-            <p className="font-semibold text-foreground truncate">
-              {profile?.full_name || 'Mon Profil'}
-            </p>
-            <p className="text-sm text-muted-foreground truncate">{profile?.email}</p>
-            {profile?.verification_status === 'verified' && (
-              <Badge variant="secondary" className="mt-1 text-xs bg-emerald-500/10 text-emerald-600 border-0">
-                <ShieldCheck className="h-3 w-3 mr-1" />
-                Vérifié
-              </Badge>
-            )}
-          </div>
-          <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
-        </motion.button>
+        {isAuthenticated ? (
+          <motion.button
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            onClick={() => navigate('/profile')}
+            className="w-full flex items-center gap-4 p-4 bg-card rounded-2xl border border-border/50 shadow-sm active:scale-[0.98] transition-transform text-left"
+          >
+            <Avatar className="h-14 w-14 border-2 border-primary/20">
+              <AvatarImage src={profile?.avatar_url || undefined} />
+              <AvatarFallback className="text-lg font-semibold bg-primary/10 text-primary">
+                {initials}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-foreground truncate">
+                {profile?.full_name || 'Mon Profil'}
+              </p>
+              <p className="text-sm text-muted-foreground truncate">{profile?.email}</p>
+              {profile?.verification_status === 'verified' && (
+                <Badge variant="secondary" className="mt-1 text-xs bg-emerald-500/10 text-emerald-600 border-0">
+                  <ShieldCheck className="h-3 w-3 mr-1" />
+                  Vérifié
+                </Badge>
+              )}
+            </div>
+            <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
+          </motion.button>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="w-full flex items-center gap-4 p-4 bg-card rounded-2xl border border-border/50 shadow-sm"
+          >
+            <Avatar className="h-14 w-14 border-2 border-muted">
+              <AvatarFallback className="text-lg font-semibold bg-muted text-muted-foreground">
+                <User className="h-6 w-6" />
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex-1 min-w-0">
+              <p className="font-semibold text-foreground">Visiteur</p>
+              <p className="text-sm text-muted-foreground">Non connecté</p>
+            </div>
+            <button
+              onClick={() => navigate('/citizen/login')}
+              className="text-sm font-medium text-primary hover:underline shrink-0"
+            >
+              Se connecter
+            </button>
+          </motion.div>
+        )}
 
         {/* Settings Groups */}
         {groups.map((group, gi) => (
