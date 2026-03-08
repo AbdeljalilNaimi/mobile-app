@@ -442,7 +442,7 @@ export const MobileHomeScreen = () => {
               <button
                 key={post.id}
                 onClick={() => navigate('/community')}
-                className="rounded-xl bg-card border border-border shadow-sm p-3.5 text-left active:scale-[0.97] transition-transform flex flex-col justify-between min-h-[100px]"
+                className="rounded-xl bg-card border border-border shadow-sm p-3.5 text-start active:scale-[0.97] transition-transform flex flex-col justify-between min-h-[100px]"
               >
                 <span className={`self-start text-[9px] font-semibold border px-2 py-0.5 rounded-full ${post.isPrimary ? 'border-primary text-primary' : 'border-border text-muted-foreground'}`}>
                   {post.category}
