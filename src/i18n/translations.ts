@@ -2900,6 +2900,8 @@ export const translations: Record<Language, Translations> = {
       comments: 'تعليقات',
     },
   },
+
+  en: {
     common: {
       search: 'Search',
       filters: 'Filters',
