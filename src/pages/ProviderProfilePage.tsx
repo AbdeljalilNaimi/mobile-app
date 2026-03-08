@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useProvider } from "@/hooks/useProviders";
 import { useFavorites, useToggleFavorite } from "@/hooks/useFavorites";
+import { useAuthRequired } from "@/hooks/useAuthRequired";
 import { BookingModal } from "@/components/BookingModal";
 import { ReviewSystem } from "@/components/ReviewSystem";
 import { useAuth } from "@/contexts/AuthContext";
@@ -129,21 +130,14 @@ const ProviderProfilePage = () => {
     }
   }, [provider?.id]);
 
-  const handleFavoriteClick = () => {
-    if (!isAuthenticated) {
-      toast.error(t('auth.login'), {
-        description: t('provider.addToFavorites'),
-        action: {
-          label: t('auth.login'),
-          onClick: () => navigate("/auth"),
-        },
-      });
-      return;
-    }
+  const { requireAuth, AuthRequiredModal: FavAuthModal } = useAuthRequired();
 
-    if (!provider) return;
-    toggleFavorite(provider.id);
-    toast.success(isFavorite ? t('provider.addToFavorites') : t('provider.removeFromFavorites'));
+  const handleFavoriteClick = () => {
+    requireAuth(() => {
+      if (!provider) return;
+      toggleFavorite(provider.id);
+      toast.success(isFavorite ? t('provider.addToFavorites') : t('provider.removeFromFavorites'));
+    });
   };
 
   const calculateRouteToProvider = useCallback((mode: 'driving' | 'foot' = transportMode) => {
@@ -2667,6 +2661,7 @@ const ProviderProfilePage = () => {
           providerId={provider.id}
         />
       )}
+    <FavAuthModal />
     </main>
   );
 };

@@ -8,6 +8,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { List, Grid, RowComponentProps, CellComponentProps } from 'react-window';
 import { VerifiedBadge } from '@/components/trust/VerifiedBadge';
 import { isProviderVerified } from '@/utils/verificationUtils';
+import { useAuthRequired } from '@/hooks/useAuthRequired';
 
 // Custom hook for detecting fast scrolling
 const useScrollingIndicator = (threshold = 150) => {
@@ -288,13 +289,17 @@ export const SearchResults = ({ providers, viewMode, searchQuery }: SearchResult
     return () => window.removeEventListener('resize', updateSize);
   }, []);
 
+  const { requireAuth, AuthRequiredModal } = useAuthRequired();
+
   const toggleFavorite = useCallback((providerId: string) => {
-    setFavorites(prev =>
-      prev.includes(providerId)
-        ? prev.filter(id => id !== providerId)
-        : [...prev, providerId]
-    );
-  }, []);
+    requireAuth(() => {
+      setFavorites(prev =>
+        prev.includes(providerId)
+          ? prev.filter(id => id !== providerId)
+          : [...prev, providerId]
+      );
+    });
+  }, [requireAuth]);
 
   // Calculate grid columns based on container width
   const columnCount = Math.max(1, Math.floor(containerSize.width / GRID_ITEM_MIN_WIDTH));
@@ -399,6 +404,7 @@ export const SearchResults = ({ providers, viewMode, searchQuery }: SearchResult
           ))}
         </div>
       )}
+      <AuthRequiredModal />
     </div>
   );
 };
