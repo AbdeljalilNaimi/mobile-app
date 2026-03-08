@@ -104,18 +104,18 @@ export default function SettingsPage() {
     {
       title: 'Ressources',
       items: [
-        { icon: Lightbulb, label: 'Comment ça marche', onClick: () => navigate('/docs/getting-started/how-it-works'), external: true, iconColor: 'text-yellow-500 bg-yellow-500/10' },
-        { icon: Heart, label: 'Pourquoi CityHealth', onClick: () => navigate('/docs/getting-started/why-cityhealth'), external: true, iconColor: 'text-pink-500 bg-pink-500/10' },
-        { icon: HelpCircle, label: 'FAQ', onClick: () => navigate('/faq'), external: true, iconColor: 'text-sky-500 bg-sky-500/10' },
-        { icon: BookOpen, label: 'Documentation', onClick: () => navigate('/docs'), external: true, iconColor: 'text-emerald-500 bg-emerald-500/10' },
+        { icon: Lightbulb, label: 'Comment ça marche', onClick: () => window.open('https://cityhealth-dz.lovable.app/docs', '_blank'), external: true, iconColor: 'text-yellow-500 bg-yellow-500/10' },
+        { icon: Heart, label: 'Pourquoi CityHealth', onClick: () => window.open('https://cityhealth-dz.lovable.app/research', '_blank'), external: true, iconColor: 'text-pink-500 bg-pink-500/10' },
+        { icon: HelpCircle, label: 'FAQ', onClick: () => window.open('https://cityhealth-dz.lovable.app/faq', '_blank'), external: true, iconColor: 'text-sky-500 bg-sky-500/10' },
+        { icon: BookOpen, label: 'Documentation', onClick: () => window.open('https://cityhealth-dz.lovable.app/docs', '_blank'), external: true, iconColor: 'text-emerald-500 bg-emerald-500/10' },
         { icon: Code, label: 'Espace développeurs', onClick: () => window.open('https://cityhealth-dz.lovable.app/developers', '_blank'), external: true, iconColor: 'text-orange-500 bg-orange-500/10' },
       ],
     },
     {
       title: 'Légal',
       items: [
-        { icon: FileText, label: 'Conditions d\'utilisation', onClick: () => navigate('/terms'), external: true, iconColor: 'text-slate-500 bg-slate-500/10' },
-        { icon: FileText, label: 'Politique de confidentialité', onClick: () => navigate('/privacy'), external: true, iconColor: 'text-slate-500 bg-slate-500/10' },
+        { icon: FileText, label: 'Conditions d\'utilisation', onClick: () => window.open('https://cityhealth-dz.lovable.app/terms', '_blank'), external: true, iconColor: 'text-slate-500 bg-slate-500/10' },
+        { icon: FileText, label: 'Politique de confidentialité', onClick: () => window.open('https://cityhealth-dz.lovable.app/privacy', '_blank'), external: true, iconColor: 'text-slate-500 bg-slate-500/10' },
       ],
     },
     {
@@ -123,7 +123,7 @@ export default function SettingsPage() {
       items: [
         { icon: ExternalLink, label: 'Visiter notre site web', description: 'cityhealth-dz.lovable.app', onClick: () => window.open('https://cityhealth-dz.lovable.app/', '_blank'), external: true, iconColor: 'text-primary bg-primary/10' },
         { icon: Info, label: 'Version de l\'app', description: 'v2.4.0', iconColor: 'text-gray-400 bg-gray-400/10' },
-        { icon: HelpCircle, label: 'Centre d\'aide', onClick: () => navigate('/faq'), iconColor: 'text-sky-500 bg-sky-500/10' },
+        { icon: HelpCircle, label: 'Centre d\'aide', onClick: () => window.open('https://cityhealth-dz.lovable.app/faq', '_blank'), external: true, iconColor: 'text-sky-500 bg-sky-500/10' },
         { icon: MessageSquare, label: 'Contacter le support', onClick: () => navigate('/contact'), iconColor: 'text-blue-500 bg-blue-500/10' },
         { icon: Bug, label: 'Signaler un bug', onClick: () => toast.info('Merci ! Envoyez un email à support@cityhealth.dz'), iconColor: 'text-orange-500 bg-orange-500/10' },
       ],
