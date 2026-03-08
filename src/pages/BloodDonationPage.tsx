@@ -53,6 +53,8 @@ export default function BloodDonationPage() {
   const { isRTL, language } = useLanguage();
   const { isAuthenticated, profile } = useAuth();
   
+  const { requireAuth, AuthRequiredModal: AuthModal } = useAuthRequired();
+  
   // Emergency response state
   const [respondingEmergency, setRespondingEmergency] = useState<BloodEmergency | null>(null);
   
