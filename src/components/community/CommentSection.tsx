@@ -5,6 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { EyeOff, Send, LogIn } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAuthRequired } from '@/hooks/useAuthRequired';
 import { CommentItem } from './CommentItem';
 import { ReportDialog } from './ReportDialog';
 import { containsProfanity } from '@/utils/profanityFilter';
@@ -19,7 +20,7 @@ import {
   ReportReason,
 } from '@/services/communityService';
 import { toast } from 'sonner';
-import { Link } from 'react-router-dom';
+
 
 interface Props {
   postId: string;
@@ -30,6 +31,7 @@ interface Props {
 export const CommentSection = ({ postId, upvotedCommentIds, onUpvoteChange }: Props) => {
   const { t } = useLanguage();
   const { user, profile, isAdmin } = useAuth();
+  const { requireAuth, AuthRequiredModal } = useAuthRequired();
   const [comments, setComments] = useState<CommunityComment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [isAnonymous, setIsAnonymous] = useState(false);
@@ -179,12 +181,10 @@ export const CommentSection = ({ postId, upvotedCommentIds, onUpvoteChange }: Pr
       ) : (
         <div className="mt-3 flex items-center gap-3 px-3 py-2.5 rounded-xl bg-muted/30">
           <p className="text-xs text-muted-foreground flex-1">{t('community', 'loginToParticipate')}</p>
-          <Link to="/citizen-login">
-            <Button size="sm" variant="outline" className="gap-1.5 rounded-full text-xs">
-              <LogIn className="h-3.5 w-3.5" />
-              {t('header', 'signin')}
-            </Button>
-          </Link>
+          <Button size="sm" variant="outline" className="gap-1.5 rounded-full text-xs" onClick={() => requireAuth()}>
+            <LogIn className="h-3.5 w-3.5" />
+            {t('header', 'signin')}
+          </Button>
         </div>
       )}
 
@@ -193,6 +193,7 @@ export const CommentSection = ({ postId, upvotedCommentIds, onUpvoteChange }: Pr
         onClose={() => setReportTarget(null)}
         onSubmit={handleReport}
       />
+      <AuthRequiredModal />
     </div>
   );
 };

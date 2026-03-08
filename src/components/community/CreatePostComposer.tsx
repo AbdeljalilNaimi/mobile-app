@@ -8,10 +8,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Send, EyeOff, User, LogIn } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAuthRequired } from '@/hooks/useAuthRequired';
 import { CommunityCategory } from '@/services/communityService';
 import { containsProfanity } from '@/utils/profanityFilter';
 import { toast } from 'sonner';
-import { Link } from 'react-router-dom';
 
 interface Props {
   onSubmit: (data: { title: string; content: string; category: CommunityCategory; is_anonymous: boolean }) => Promise<void>;
@@ -21,6 +21,7 @@ interface Props {
 export const CreatePostComposer = ({ onSubmit, isLoading }: Props) => {
   const { t } = useLanguage();
   const { user, profile } = useAuth();
+  const { requireAuth, AuthRequiredModal } = useAuthRequired();
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [category, setCategory] = useState<CommunityCategory>('suggestion');
@@ -44,22 +45,23 @@ export const CreatePostComposer = ({ onSubmit, isLoading }: Props) => {
   // Guest state — show login prompt
   if (!user) {
     return (
-      <Card className="rounded-2xl border-border/40 shadow-sm">
-        <CardContent className="p-5 flex items-center gap-4">
-          <div className="w-11 h-11 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-            <User className="h-5 w-5 text-muted-foreground" />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm text-muted-foreground">{t('community', 'loginToParticipate')}</p>
-          </div>
-          <Link to="/citizen-login">
-            <Button size="sm" className="gap-2 rounded-full">
+      <>
+        <Card className="rounded-2xl border-border/40 shadow-sm">
+          <CardContent className="p-5 flex items-center gap-4">
+            <div className="w-11 h-11 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+              <User className="h-5 w-5 text-muted-foreground" />
+            </div>
+            <div className="flex-1">
+              <p className="text-sm text-muted-foreground">{t('community', 'loginToParticipate')}</p>
+            </div>
+            <Button size="sm" className="gap-2 rounded-full" onClick={() => requireAuth()}>
               <LogIn className="h-4 w-4" />
               {t('header', 'signin')}
             </Button>
-          </Link>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+        <AuthRequiredModal />
+      </>
     );
   }
 
