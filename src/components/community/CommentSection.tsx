@@ -20,7 +20,7 @@ import {
   ReportReason,
 } from '@/services/communityService';
 import { toast } from 'sonner';
-import { Link } from 'react-router-dom';
+
 
 interface Props {
   postId: string;
