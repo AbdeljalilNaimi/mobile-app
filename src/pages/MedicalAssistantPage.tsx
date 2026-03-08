@@ -1,6 +1,5 @@
 import { useMemo, useState, useCallback } from "react";
-import { motion } from "framer-motion";
-import { Bot, AlertTriangle, Phone, Sparkles, PenSquare, History, ChevronRight, Clock, Trash2, LogIn } from "lucide-react";
+import { Bot, AlertTriangle, Phone, PenSquare, History, ChevronRight, Clock, Trash2, LogIn, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import {
@@ -32,6 +31,7 @@ export default function MedicalAssistantPage() {
   const [showResetDialog, setShowResetDialog] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [showGuestBanner, setShowGuestBanner] = useState(true);
   const [initialMessages, setInitialMessages] = useState<{ role: "user" | "assistant"; content: string }[] | undefined>();
 
   const {
@@ -95,11 +95,8 @@ export default function MedicalAssistantPage() {
     const translations = {
       fr: {
         title: "Assistant Médical",
-        subtitle: "IA",
         online: "En ligne",
-        disclaimer: "Ne remplace pas un avis médical",
-        emergency: "Urgence →",
-        newConversation: "Nouvelle conversation",
+        disclaimer: "Cet assistant ne remplace pas un avis médical professionnel",
         resetTitle: "Nouvelle conversation ?",
         resetDescription: "L'historique de cette session sera effacé.",
         cancel: "Annuler",
@@ -110,17 +107,13 @@ export default function MedicalAssistantPage() {
         deleteAll: "Effacer tout l'historique",
         deleteAllTitle: "Effacer l'historique ?",
         deleteAllDesc: "Toutes vos conversations seront supprimées définitivement.",
-        guestBanner: "Connectez-vous pour sauvegarder vos conversations",
-        login: "Se connecter",
-        history: "Historique",
+        guestBanner: "Connectez-vous pour sauvegarder",
+        login: "Se connecter →",
       },
       ar: {
         title: "المساعد الطبي",
-        subtitle: "ذكي",
         online: "متصل",
-        disclaimer: "لا يحل محل الاستشارة الطبية",
-        emergency: "طوارئ →",
-        newConversation: "محادثة جديدة",
+        disclaimer: "هذا المساعد لا يحل محل الاستشارة الطبية المهنية",
         resetTitle: "محادثة جديدة؟",
         resetDescription: "سيتم مسح سجل هذه الجلسة.",
         cancel: "إلغاء",
@@ -132,16 +125,12 @@ export default function MedicalAssistantPage() {
         deleteAllTitle: "حذف السجل؟",
         deleteAllDesc: "سيتم حذف جميع محادثاتك نهائياً.",
         guestBanner: "سجل الدخول لحفظ محادثاتك",
-        login: "تسجيل الدخول",
-        history: "السجل",
+        login: "تسجيل الدخول →",
       },
       en: {
         title: "Medical Assistant",
-        subtitle: "AI",
         online: "Online",
-        disclaimer: "Does not replace medical advice",
-        emergency: "Emergency →",
-        newConversation: "New conversation",
+        disclaimer: "This assistant does not replace professional medical advice",
         resetTitle: "New conversation?",
         resetDescription: "This session's history will be cleared.",
         cancel: "Cancel",
@@ -153,8 +142,7 @@ export default function MedicalAssistantPage() {
         deleteAllTitle: "Clear history?",
         deleteAllDesc: "All your conversations will be permanently deleted.",
         guestBanner: "Sign in to save your conversations",
-        login: "Sign in",
-        history: "History",
+        login: "Sign in →",
       },
     };
     return translations[language as keyof typeof translations] || translations.fr;
@@ -162,85 +150,66 @@ export default function MedicalAssistantPage() {
 
   return (
     <div className={cn(
-      "flex flex-col bg-background overflow-hidden",
+      "flex flex-col overflow-hidden",
       "h-[calc(100dvh-4rem-env(safe-area-inset-bottom,8px))]",
       language === "ar" && "rtl"
-    )}>
-      {/* Compact Header — optimized for mobile */}
-      <motion.header
-        initial={{ opacity: 0, y: -4 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.2 }}
-        className="shrink-0 bg-background/95 backdrop-blur-xl z-10"
-      >
-        <div className="px-3 py-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="relative">
-                <div className="w-8 h-8 rounded-[10px] bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center shadow-sm">
-                  <Bot className="w-4 h-4 text-white" />
-                </div>
-                <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-emerald-500 rounded-full border-[1.5px] border-background" />
-              </div>
-              <div className="leading-tight">
-                <h1 className="font-bold text-[13px] flex items-center gap-1">
-                  {t.title}
-                  <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md bg-gradient-to-r from-teal-500/10 to-cyan-500/10 text-teal-600 dark:text-teal-400">
-                    {t.subtitle}
-                  </span>
-                </h1>
-                <div className="flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
-                  <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium">{t.online}</span>
-                </div>
-              </div>
+    )} style={{ backgroundColor: "#F8F9FA" }}>
+      {/* Header — 56px */}
+      <header className="shrink-0 h-14 bg-white border-b" style={{ borderColor: "#E5E7EB" }}>
+        <div className="h-full px-4 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <div className="w-6 h-6 flex items-center justify-center">
+              <Bot className="w-6 h-6" style={{ color: "#1D4ED8" }} />
             </div>
-
-            <div className="flex items-center gap-1">
-              {isAuthed && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-9 w-9 rounded-[10px] text-muted-foreground hover:text-foreground active:scale-95 transition-all"
-                  onClick={handleOpenHistory}
-                >
-                  <History className="w-[18px] h-[18px]" />
-                </Button>
-              )}
-
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 rounded-[10px] text-muted-foreground hover:text-foreground active:scale-95 transition-all"
-                onClick={() => setShowResetDialog(true)}
-              >
-                <PenSquare className="w-[18px] h-[18px]" />
-              </Button>
-
-              <Button
-                variant="destructive"
-                size="sm"
-                className="gap-1 rounded-[10px] shadow-sm h-8 text-xs px-2.5 active:scale-95 transition-all"
-                onClick={() => window.location.href = "tel:15"}
-              >
-                <Phone className="w-3.5 h-3.5" />
-                <span className="font-bold">15</span>
-              </Button>
+            <div className="leading-tight">
+              <h1 className="font-bold text-[15px] text-foreground">{t.title}</h1>
+              <div className="flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#22C55E" }} />
+                <span className="text-[12px]" style={{ color: "#9CA3AF" }}>{t.online}</span>
+              </div>
             </div>
           </div>
 
-          {/* Minimal disclaimer bar */}
-          <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground/70 mt-1 px-0.5">
-            <AlertTriangle className="w-2.5 h-2.5 text-amber-500/70 shrink-0" />
-            <span>{t.disclaimer} · <button onClick={() => window.location.href = "tel:15"} className="text-destructive font-semibold">{t.emergency} 15</button></span>
+          <div className="flex items-center gap-1">
+            {isAuthed && (
+              <button
+                onClick={handleOpenHistory}
+                className="h-9 w-9 flex items-center justify-center rounded-lg transition-colors hover:bg-black/5 active:scale-95"
+              >
+                <History className="w-[18px] h-[18px]" style={{ color: "#9CA3AF" }} />
+              </button>
+            )}
+
+            <button
+              onClick={() => setShowResetDialog(true)}
+              className="h-9 w-9 flex items-center justify-center rounded-lg transition-colors hover:bg-black/5 active:scale-95"
+            >
+              <PenSquare className="w-[18px] h-[18px]" style={{ color: "#9CA3AF" }} />
+            </button>
+
+            <button
+              onClick={() => window.location.href = "tel:15"}
+              className="flex items-center gap-1 h-7 px-2.5 rounded-full text-white text-xs font-bold transition-all active:scale-95"
+              style={{ backgroundColor: "#EF4444" }}
+            >
+              <span>🚨</span>
+              <span>15</span>
+            </button>
           </div>
         </div>
-        <div className="h-px bg-gradient-to-r from-transparent via-border/50 to-transparent" />
-      </motion.header>
+      </header>
 
-      {/* Chat */}
+      {/* Disclaimer — 32px */}
+      <div className="shrink-0 h-8 flex items-center justify-center px-4" style={{ backgroundColor: "#F8F9FA" }}>
+        <div className="flex items-center gap-1.5">
+          <AlertTriangle className="w-3 h-3 shrink-0" style={{ color: "#9CA3AF" }} />
+          <span className="text-[11px] italic" style={{ color: "#9CA3AF" }}>{t.disclaimer}</span>
+        </div>
+      </div>
+
+      {/* Chat area */}
       <main className="flex-1 min-h-0 overflow-hidden flex flex-col">
-        <div className="flex-1 min-h-0 overflow-hidden">
+        <div className="flex-1 min-h-0 overflow-hidden bg-white mx-0">
           <SymptomTriageBot
             resetKey={resetKey}
             onMessageSent={handleMessageSent}
@@ -248,14 +217,21 @@ export default function MedicalAssistantPage() {
           />
         </div>
 
-        {/* Guest banner */}
-        {!isAuthed && (
-          <div className="shrink-0 flex items-center justify-center gap-2 px-4 py-1.5 bg-muted/30 border-t border-border/20 text-[11px] text-muted-foreground">
-            <span>💾 {t.guestBanner}</span>
-            <Link to="/citizen/login" className="text-primary font-semibold hover:underline flex items-center gap-0.5">
-              <LogIn className="w-3 h-3" />
-              {t.login}
-            </Link>
+        {/* Guest sign-in banner */}
+        {!isAuthed && showGuestBanner && (
+          <div className="shrink-0 mx-4 mb-2 mt-1 rounded-[10px] px-3.5 py-2.5 flex items-center justify-between" style={{ backgroundColor: "#EFF6FF" }}>
+            <div className="flex items-center gap-2 text-[13px]" style={{ color: "#6B7280" }}>
+              <span>💾</span>
+              <span>{t.guestBanner}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Link to="/citizen/login" className="text-[13px] font-bold hover:underline" style={{ color: "#1D4ED8" }}>
+                {t.login}
+              </Link>
+              <button onClick={() => setShowGuestBanner(false)} className="p-0.5 rounded hover:bg-black/5">
+                <X className="w-3.5 h-3.5" style={{ color: "#9CA3AF" }} />
+              </button>
+            </div>
           </div>
         )}
       </main>
@@ -269,7 +245,7 @@ export default function MedicalAssistantPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="rounded-xl">{t.cancel}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleConfirmReset} className="bg-primary hover:bg-primary/90 rounded-xl">
+            <AlertDialogAction onClick={handleConfirmReset} className="rounded-xl text-white" style={{ backgroundColor: "#1D4ED8" }}>
               {t.confirm}
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -282,7 +258,9 @@ export default function MedicalAssistantPage() {
           <DrawerHeader className="flex items-center justify-between pb-1 px-4">
             <DrawerTitle className="text-[15px] font-bold">{t.historyTitle}</DrawerTitle>
             <DrawerClose asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full text-muted-foreground">✕</Button>
+              <button className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-black/5">
+                <X className="w-4 h-4" style={{ color: "#9CA3AF" }} />
+              </button>
             </DrawerClose>
           </DrawerHeader>
 
@@ -294,12 +272,12 @@ export default function MedicalAssistantPage() {
                 ))}
               </div>
             ) : conversations.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-10 text-muted-foreground">
-                <div className="w-12 h-12 rounded-full bg-muted/60 flex items-center justify-center mb-3">
-                  <Clock className="w-5 h-5 opacity-40" />
+              <div className="flex flex-col items-center justify-center py-10">
+                <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3" style={{ backgroundColor: "#F3F4F6" }}>
+                  <Clock className="w-5 h-5" style={{ color: "#9CA3AF" }} />
                 </div>
-                <p className="text-sm font-medium">{t.emptyHistory}</p>
-                <p className="text-xs text-muted-foreground/60 mt-0.5">{t.emptyHistorySub}</p>
+                <p className="text-sm font-medium" style={{ color: "#6B7280" }}>{t.emptyHistory}</p>
+                <p className="text-xs mt-0.5" style={{ color: "#9CA3AF" }}>{t.emptyHistorySub}</p>
               </div>
             ) : (
               <div className="space-y-1">
@@ -307,20 +285,20 @@ export default function MedicalAssistantPage() {
                   <button
                     key={conv.id}
                     onClick={() => handleSelectConversation(conv.id)}
-                    className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-muted/50 active:bg-muted/70 transition-colors text-left group"
+                    className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-black/[0.03] active:bg-black/[0.06] transition-colors text-left group"
                   >
-                    <div className="w-8 h-8 rounded-[10px] bg-muted/60 flex items-center justify-center shrink-0">
-                      <Bot className="w-3.5 h-3.5 text-muted-foreground/60" />
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: "#EFF6FF" }}>
+                      <Bot className="w-3.5 h-3.5" style={{ color: "#1D4ED8" }} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-[13px] font-medium truncate">
+                      <p className="text-[13px] font-medium truncate text-foreground">
                         {(conv.title || "…").slice(0, 35)}
                       </p>
-                      <p className="text-[11px] text-muted-foreground/60">
+                      <p className="text-[11px]" style={{ color: "#9CA3AF" }}>
                         {formatRelativeDate(conv.updated_at)}
                       </p>
                     </div>
-                    <ChevronRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-muted-foreground/60 transition-colors shrink-0" />
+                    <ChevronRight className="w-4 h-4 shrink-0" style={{ color: "#D1D5DB" }} />
                   </button>
                 ))}
               </div>
@@ -328,10 +306,11 @@ export default function MedicalAssistantPage() {
           </div>
 
           {conversations.length > 0 && (
-            <div className="px-4 py-2.5 border-t border-border/20">
+            <div className="px-4 py-2.5 border-t" style={{ borderColor: "#F3F4F6" }}>
               <button
                 onClick={() => setShowDeleteDialog(true)}
-                className="flex items-center gap-1.5 text-xs text-destructive/80 hover:text-destructive transition-colors mx-auto active:scale-95"
+                className="flex items-center gap-1.5 text-xs mx-auto active:scale-95 transition-all"
+                style={{ color: "#EF4444" }}
               >
                 <Trash2 className="w-3 h-3" />
                 {t.deleteAll}
@@ -350,7 +329,7 @@ export default function MedicalAssistantPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel className="rounded-xl">{t.cancel}</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteAll} className="bg-destructive hover:bg-destructive/90 text-destructive-foreground rounded-xl">
+            <AlertDialogAction onClick={handleDeleteAll} className="rounded-xl text-white" style={{ backgroundColor: "#EF4444" }}>
               {t.confirm}
             </AlertDialogAction>
           </AlertDialogFooter>
