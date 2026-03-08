@@ -3,45 +3,61 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import {
   Search, MapPin, Siren, Droplets,
-  CalendarDays, Heart, MessageSquare, Stethoscope,
-  ChevronRight, Star, ArrowRight,
-  Bot, Pill, Activity, BookOpen, Megaphone,
-  Users, Clock, Flame, TrendingUp, Bell,
+  CalendarDays, ChevronRight, Bot, Pill, Activity,
+  BookOpen, Megaphone, Users, Clock, Heart,
+  Bell, SlidersHorizontal, Stethoscope, Star,
+  MessageSquare, TrendingUp, LayoutGrid,
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useNotifications } from '@/hooks/useNotifications';
 
 const stagger = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.06 } },
+  show: { transition: { staggerChildren: 0.1 } },
 };
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 14 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [.22, 1, .36, 1] } },
+  hidden: { opacity: 0, y: 12 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } },
 };
 
-/* ── Quick-action items ── */
 const quickActions = [
-  { icon: Search, label: 'Chercher', path: '/search', gradient: 'from-teal-500 to-cyan-400' },
-  { icon: MapPin, label: 'Carte', path: '/map/providers', gradient: 'from-amber-500 to-orange-400' },
-  { icon: Siren, label: 'Urgences', path: '/map/emergency', gradient: 'from-rose-500 to-pink-400' },
-  { icon: CalendarDays, label: 'RDV', path: '/citizen/appointments', gradient: 'from-indigo-500 to-violet-400' },
+  { icon: Search, label: 'Chercher', path: '/search' },
+  { icon: MapPin, label: 'Carte', path: '/map/providers' },
+  { icon: Siren, label: 'Urgences', path: '/map/emergency' },
+  { icon: CalendarDays, label: 'RDV', path: '/citizen/appointments' },
 ];
 
-/* ── Health services horizontal scroll ── */
 const healthServices = [
-  { title: 'Pharmacies de garde', subtitle: 'Ouvertes maintenant', icon: Pill, gradient: 'from-emerald-600 to-teal-500', path: '/search' },
-  { title: 'Cardiologie', subtitle: '12 spécialistes', icon: Activity, gradient: 'from-rose-600 to-amber-500', path: '/search' },
-  { title: 'Pédiatrie', subtitle: '8 médecins', icon: Stethoscope, gradient: 'from-sky-600 to-indigo-500', path: '/search' },
-  { title: 'Ophtalmologie', subtitle: '6 médecins', icon: Star, gradient: 'from-violet-600 to-purple-500', path: '/search' },
+  { title: 'Pharmacies de garde', subtitle: 'Ouvertes maintenant', icon: Pill, path: '/search' },
+  { title: 'Cardiologie', subtitle: '12 spécialistes', icon: Activity, path: '/search' },
+  { title: 'Pédiatrie', subtitle: '8 médecins', icon: Stethoscope, path: '/search' },
+  { title: 'Ophtalmologie', subtitle: '6 médecins', icon: Star, path: '/search' },
 ];
 
-/* ── Community highlights ── */
-const communityHighlights = [
-  { title: 'Conseils post-opératoires', category: 'Expérience', comments: 12 },
-  { title: 'Meilleur pédiatre à SBA ?', category: 'Question', comments: 24 },
-  { title: 'Nouveau centre IRM ouvert', category: 'Info', comments: 8 },
+const ads = [
+  { title: 'Consultation gratuite', provider: 'Dr. Benali', tag: 'Promo', tagStyle: 'bg-[#1D4ED8]/10 text-[#1D4ED8]' },
+  { title: 'Journée dépistage diabète', provider: 'Clinique El-Afia', tag: 'Événement', tagStyle: 'bg-[#9CA3AF]/15 text-[#6B7280]' },
+  { title: 'Nouveau scanner IRM', provider: 'Centre Imagerie', tag: 'Nouveau', tagStyle: 'bg-[#1D4ED8]/10 text-[#1D4ED8]' },
+  { title: 'Bilan de santé complet', provider: 'Polyclinique Saada', tag: 'Promo', tagStyle: 'bg-[#1D4ED8]/10 text-[#1D4ED8]' },
+];
+
+const articles = [
+  { title: 'Impact du diabète de type 2 en Algérie', author: 'Dr. Merah', reads: 142 },
+  { title: 'Nouvelles approches en cardiologie préventive', author: 'Pr. Khelif', reads: 89 },
+];
+
+const communityPosts = [
+  { title: 'Conseils post-opératoires', category: 'Expérience', comments: 12, outline: 'border-[#1D4ED8] text-[#1D4ED8]' },
+  { title: 'Meilleur pédiatre à SBA ?', category: 'Question', comments: 24, outline: 'border-[#9CA3AF] text-[#6B7280]' },
+  { title: 'Nouveau centre IRM ouvert', category: 'Info', comments: 8, outline: 'border-[#9CA3AF] text-[#6B7280]' },
+  { title: 'Expérience chirurgie laser', category: 'Expérience', comments: 15, outline: 'border-[#1D4ED8] text-[#1D4ED8]' },
+];
+
+const quickAccess = [
+  { icon: Bot, title: 'Assistant IA', subtitle: 'Posez vos questions', borderColor: 'border-l-[#1D4ED8]', path: '/medical-assistant' },
+  { icon: Heart, title: 'Favoris', subtitle: 'Médecins sauvegardés', borderColor: 'border-l-[#9CA3AF]', path: '/favorites' },
+  { icon: LayoutGrid, title: 'Tableau de bord', subtitle: 'Votre espace patient', borderColor: 'border-l-[#9CA3AF]', path: '/citizen/dashboard' },
 ];
 
 export const MobileHomeScreen = () => {
@@ -51,8 +67,6 @@ export const MobileHomeScreen = () => {
 
   const displayName = profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || 'Visiteur';
   const isGuest = !user;
-
-  // Dynamic greeting based on time of day
   const hour = new Date().getHours();
   const greeting = hour >= 18 ? 'Bonsoir' : hour >= 12 ? 'Bon après-midi' : 'Bonjour';
 
@@ -61,69 +75,64 @@ export const MobileHomeScreen = () => {
       variants={stagger}
       initial="hidden"
       animate="show"
-      className="px-4 pt-2 pb-6 space-y-6"
+      className="bg-[#F8F9FA] min-h-screen px-4 pb-20 space-y-6"
     >
-      {/* ── 1. Header with gradient background ── */}
-      <motion.div variants={fadeUp} className="-mx-4 px-4 py-3 rounded-b-3xl bg-gradient-to-r from-blue-50 to-teal-50 dark:from-blue-950/20 dark:to-teal-950/20">
+      {/* 1. Header */}
+      <motion.div variants={fadeUp} className="-mx-4 px-4 pt-3 pb-4 bg-gradient-to-r from-[#F0F4FF] to-[#F0FAFA]">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-[11px] text-muted-foreground italic">Bienvenue sur CityHealth</p>
-            <h2 className="text-2xl font-extrabold text-foreground">
-              {greeting} 👋{' '}
-              <span className="bg-gradient-to-r from-blue-500 to-teal-400 bg-clip-text text-transparent">
-                {displayName}
-              </span>
+            <p className="text-[11px] text-[#9CA3AF] italic">Bienvenue sur CityHealth</p>
+            <h2 className="text-2xl font-extrabold text-[#111827]">
+              {greeting} 👋 <span className="text-[#1D4ED8]">{displayName}</span>
             </h2>
           </div>
           <div className="flex items-center gap-2">
-            {/* Notification bell */}
             <button
               onClick={() => navigate('/settings')}
-              className="relative p-2 rounded-full hover:bg-muted/50 transition-colors"
+              className="relative p-2 rounded-full hover:bg-black/5 transition-colors"
               aria-label="Notifications"
             >
-              <Bell className="h-5 w-5 text-muted-foreground" />
+              <Bell className="h-5 w-5 text-[#6B7280]" />
               {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold px-1">
+                <span className="absolute top-1 right-1 min-w-[16px] h-4 flex items-center justify-center rounded-full bg-red-500 text-white text-[9px] font-bold px-1">
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </span>
               )}
             </button>
-
-            {/* Avatar or Login CTA */}
             {isGuest ? (
               <button
                 onClick={() => navigate('/auth')}
-                className="bg-primary text-primary-foreground rounded-full px-4 py-2 text-xs font-semibold active:scale-95 transition-transform"
+                className="bg-[#1D4ED8] text-white rounded-full px-4 py-2 text-xs font-semibold active:scale-95 transition-transform"
               >
                 Se connecter
               </button>
             ) : (
               <button onClick={() => navigate('/citizen/profile')} className="relative">
-                <Avatar className="h-11 w-11 ring-2 ring-emerald-400 ring-offset-2 ring-offset-background shadow-lg">
+                <Avatar className="h-11 w-11 ring-2 ring-emerald-400 ring-offset-2 ring-offset-[#F0F4FF] shadow-lg">
                   <AvatarImage src={profile?.avatar_url || ''} />
-                  <AvatarFallback className="bg-primary/10 text-primary font-semibold text-sm">
+                  <AvatarFallback className="bg-[#1D4ED8]/10 text-[#1D4ED8] font-semibold text-sm">
                     {displayName.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
-                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-background" />
+                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-[#F0F4FF]" />
               </button>
             )}
           </div>
         </div>
       </motion.div>
 
-      {/* ── 2. Search bar ── */}
+      {/* 2. Search bar */}
       <motion.button
         variants={fadeUp}
         onClick={() => navigate('/search')}
-        className="w-full flex items-center gap-3 rounded-2xl bg-card border border-border/60 px-4 py-3 active:scale-[0.98] transition-transform"
+        className="w-full flex items-center gap-3 rounded-xl bg-white border border-[#E5E7EB] px-4 py-3 shadow-sm active:scale-[0.98] transition-transform"
       >
-        <Search className="h-4.5 w-4.5 text-muted-foreground" />
-        <span className="text-sm text-muted-foreground">Rechercher un médecin, spécialité…</span>
+        <Search className="h-4 w-4 text-[#9CA3AF]" />
+        <span className="text-sm text-[#9CA3AF] flex-1 text-left">Rechercher un médecin, spécialité, ville…</span>
+        <SlidersHorizontal className="h-4 w-4 text-[#9CA3AF]" />
       </motion.button>
 
-      {/* ── 3. Quick actions ── */}
+      {/* 3. Quick actions */}
       <motion.div variants={fadeUp} className="grid grid-cols-4 gap-3">
         {quickActions.map((a) => (
           <button
@@ -131,39 +140,40 @@ export const MobileHomeScreen = () => {
             onClick={() => navigate(a.path)}
             className="flex flex-col items-center gap-1.5 active:scale-95 transition-transform"
           >
-            <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${a.gradient} flex items-center justify-center shadow-md`}>
-              <a.icon className="h-5 w-5 text-white" strokeWidth={2} />
+            <div className="w-12 h-12 rounded-xl bg-white border border-[#E5E7EB] shadow-sm flex items-center justify-center">
+              <a.icon className="h-5 w-5 text-[#1D4ED8]" strokeWidth={2} />
             </div>
-            <span className="text-[11px] font-medium text-foreground">{a.label}</span>
+            <span className="text-[11px] font-medium text-[#111827]">{a.label}</span>
           </button>
         ))}
       </motion.div>
 
-      {/* ── 4. Blood Donation CTA ── */}
+      {/* 4. Urgent banner */}
       <motion.button
         variants={fadeUp}
         onClick={() => navigate('/blood-donation')}
-        className="w-full rounded-2xl bg-gradient-to-br from-rose-600 to-red-500 p-4 text-left shadow-lg shadow-rose-500/20 active:scale-[0.98] transition-transform"
+        className="w-full rounded-xl bg-white border border-[#E5E7EB] border-l-4 border-l-red-500 shadow-sm p-4 text-left active:scale-[0.98] transition-transform"
       >
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
-            <Droplets className="h-5.5 w-5.5 text-white" />
+          <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center flex-shrink-0">
+            <Droplets className="h-5 w-5 text-red-500" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
-              <h3 className="text-sm font-bold text-white">Don de sang</h3>
-              <span className="inline-flex items-center gap-1 text-[10px] font-semibold bg-white/20 text-white px-2 py-0.5 rounded-full">
-                <Flame className="h-2.5 w-2.5" /> Urgent
+              <h3 className="text-sm font-bold text-[#111827]">Don de sang</h3>
+              <span className="inline-flex items-center gap-1 text-[10px] font-semibold bg-red-500/10 text-red-600 px-2 py-0.5 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                URGENT
               </span>
             </div>
-            <p className="text-white/70 text-xs mt-0.5">Sauvez des vies — trouvez un centre de don près de vous</p>
+            <p className="text-[#6B7280] text-xs mt-0.5">Trouvez un centre de don près de vous</p>
           </div>
-          <ChevronRight className="h-4 w-4 text-white/60 flex-shrink-0" />
+          <ChevronRight className="h-4 w-4 text-[#9CA3AF] flex-shrink-0" />
         </div>
       </motion.button>
 
-      {/* ── 5. Health Services — Horizontal Scroll ── */}
-      <SectionHeader title="Services de santé" actionLabel="Tout voir" onAction={() => navigate('/search')} />
+      {/* 5. Services de santé */}
+      <SectionHeader label="Spécialités" title="Services de santé" actionLabel="Tout voir" onAction={() => navigate('/search')} />
       <motion.div variants={fadeUp} className="-mx-4 px-4">
         <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide">
           {healthServices.map((s, i) => (
@@ -172,13 +182,13 @@ export const MobileHomeScreen = () => {
               onClick={() => navigate(s.path)}
               className="flex-shrink-0 w-[140px] snap-start active:scale-[0.97] transition-transform"
             >
-              <div className={`rounded-2xl bg-gradient-to-br ${s.gradient} p-3.5 h-full flex flex-col justify-between min-h-[130px]`}>
-                <div className="w-9 h-9 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                  <s.icon className="h-4 w-4 text-white" strokeWidth={2} />
+              <div className="rounded-xl bg-white border border-[#E5E7EB] shadow-sm p-3.5 h-full flex flex-col justify-between min-h-[120px]">
+                <div className="w-9 h-9 rounded-lg bg-[#1D4ED8]/10 flex items-center justify-center">
+                  <s.icon className="h-4 w-4 text-[#1D4ED8]" strokeWidth={2} />
                 </div>
                 <div className="mt-auto space-y-0.5">
-                  <p className="text-white font-semibold text-[11px] leading-tight">{s.title}</p>
-                  <p className="text-white/60 text-[10px]">{s.subtitle}</p>
+                  <p className="text-[#111827] font-semibold text-[11px] leading-tight">{s.title}</p>
+                  <p className="text-[#9CA3AF] text-[10px]">{s.subtitle}</p>
                 </div>
               </div>
             </button>
@@ -186,160 +196,117 @@ export const MobileHomeScreen = () => {
         </div>
       </motion.div>
 
-      {/* ── 6. Annonces médicales — Horizontal Scroll ── */}
-      <SectionHeader title="Annonces médicales" actionLabel="Voir tout" onAction={() => navigate('/ads')} icon={Megaphone} />
-      <motion.div variants={fadeUp} className="-mx-4 px-4">
-        <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide">
-          {[
-            { title: 'Consultation gratuite', provider: 'Dr. Benali', tag: 'Promo', gradient: 'from-teal-600 to-cyan-500' },
-            { title: 'Journée dépistage diabète', provider: 'Clinique El-Afia', tag: 'Événement', gradient: 'from-amber-600 to-orange-500' },
-            { title: 'Nouveau scanner IRM', provider: 'Centre Imagerie', tag: 'Nouveau', gradient: 'from-indigo-600 to-blue-500' },
-          ].map((ad, i) => (
-            <button
-              key={i}
-              onClick={() => navigate('/ads')}
-              className="flex-shrink-0 w-[200px] snap-start active:scale-[0.97] transition-transform"
-            >
-              <div className={`rounded-2xl bg-gradient-to-br ${ad.gradient} p-4 min-h-[110px] flex flex-col justify-between`}>
-                <span className="self-start text-[9px] font-bold bg-white/25 text-white px-2 py-0.5 rounded-full backdrop-blur-sm">
-                  {ad.tag}
-                </span>
-                <div className="mt-auto space-y-1">
-                  <p className="text-white font-semibold text-xs leading-tight">{ad.title}</p>
-                  <p className="text-white/60 text-[10px]">{ad.provider}</p>
-                </div>
-              </div>
-            </button>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* ── 7. Research Hub ── */}
-      <SectionHeader title="Recherche médicale" actionLabel="Explorer" onAction={() => navigate('/research')} icon={BookOpen} />
-      <motion.div variants={fadeUp} className="space-y-2.5">
-        {[
-          { title: 'Impact du diabète de type 2 en Algérie', author: 'Dr. Merah', reads: 142 },
-          { title: 'Nouvelles approches en cardiologie préventive', author: 'Pr. Khelif', reads: 89 },
-        ].map((article, i) => (
+      {/* 6. Annonces médicales */}
+      <SectionHeader label="Actualités" title="Annonces médicales" actionLabel="Voir tout" onAction={() => navigate('/ads')} />
+      <motion.div variants={fadeUp} className="grid grid-cols-2 gap-3">
+        {ads.map((ad, i) => (
           <button
             key={i}
-            onClick={() => navigate('/research')}
-            className="w-full rounded-xl bg-card border border-border/60 p-3.5 flex items-start gap-3 text-left active:scale-[0.98] transition-transform"
+            onClick={() => navigate('/ads')}
+            className="rounded-xl bg-white border border-[#E5E7EB] shadow-sm p-3.5 text-left active:scale-[0.97] transition-transform flex flex-col justify-between min-h-[100px]"
           >
-            <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-              <BookOpen className="h-4 w-4 text-primary" />
+            <span className={`self-start text-[9px] font-bold px-2 py-0.5 rounded-full ${ad.tagStyle}`}>
+              {ad.tag}
+            </span>
+            <div className="mt-auto space-y-1">
+              <p className="text-[#111827] font-medium text-[13px] leading-tight line-clamp-2">{ad.title}</p>
+              <p className="text-[#9CA3AF] text-[10px]">{ad.provider}</p>
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-foreground leading-snug line-clamp-2">{article.title}</p>
-              <div className="flex items-center gap-2 mt-1.5">
-                <span className="text-[10px] text-muted-foreground">{article.author}</span>
-                <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
-                  <TrendingUp className="h-2.5 w-2.5" /> {article.reads} lectures
-                </span>
-              </div>
-            </div>
-            <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0 mt-1" />
           </button>
         ))}
       </motion.div>
 
-      {/* ── 8. Community ── */}
-      <SectionHeader title="Communauté" actionLabel="Rejoindre" onAction={() => navigate('/community')} icon={Users} />
-      <motion.div variants={fadeUp} className="-mx-4 px-4">
-        <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide">
-          {communityHighlights.map((post, i) => (
-            <button
-              key={i}
-              onClick={() => navigate('/community')}
-              className="flex-shrink-0 w-[200px] snap-start active:scale-[0.97] transition-transform"
-            >
-              <div className="rounded-2xl bg-card border border-border/60 p-4 min-h-[100px] flex flex-col justify-between">
-                <span className="self-start text-[9px] font-semibold bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-                  {post.category}
+      {/* 7. Recherche médicale */}
+      <SectionHeader label="Publications" title="Recherche médicale" actionLabel="Explorer" onAction={() => navigate('/research')} />
+      <motion.div variants={fadeUp} className="rounded-xl bg-white border border-[#E5E7EB] shadow-sm overflow-hidden divide-y divide-[#E5E7EB]">
+        {articles.map((article, i) => (
+          <button
+            key={i}
+            onClick={() => navigate('/research')}
+            className="w-full p-3.5 flex items-start gap-3 text-left active:bg-[#F8F9FA] transition-colors"
+          >
+            <div className="w-9 h-9 rounded-lg bg-[#F3F4F6] flex items-center justify-center flex-shrink-0 mt-0.5">
+              <BookOpen className="h-4 w-4 text-[#6B7280]" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[13px] font-medium text-[#111827] leading-snug line-clamp-2">{article.title}</p>
+              <div className="flex items-center gap-2 mt-1.5">
+                <span className="text-[10px] text-[#9CA3AF]">{article.author}</span>
+                <span className="text-[10px] text-[#9CA3AF] flex items-center gap-0.5">
+                  <TrendingUp className="h-2.5 w-2.5" /> {article.reads} lectures
                 </span>
-                <div className="mt-auto space-y-1.5">
-                  <p className="text-foreground font-semibold text-xs leading-tight line-clamp-2">{post.title}</p>
-                  <div className="flex items-center gap-1 text-muted-foreground">
-                    <MessageSquare className="h-3 w-3" />
-                    <span className="text-[10px]">{post.comments} commentaires</span>
-                  </div>
-                </div>
               </div>
-            </button>
-          ))}
-        </div>
+            </div>
+            <ChevronRight className="h-4 w-4 text-[#9CA3AF] flex-shrink-0 mt-1" />
+          </button>
+        ))}
       </motion.div>
 
-      {/* ── 9. Quick access grid ── */}
-      <SectionHeader title="Accès rapide" />
+      {/* 8. Communauté */}
+      <SectionHeader label="Discussions" title="Communauté" actionLabel="Rejoindre" onAction={() => navigate('/community')} />
       <motion.div variants={fadeUp} className="grid grid-cols-2 gap-3">
-        <QuickCard icon={Bot} title="Assistant IA" subtitle="Posez vos questions" gradient="from-indigo-600/90 to-rose-500/90" onClick={() => navigate('/medical-assistant')} />
-        <QuickCard icon={Heart} title="Favoris" subtitle="Médecins sauvegardés" gradient="from-rose-600/90 to-pink-500/90" onClick={() => navigate('/favorites')} />
+        {communityPosts.map((post, i) => (
+          <button
+            key={i}
+            onClick={() => navigate('/community')}
+            className="rounded-xl bg-white border border-[#E5E7EB] shadow-sm p-3.5 text-left active:scale-[0.97] transition-transform flex flex-col justify-between min-h-[100px]"
+          >
+            <span className={`self-start text-[9px] font-semibold border px-2 py-0.5 rounded-full ${post.outline}`}>
+              {post.category}
+            </span>
+            <div className="mt-auto space-y-1.5">
+              <p className="text-[#111827] font-medium text-[13px] leading-tight line-clamp-2">{post.title}</p>
+              <div className="flex items-center gap-1 text-[#9CA3AF]">
+                <MessageSquare className="h-3 w-3" />
+                <span className="text-[10px]">{post.comments}</span>
+              </div>
+            </div>
+          </button>
+        ))}
       </motion.div>
 
-      {/* ── 10. Continue section ── */}
-      {user && (
-        <motion.button
-          variants={fadeUp}
-          onClick={() => navigate('/citizen/dashboard')}
-          className="w-full rounded-xl bg-card border border-border/60 p-4 flex items-center gap-3 text-left active:scale-[0.98] transition-transform"
-        >
-          <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
-            <Clock className="h-5 w-5 text-amber-500" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-foreground">Tableau de bord</p>
-            <p className="text-xs text-muted-foreground truncate">Continuer vers votre espace patient</p>
-          </div>
-          <ChevronRight className="h-4 w-4 text-muted-foreground" />
-        </motion.button>
-      )}
+      {/* 9. Accès rapide */}
+      <SectionHeader label="Navigation" title="Accès rapide" />
+      <motion.div variants={fadeUp} className="space-y-2.5">
+        {quickAccess.map((item, i) => (
+          <button
+            key={i}
+            onClick={() => navigate(item.path)}
+            className={`w-full rounded-xl bg-white border border-[#E5E7EB] border-l-4 ${item.borderColor} shadow-sm p-4 flex items-center gap-3 text-left active:scale-[0.98] transition-transform`}
+          >
+            <div className="w-10 h-10 rounded-lg bg-[#F3F4F6] flex items-center justify-center flex-shrink-0">
+              <item.icon className="h-5 w-5 text-[#6B7280]" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-[#111827]">{item.title}</p>
+              <p className="text-xs text-[#9CA3AF]">{item.subtitle}</p>
+            </div>
+            <ChevronRight className="h-4 w-4 text-[#9CA3AF] flex-shrink-0" />
+          </button>
+        ))}
+      </motion.div>
     </motion.div>
   );
 };
 
-/* ── Section header component ── */
-function SectionHeader({ title, actionLabel, onAction, icon: Icon }: {
+/* ── Section header ── */
+function SectionHeader({ label, title, actionLabel, onAction }: {
+  label: string;
   title: string;
   actionLabel?: string;
   onAction?: () => void;
-  icon?: React.ElementType;
 }) {
   return (
-    <motion.div variants={fadeUp} className="flex items-center justify-between">
-      <div className="flex items-center gap-2">
-        {Icon && <Icon className="h-4 w-4 text-primary" />}
-        <h3 className="text-sm font-bold text-foreground">{title}</h3>
+    <motion.div variants={fadeUp} className="flex items-end justify-between">
+      <div>
+        <p className="text-[11px] uppercase tracking-widest text-[#9CA3AF] font-medium">{label}</p>
+        <h3 className="text-base font-semibold text-[#111827]">{title}</h3>
       </div>
       {actionLabel && onAction && (
-        <button onClick={onAction} className="text-xs font-medium text-primary flex items-center gap-0.5">
+        <button onClick={onAction} className="text-xs font-medium text-[#1D4ED8] flex items-center gap-0.5 pb-0.5">
           {actionLabel} <ChevronRight className="h-3 w-3" />
         </button>
       )}
     </motion.div>
-  );
-}
-
-/* ── Quick card component ── */
-function QuickCard({ icon: Icon, title, subtitle, gradient, onClick }: {
-  icon: React.ElementType;
-  title: string;
-  subtitle: string;
-  gradient: string;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`rounded-2xl bg-gradient-to-br ${gradient} p-4 text-left active:scale-[0.97] transition-transform min-h-[100px] flex flex-col justify-between`}
-    >
-      <div className="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center">
-        <Icon className="h-4 w-4 text-white" strokeWidth={2} />
-      </div>
-      <div className="mt-auto space-y-0.5">
-        <p className="text-white font-semibold text-sm leading-tight">{title}</p>
-        <p className="text-white/60 text-[10px]">{subtitle}</p>
-      </div>
-    </button>
   );
 }
