@@ -6,13 +6,12 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import { motion } from 'framer-motion';
 import {
-  User, Bell, Heart, Shield, Lock, LogOut, Globe, Moon,
-  HelpCircle, MessageSquare, Bug, Info, FileText, ChevronRight,
-  Droplet, Calendar, Star, ShieldCheck, Settings as SettingsIcon
+  User, Bell, Lock, LogOut, Globe, Moon, HelpCircle, MessageSquare,
+  Bug, Info, FileText, ChevronRight, Droplet, Calendar, ShieldCheck,
+  ExternalLink, BookOpen, Lightbulb, Code, Heart
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -24,6 +23,8 @@ interface SettingsItem {
   rightElement?: React.ReactNode;
   destructive?: boolean;
   badge?: string;
+  external?: boolean;
+  iconColor?: string;
 }
 
 interface SettingsGroup {
@@ -32,7 +33,7 @@ interface SettingsGroup {
 }
 
 export default function SettingsPage() {
-  const { profile, logout, user } = useAuth();
+  const { profile, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { language, setLanguage } = useLanguage();
   const navigate = useNavigate();
@@ -69,131 +70,65 @@ export default function SettingsPage() {
 
   const groups: SettingsGroup[] = [
     {
+      title: 'Compte',
+      items: [
+        { icon: User, label: 'Mon Profil', onClick: () => navigate('/profile'), iconColor: 'text-blue-500 bg-blue-500/10' },
+        { icon: Lock, label: 'Changer le mot de passe', onClick: () => toast.info('Fonctionnalité à venir'), iconColor: 'text-slate-500 bg-slate-500/10' },
+        { icon: LogOut, label: 'Se déconnecter', onClick: handleLogout, destructive: true },
+      ],
+    },
+    {
       title: 'Notifications',
       items: [
-        {
-          icon: Calendar,
-          label: 'Rendez-vous',
-          description: 'Rappels et confirmations',
-          rightElement: <Switch checked={notifAppointments} onCheckedChange={setNotifAppointments} />,
-        },
-        {
-          icon: Droplet,
-          label: 'Urgences sang',
-          description: 'Alertes don de sang',
-          rightElement: <Switch checked={notifEmergency} onCheckedChange={setNotifEmergency} />,
-        },
-        {
-          icon: MessageSquare,
-          label: 'Messages',
-          description: 'Notifications de messages',
-          rightElement: <Switch checked={notifMessages} onCheckedChange={setNotifMessages} />,
-        },
+        { icon: Calendar, label: 'Rendez-vous', description: 'Rappels et confirmations', rightElement: <Switch checked={notifAppointments} onCheckedChange={setNotifAppointments} />, iconColor: 'text-indigo-500 bg-indigo-500/10' },
+        { icon: Droplet, label: 'Urgences sang', description: 'Alertes don de sang', rightElement: <Switch checked={notifEmergency} onCheckedChange={setNotifEmergency} />, iconColor: 'text-red-500 bg-red-500/10' },
+        { icon: MessageSquare, label: 'Messages', description: 'Notifications de messages', rightElement: <Switch checked={notifMessages} onCheckedChange={setNotifMessages} />, iconColor: 'text-green-500 bg-green-500/10' },
       ],
     },
     {
       title: 'Services de santé',
       items: [
-        {
-          icon: Heart,
-          label: 'Mes favoris',
-          onClick: () => navigate('/favorites'),
-          badge: undefined,
-        },
-        {
-          icon: Calendar,
-          label: 'Mes rendez-vous',
-          onClick: () => navigate('/citizen/appointments'),
-        },
-        {
-          icon: ShieldCheck,
-          label: 'Carte d\'urgence',
-          onClick: () => navigate('/profile'),
-        },
-        {
-          icon: Droplet,
-          label: 'Don de sang',
-          onClick: () => navigate('/blood-donation'),
-        },
-      ],
-    },
-    {
-      title: 'Sécurité',
-      items: [
-        {
-          icon: Lock,
-          label: 'Changer le mot de passe',
-          onClick: () => toast.info('Fonctionnalité à venir'),
-        },
-        {
-          icon: LogOut,
-          label: 'Se déconnecter',
-          onClick: handleLogout,
-          destructive: true,
-        },
+        { icon: ShieldCheck, label: 'Carte d\'urgence', onClick: () => navigate('/profile'), iconColor: 'text-teal-500 bg-teal-500/10' },
+        { icon: Droplet, label: 'Don de sang', onClick: () => navigate('/blood-donation'), iconColor: 'text-rose-500 bg-rose-500/10' },
       ],
     },
     {
       title: 'Préférences',
       items: [
-        {
-          icon: Globe,
-          label: 'Langue',
-          description: languageLabel[language] || 'Français',
-          onClick: cycleLanguage,
-        },
-        {
-          icon: Moon,
-          label: 'Mode sombre',
-          rightElement: <Switch checked={theme === 'dark'} onCheckedChange={toggleTheme} />,
-        },
+        { icon: Globe, label: 'Langue', description: languageLabel[language] || 'Français', onClick: cycleLanguage, iconColor: 'text-amber-500 bg-amber-500/10' },
+        { icon: Moon, label: 'Mode sombre', rightElement: <Switch checked={theme === 'dark'} onCheckedChange={toggleTheme} />, iconColor: 'text-violet-500 bg-violet-500/10' },
       ],
     },
     {
-      title: 'Support',
+      title: 'Ressources',
       items: [
-        {
-          icon: HelpCircle,
-          label: 'Centre d\'aide',
-          onClick: () => navigate('/faq'),
-        },
-        {
-          icon: MessageSquare,
-          label: 'Contacter le support',
-          onClick: () => navigate('/contact'),
-        },
-        {
-          icon: Bug,
-          label: 'Signaler un bug',
-          onClick: () => toast.info('Merci ! Envoyez un email à support@cityhealth.dz'),
-        },
+        { icon: Lightbulb, label: 'Comment ça marche', onClick: () => navigate('/docs/getting-started/how-it-works'), external: true, iconColor: 'text-yellow-500 bg-yellow-500/10' },
+        { icon: Heart, label: 'Pourquoi CityHealth', onClick: () => navigate('/docs/getting-started/why-cityhealth'), external: true, iconColor: 'text-pink-500 bg-pink-500/10' },
+        { icon: HelpCircle, label: 'FAQ', onClick: () => navigate('/faq'), external: true, iconColor: 'text-sky-500 bg-sky-500/10' },
+        { icon: BookOpen, label: 'Documentation', onClick: () => navigate('/docs'), external: true, iconColor: 'text-emerald-500 bg-emerald-500/10' },
+        { icon: Code, label: 'Espace développeurs', onClick: () => navigate('/developers'), external: true, iconColor: 'text-orange-500 bg-orange-500/10' },
+      ],
+    },
+    {
+      title: 'Légal',
+      items: [
+        { icon: FileText, label: 'Conditions d\'utilisation', onClick: () => navigate('/terms'), external: true, iconColor: 'text-slate-500 bg-slate-500/10' },
+        { icon: FileText, label: 'Politique de confidentialité', onClick: () => navigate('/privacy'), external: true, iconColor: 'text-slate-500 bg-slate-500/10' },
       ],
     },
     {
       title: 'À propos',
       items: [
-        {
-          icon: Info,
-          label: 'Version de l\'app',
-          description: 'v2.4.0',
-        },
-        {
-          icon: FileText,
-          label: 'Conditions d\'utilisation',
-          onClick: () => navigate('/terms'),
-        },
-        {
-          icon: Shield,
-          label: 'Politique de confidentialité',
-          onClick: () => navigate('/privacy'),
-        },
+        { icon: Info, label: 'Version de l\'app', description: 'v2.4.0', iconColor: 'text-gray-400 bg-gray-400/10' },
+        { icon: HelpCircle, label: 'Centre d\'aide', onClick: () => navigate('/faq'), iconColor: 'text-sky-500 bg-sky-500/10' },
+        { icon: MessageSquare, label: 'Contacter le support', onClick: () => navigate('/contact'), iconColor: 'text-blue-500 bg-blue-500/10' },
+        { icon: Bug, label: 'Signaler un bug', onClick: () => toast.info('Merci ! Envoyez un email à support@cityhealth.dz'), iconColor: 'text-orange-500 bg-orange-500/10' },
       ],
     },
   ];
 
   return (
     <div className="min-h-screen bg-muted/30 pb-24">
-      {/* Header */}
       <div className="sticky top-0 z-30 bg-background/80 backdrop-blur-xl border-b border-border/40">
         <div className="px-5 py-4">
           <h1 className="text-lg font-semibold text-foreground">Paramètres</h1>
@@ -257,11 +192,11 @@ export default function SettingsPage() {
                       'w-8 h-8 rounded-lg flex items-center justify-center shrink-0',
                       item.destructive
                         ? 'bg-destructive/10'
-                        : 'bg-primary/10'
+                        : item.iconColor || 'bg-primary/10'
                     )}>
                       <Icon className={cn(
                         'h-4 w-4',
-                        item.destructive ? 'text-destructive' : 'text-primary'
+                        item.destructive ? 'text-destructive' : item.iconColor?.split(' ')[0] || 'text-primary'
                       )} />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -280,6 +215,8 @@ export default function SettingsPage() {
                     )}
                     {item.rightElement ? (
                       <div onClick={e => e.stopPropagation()}>{item.rightElement}</div>
+                    ) : item.external ? (
+                      <ExternalLink className="h-4 w-4 text-muted-foreground shrink-0" />
                     ) : hasAction ? (
                       <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
                     ) : null}
