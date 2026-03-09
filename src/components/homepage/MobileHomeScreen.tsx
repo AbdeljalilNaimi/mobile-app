@@ -39,7 +39,7 @@ const symptomKeys = ['headache', 'nausea', 'fever', 'fatigue', 'allergy', 'breat
 
 export const MobileHomeScreen = () => {
   const { user, profile } = useAuth();
-  const { t } = useLanguage();
+  const { t, isRTL } = useLanguage();
   const navigate = useNavigate();
   const { unreadCount } = useNotifications(user?.uid);
   const [searchQuery, setSearchQuery] = useState('');
@@ -285,6 +285,49 @@ export const MobileHomeScreen = () => {
         </div>
       </motion.div>
 
+      {/* ── Auto-scrolling Ads Carousel ── */}
+      {ads.length > 0 && (
+        <motion.div variants={fadeUp}>
+          <SectionHeader label={t('mobileHome', 'news')} title={t('mobileHome', 'medicalAds')} actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/annonces')} />
+          <div className="mt-3 overflow-hidden">
+            <div className="flex gap-3 animate-scroll-left hover:[animation-play-state:paused]" style={{ width: 'max-content' }}>
+              {[...ads, ...ads].map((ad, idx) => (
+                <button
+                  key={`${ad.id}-${idx}`}
+                  onClick={() => navigate('/annonces')}
+                  className="w-[260px] shrink-0 rounded-2xl bg-card border border-border shadow-sm overflow-hidden text-start active:scale-[0.97] transition-all duration-200 hover:shadow-md"
+                >
+                  {ad.imageUrl && (
+                    <div className="relative aspect-[16/9] overflow-hidden">
+                      <img src={ad.imageUrl} alt={ad.title} className="w-full h-full object-cover" loading="lazy" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                      <span className={`absolute top-2 ${isRTL ? 'right-2' : 'left-2'} text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm ${
+                        ad.isPrimary ? 'bg-amber-500/90 text-white' : 'bg-card/80 text-foreground'
+                      }`}>
+                        {ad.tag}
+                      </span>
+                    </div>
+                  )}
+                  <div className="p-3 space-y-1.5">
+                    <p className="text-foreground font-semibold text-[13px] leading-tight line-clamp-2">{ad.title}</p>
+                    {ad.shortDescription && (
+                      <p className="text-muted-foreground text-[11px] leading-snug line-clamp-1">{ad.shortDescription}</p>
+                    )}
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span className="text-[8px] font-bold text-primary">{ad.provider.charAt(0)}</span>
+                      </div>
+                      <span className="text-[10px] text-muted-foreground truncate">{ad.provider}</span>
+                      {ad.isVerified && <Shield className="h-3 w-3 text-primary flex-shrink-0" />}
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      )}
+
       {/* ── Urgent banner ── */}
       <motion.div variants={fadeUp} className="w-full rounded-xl bg-card border border-border border-s-4 border-s-destructive shadow-sm p-4 space-y-3">
         <button
@@ -352,86 +395,6 @@ export const MobileHomeScreen = () => {
             <ChevronRight className="h-3 w-3" />
           </button>
         </div>
-      </motion.div>
-
-      {/* ── Annonces Pro ── */}
-      <SectionHeader label={t('mobileHome', 'news')} title={t('mobileHome', 'medicalAds')} actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/annonces')} />
-      <motion.div variants={fadeUp}>
-        {ads.length > 0 ? (
-          <div className="grid grid-cols-2 gap-3">
-            {ads.map((ad) => (
-              <button
-                key={ad.id}
-                onClick={() => navigate(`/annonces`)}
-                className="group/ad rounded-2xl bg-card border border-border shadow-sm overflow-hidden text-start active:scale-[0.97] transition-all duration-200 hover:shadow-md"
-              >
-                {/* Image */}
-                {ad.imageUrl && (
-                  <div className="relative aspect-[4/3] overflow-hidden">
-                    <img
-                      src={ad.imageUrl}
-                      alt={ad.title}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover/ad:scale-105"
-                      loading="lazy"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                    {/* Badge */}
-                    <span className={`absolute top-2 left-2 text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm ${
-                      ad.isPrimary
-                        ? 'bg-amber-500/90 text-white'
-                        : 'bg-card/80 text-foreground'
-                    }`}>
-                      {ad.tag}
-                    </span>
-                  </div>
-                )}
-                {/* Content */}
-                <div className="p-3 space-y-2">
-                  {!ad.imageUrl && (
-                    <span className={`inline-block text-[9px] font-bold px-2 py-0.5 rounded-full ${
-                      ad.isPrimary ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
-                    }`}>
-                      {ad.tag}
-                    </span>
-                  )}
-                  <p className="text-foreground font-semibold text-[13px] leading-tight line-clamp-2 group-hover/ad:text-primary transition-colors">
-                    {ad.title}
-                  </p>
-                  {ad.shortDescription && (
-                    <p className="text-muted-foreground text-[11px] leading-snug line-clamp-1">
-                      {ad.shortDescription}
-                    </p>
-                  )}
-                  <div className="flex items-center gap-1.5 pt-0.5">
-                    {ad.providerAvatar ? (
-                      <img src={ad.providerAvatar} alt="" className="w-4 h-4 rounded-full object-cover" />
-                    ) : (
-                      <div className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center">
-                        <span className="text-[8px] font-bold text-primary">{ad.provider.charAt(0)}</span>
-                      </div>
-                    )}
-                    <span className="text-[10px] text-muted-foreground truncate">{ad.provider}</span>
-                    {ad.isVerified && (
-                      <Shield className="h-3 w-3 text-primary flex-shrink-0" />
-                    )}
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        ) : (
-          <button
-            onClick={() => navigate('/annonces')}
-            className="w-full rounded-2xl bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 p-6 text-center active:scale-[0.98] transition-transform"
-          >
-            <Megaphone className="h-8 w-8 text-primary mx-auto mb-2" />
-            <p className="text-sm font-semibold text-foreground">{t('mobileHome', 'medicalAds')}</p>
-            <p className="text-xs text-muted-foreground mt-1">Découvrez les annonces des professionnels de santé</p>
-            <span className="inline-flex items-center gap-1 mt-3 px-4 py-2 rounded-full bg-primary text-primary-foreground text-xs font-semibold">
-              {t('mobileHome', 'viewAll')} <ArrowRight className="h-3 w-3" />
-            </span>
-          </button>
-        )}
       </motion.div>
 
       {/* ── Research articles ── */}
