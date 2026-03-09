@@ -121,16 +121,7 @@ const SearchPage = () => {
     }
 
     if (filters.categories.length > 0) {
-      results = results.filter(p =>
-        filters.categories.some(cat => {
-          const t = p.type.toLowerCase();
-          if (cat === 'doctors') return t.includes('doctor') || t.includes('specialist');
-          if (cat === 'pharmacies') return t.includes('pharmacy');
-          if (cat === 'laboratories') return t.includes('lab');
-          if (cat === 'clinics') return t.includes('clinic') || t.includes('hospital');
-          return false;
-        })
-      );
+      results = results.filter(p => filters.categories.includes(p.type));
     }
 
     if (filters.minRating > 0) results = results.filter(p => p.rating >= filters.minRating);
@@ -138,6 +129,17 @@ const SearchPage = () => {
     if (filters.emergencyServices) results = results.filter(p => p.emergency);
     if (filters.wheelchairAccessible) results = results.filter(p => p.accessible);
     if (filters.availability === 'now') results = results.filter(p => p.isOpen);
+    if (filters.languages.length > 0) {
+      results = results.filter(p =>
+        filters.languages.some(lang => p.languages?.includes(lang as any))
+      );
+    }
+    if (filters.area) {
+      results = results.filter(p => p.area === filters.area);
+    }
+    if (filters.maxDistance < 50) {
+      results = results.filter(p => (p.distance || 0) <= filters.maxDistance);
+    }
 
     const sorted = [...results];
     if (sortBy === 'rating') sorted.sort((a, b) => b.rating - a.rating);
@@ -148,9 +150,9 @@ const SearchPage = () => {
   }, [allProviders, debouncedQuery, filters, sortBy]);
 
   const clearAll = () => setFilters({
-    categories: [], location: '', radius: 25, availability: 'any', minRating: 0,
+    categories: [], availability: 'any', minRating: 0,
     verifiedOnly: false, emergencyServices: false, wheelchairAccessible: false,
-    insuranceAccepted: false, priceRange: [0, 500], equipmentBrands: [], cnasOnly: false,
+    languages: [], area: '', maxDistance: 50,
   });
 
   return (
