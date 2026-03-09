@@ -100,11 +100,13 @@ export const MobileHomeScreen = () => {
   ];
 
 
-  const entraideItems = [
-    { icon: Handshake, title: t('mobileHome', 'medications'), subtitle: t('mobileHome', 'donationsAvailable'), path: '/citizen/provide' },
-    { icon: Handshake, title: t('mobileHome', 'transport'), subtitle: t('mobileHome', 'accompaniment'), path: '/citizen/provide' },
-    { icon: Handshake, title: t('mobileHome', 'medicalEquipment'), subtitle: t('mobileHome', 'loanDonation'), path: '/citizen/provide' },
-    { icon: Handshake, title: t('mobileHome', 'food'), subtitle: t('mobileHome', 'foodAid'), path: '/citizen/provide' },
+  const serviceItems = [
+    { icon: FlaskConical, title: 'API Developer', subtitle: 'Intégrez nos données', path: '/service/api-developer' },
+    { icon: BookOpen, title: 'Articles & Recherche', subtitle: 'Publications médicales', path: '/service/articles-recherche' },
+    { icon: Droplets, title: 'Don de Sang', subtitle: 'Sauvez des vies', path: '/service/don-de-sang' },
+    { icon: Handshake, title: 'Don Gratuit', subtitle: 'Entraide communautaire', path: '/service/don-gratuit' },
+    { icon: Newspaper, title: 'Documents', subtitle: 'Guides & ressources', path: '/service/documents' },
+    { icon: CreditCard, title: 'Tarifs Providers', subtitle: 'Plans professionnels', path: '/service/tarifs-providers' },
   ];
 
 
