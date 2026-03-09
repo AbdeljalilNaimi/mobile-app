@@ -103,7 +103,7 @@ export const MobileHomeScreen = () => {
   const serviceItems = [
     { icon: FlaskConical, title: 'API Developer', subtitle: 'Intégrez nos données', path: '/service/api-developer' },
     { icon: BookOpen, title: 'Articles & Recherche', subtitle: 'Publications médicales', path: '/service/articles-recherche' },
-    { icon: Droplets, title: 'Don de Sang', subtitle: 'Sauvez des vies', path: '/service/don-de-sang' },
+    { icon: Droplets, title: 'Don de Sang', subtitle: 'Sauvez des vies', path: '/blood-donation' },
     { icon: Handshake, title: 'Don Gratuit', subtitle: 'Entraide communautaire', path: '/service/don-gratuit' },
     { icon: Newspaper, title: 'Documents', subtitle: 'Guides & ressources', path: '/service/documents' },
     { icon: CreditCard, title: 'Tarifs Providers', subtitle: 'Plans professionnels', path: '/service/tarifs-providers' },
