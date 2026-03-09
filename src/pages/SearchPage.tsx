@@ -132,6 +132,8 @@ const SearchPage = () => {
     if (filters.minRating > 0) results = results.filter(p => p.rating >= filters.minRating);
     if (filters.verifiedOnly) results = results.filter(p => isProviderVerified(p));
     if (filters.emergencyServices) results = results.filter(p => p.emergency);
+    if (filters.wheelchairAccessible) results = results.filter(p => p.accessible);
+    if (filters.availability === 'now') results = results.filter(p => p.isOpen);
 
     const sorted = [...results];
     if (sortBy === 'rating') sorted.sort((a, b) => b.rating - a.rating);
