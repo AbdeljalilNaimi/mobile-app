@@ -19,6 +19,7 @@ import { Input } from '@/components/ui/input';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useHomepageAds, useHomepageArticles, useHomepageCommunity } from '@/hooks/useHomepageData';
 import { getProviders } from '@/data/providers';
+import { SideDrawer } from '@/components/layout/SideDrawer';
 
 const stagger = {
   hidden: {},
