@@ -22,7 +22,7 @@ const appLinks = [
   { icon: Search, labelKey: 'drawerDoctors', path: '/search' },
   { icon: Map, labelKey: 'drawerMap', path: '/map' },
   { icon: Bot, labelKey: 'drawerAI', path: '/medical-assistant' },
-  { icon: FileText, labelKey: 'drawerDocuments', path: '/citizen/documents' },
+  { icon: FileText, labelKey: 'drawerDocuments', path: '/service/documents' },
   { icon: UserCircle, labelKey: 'drawerProfile', path: '/profile' },
   { icon: Phone, labelKey: 'drawerContact', path: '/contact' },
 ];
