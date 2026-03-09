@@ -223,6 +223,15 @@
   .animate-float {
     will-change: transform;
   }
+
+  /* Auto-scrolling carousel */
+  @keyframes scroll-left {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  .animate-scroll-left {
+    animation: scroll-left 20s linear infinite;
+  }
   
   /* Reduce motion for accessibility */
   @media (prefers-reduced-motion: reduce) {
