@@ -301,7 +301,7 @@ export const MobileHomeScreen = () => {
                     <div className="relative aspect-[16/9] overflow-hidden">
                       <img src={ad.imageUrl} alt={ad.title} className="w-full h-full object-cover" loading="lazy" />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                      <span className={`absolute top-2 ${language === 'ar' ? 'right-2' : 'left-2'} text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm ${
+                      <span className={`absolute top-2 ${isRTL ? 'right-2' : 'left-2'} text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm ${
                         ad.isPrimary ? 'bg-amber-500/90 text-white' : 'bg-card/80 text-foreground'
                       }`}>
                         {ad.tag}
