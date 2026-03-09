@@ -1,5 +1,5 @@
 import React, { useState, memo, useCallback, useRef, useEffect } from 'react';
-import { Heart, Phone, Star, MapPin, Clock, Navigation, Calendar, Share2, Loader2, CheckCircle } from 'lucide-react';
+import { Heart, Phone, Star, Clock, Navigation, Calendar, Share2, Loader2, CheckCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Provider, ViewMode } from '@/pages/SearchPage';
