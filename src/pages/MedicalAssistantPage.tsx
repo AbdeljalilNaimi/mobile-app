@@ -35,14 +35,14 @@ export default function MedicalAssistantPage() {
   const [showGuestBanner, setShowGuestBanner] = useState(true);
   const [initialMessages, setInitialMessages] = useState<{ role: "user" | "assistant"; content: string }[] | undefined>();
 
-  const symptomFromUrl = searchParams.get("symptom");
+  // Capture symptom from URL once, then clear the param
+  const [capturedSymptom] = useState(() => searchParams.get("symptom"));
 
-  // Clear the URL param after reading it so it doesn't re-trigger on navigation
   useEffect(() => {
-    if (symptomFromUrl) {
+    if (searchParams.get("symptom")) {
       setSearchParams({}, { replace: true });
     }
-  }, [symptomFromUrl, setSearchParams]);
+  }, [searchParams, setSearchParams]);
 
   const {
     conversations,
@@ -222,7 +222,7 @@ export default function MedicalAssistantPage() {
             resetKey={resetKey}
             onMessageSent={handleMessageSent}
             initialMessages={initialMessages}
-            autoSendSymptom={symptomFromUrl}
+            autoSendSymptom={capturedSymptom}
           />
         </div>
 
