@@ -467,11 +467,11 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
         </div>
       </div>
 
-      {/* Input bar — clean */}
-      <div className="shrink-0 px-3 py-2 pb-[calc(3rem+env(safe-area-inset-bottom,0px))] border-t border-border bg-background">
+      {/* Modern AI-style input bar */}
+      <div className="shrink-0 px-3 pt-2 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] bg-gradient-to-t from-background via-background to-background/80">
         <div className={cn(
-          "flex items-center gap-2 min-h-[44px] px-3 rounded-xl border border-border bg-muted/30 transition-colors",
-          input && "border-primary/40 bg-background"
+          "flex items-end gap-2 min-h-[48px] px-4 py-2 rounded-2xl border-2 bg-card shadow-lg transition-all duration-200",
+          input ? "border-primary/50 shadow-primary/10" : "border-border"
         )}>
           <textarea
             ref={inputRef}
@@ -480,23 +480,23 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
             onKeyDown={handleKeyDown}
             placeholder={t.placeholder}
             rows={1}
-            className="flex-1 resize-none text-sm bg-transparent py-2.5 placeholder:text-muted-foreground/50 focus:outline-none max-h-[72px] leading-normal text-foreground"
+            className="flex-1 resize-none text-sm bg-transparent py-1.5 placeholder:text-muted-foreground/60 focus:outline-none max-h-[80px] leading-normal text-foreground"
             disabled={isLoading || isLoadingProviders}
           />
           <button
             onClick={() => sendMessage()}
             disabled={!input.trim() || isLoading || isLoadingProviders}
             className={cn(
-              "shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-90",
+              "shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-90 mb-0.5",
               input.trim()
-                ? "bg-primary text-primary-foreground"
-                : "bg-transparent text-muted-foreground/30"
+                ? "bg-primary text-primary-foreground shadow-md shadow-primary/25"
+                : "bg-muted text-muted-foreground"
             )}
           >
             {isLoading ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
-              <Send className="w-3.5 h-3.5" />
+              <Send className="w-4 h-4" />
             )}
           </button>
         </div>
