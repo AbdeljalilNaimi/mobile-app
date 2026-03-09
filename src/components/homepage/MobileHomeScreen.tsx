@@ -43,6 +43,7 @@ export const MobileHomeScreen = () => {
   const navigate = useNavigate();
   const { unreadCount } = useNotifications(user?.uid);
   const [searchQuery, setSearchQuery] = useState('');
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const { data: adsData } = useHomepageAds();
   const { data: articlesData } = useHomepageArticles();
