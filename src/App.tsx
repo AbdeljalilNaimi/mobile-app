@@ -75,6 +75,7 @@ const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
 const DeveloperLandingPage = lazy(() => import("./pages/developers/DeveloperLandingPage"));
 const DeveloperDashboardPage = lazy(() => import("./pages/developers/DeveloperDashboardPage"));
 const DeveloperDocsPage = lazy(() => import("./pages/developers/DeveloperDocsPage"));
+const ServiceLandingPage = lazy(() => import("./pages/ServiceLandingPage"));
 const queryClient = new QueryClient();
 
 // Loading fallback component
