@@ -133,8 +133,12 @@ export const SideDrawer = ({ open, onOpenChange }: SideDrawerProps) => {
     return location.pathname.startsWith(path);
   };
 
-  const go = (path: string) => {
-    navigate(path);
+  const go = (path: string, external?: boolean) => {
+    if (external) {
+      window.open(path, '_blank', 'noopener,noreferrer');
+    } else {
+      navigate(path);
+    }
     onOpenChange(false);
   };
 
