@@ -30,7 +30,7 @@ const appLinks = [
 const platformLinks = [
   { icon: Code2, labelKey: 'drawerAPI', path: '/service/api-developer' },
   { icon: BookOpen, labelKey: 'drawerArticles', path: '/service/articles-recherche' },
-  { icon: Droplets, labelKey: 'drawerBlood', path: '/service/don-de-sang' },
+  { icon: Droplets, labelKey: 'drawerBlood', path: '/blood-donation' },
   { icon: Handshake, labelKey: 'drawerDonation', path: '/service/don-gratuit' },
   { icon: FileText, labelKey: 'drawerDocs', path: '/service/documents' },
   { icon: CreditCard, labelKey: 'drawerPricing', path: '/service/tarifs-providers' },
