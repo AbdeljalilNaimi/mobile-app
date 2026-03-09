@@ -17,7 +17,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { useNotifications } from '@/hooks/useNotifications';
-import { useHomepageAds, useHomepageArticles, useHomepageCommunity, useHomepageProviderCounts } from '@/hooks/useHomepageData';
+import { useHomepageAds, useHomepageArticles, useHomepageCommunity } from '@/hooks/useHomepageData';
 import { getProviders } from '@/data/providers';
 
 const stagger = {
