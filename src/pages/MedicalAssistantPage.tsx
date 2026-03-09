@@ -32,6 +32,7 @@ export default function MedicalAssistantPage() {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showGuestBanner, setShowGuestBanner] = useState(true);
+  const [showDisclaimer, setShowDisclaimer] = useState(true);
   const [initialMessages, setInitialMessages] = useState<{ role: "user" | "assistant"; content: string }[] | undefined>();
 
   const [capturedSymptom] = useState(() => searchParams.get("symptom"));
