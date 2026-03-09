@@ -363,6 +363,7 @@ export const MobileHomeScreen = () => {
       </motion.div>
 
       {/* ── Emergency section ── */}
+      <SectionHeader label={t('mobileHome', 'specialties')} title={t('mobileHome', 'emergencyTitle')} actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/emergency')} />
       <motion.div variants={fadeUp} className="w-full rounded-xl bg-card border border-border shadow-sm overflow-hidden">
         <div className="p-4 space-y-3">
           <div className="flex items-center gap-2">
