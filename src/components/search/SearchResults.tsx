@@ -9,6 +9,7 @@ import { List, Grid, RowComponentProps, CellComponentProps } from 'react-window'
 import { VerifiedBadge } from '@/components/trust/VerifiedBadge';
 import { isProviderVerified } from '@/utils/verificationUtils';
 import { useAuthRequired } from '@/hooks/useAuthRequired';
+import { ProviderAvatar } from '@/components/ui/ProviderAvatar';
 
 // Custom hook for detecting fast scrolling
 const useScrollingIndicator = (threshold = 150) => {
