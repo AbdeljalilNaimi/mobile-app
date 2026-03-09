@@ -8,8 +8,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import {
   Home, Search, Map, Bot, FileText, UserCircle, Phone,
-  Handshake, MessageSquare, Megaphone, Code2,
+  Handshake, Code2,
   ExternalLink, QrCode, LogIn, Droplets, BookOpen, CreditCard,
+  HelpCircle, Shield, ScrollText,
 } from 'lucide-react';
 
 interface SideDrawerProps {
@@ -17,42 +18,55 @@ interface SideDrawerProps {
   onOpenChange: (open: boolean) => void;
 }
 
-const appLinks = [
+interface NavLink {
+  icon: typeof Home;
+  labelKey: string;
+  path: string;
+  external?: boolean;
+}
+
+const appLinks: NavLink[] = [
   { icon: Home, labelKey: 'drawerHome', path: '/' },
   { icon: Search, labelKey: 'drawerDoctors', path: '/search' },
   { icon: Map, labelKey: 'drawerMap', path: '/map' },
   { icon: Bot, labelKey: 'drawerAI', path: '/medical-assistant' },
-  { icon: FileText, labelKey: 'drawerDocuments', path: '/service/documents' },
   { icon: UserCircle, labelKey: 'drawerProfile', path: '/profile' },
   { icon: Phone, labelKey: 'drawerContact', path: '/contact' },
 ];
 
-const platformLinks = [
-  { icon: Code2, labelKey: 'drawerAPI', path: '/service/api-developer' },
-  { icon: BookOpen, labelKey: 'drawerArticles', path: '/service/articles-recherche' },
-  { icon: Droplets, labelKey: 'drawerBlood', path: '/blood-donation' },
-  { icon: Handshake, labelKey: 'drawerDonation', path: '/service/don-gratuit' },
-  { icon: FileText, labelKey: 'drawerDocs', path: '/service/documents' },
-  { icon: CreditCard, labelKey: 'drawerPricing', path: '/service/tarifs-providers' },
+const platformLinks: NavLink[] = [
+  { icon: BookOpen, labelKey: 'drawerArticles', path: 'https://cityhealth-dz.lovable.app/research', external: true },
+  { icon: Droplets, labelKey: 'drawerBlood', path: 'https://cityhealth-dz.lovable.app/blood-donation', external: true },
+  { icon: Handshake, labelKey: 'drawerDonation', path: 'https://cityhealth-dz.lovable.app/citizen/provide', external: true },
+  { icon: FileText, labelKey: 'drawerDocs', path: 'https://cityhealth-dz.lovable.app/docs', external: true },
+  { icon: CreditCard, labelKey: 'drawerPricing', path: 'https://cityhealth-dz.lovable.app/tarifs', external: true },
+];
+
+const legalLinks: NavLink[] = [
+  { icon: HelpCircle, labelKey: 'drawerFAQ', path: 'https://cityhealth-dz.lovable.app/faq', external: true },
+  { icon: Shield, labelKey: 'drawerPrivacy', path: 'https://cityhealth-dz.lovable.app/privacy', external: true },
+  { icon: ScrollText, labelKey: 'drawerTerms', path: 'https://cityhealth-dz.lovable.app/terms', external: true },
 ];
 
 const drawerLabels: Record<string, Record<string, string>> = {
   fr: {
     services: 'Services',
     platform: 'Plateforme',
+    legal: 'Légal',
     drawerHome: 'Accueil',
     drawerDoctors: 'Doctors',
     drawerMap: 'Carte',
     drawerAI: 'AI Assistance',
-    drawerDocuments: 'Documents',
     drawerProfile: 'Profile',
     drawerContact: 'Contactez-nous',
-    drawerAPI: 'API Developer',
     drawerArticles: 'Articles & Recherche',
     drawerBlood: 'Don de Sang',
     drawerDonation: 'Don Gratuit',
     drawerDocs: 'Documents',
     drawerPricing: 'Tarifs Providers',
+    drawerFAQ: 'FAQ',
+    drawerPrivacy: 'Confidentialité',
+    drawerTerms: 'Conditions',
     visitPlatform: 'Visiter notre plateforme',
     guest: 'Visiteur',
     signIn: 'Se connecter',
@@ -61,19 +75,21 @@ const drawerLabels: Record<string, Record<string, string>> = {
   en: {
     services: 'Services',
     platform: 'Platform',
+    legal: 'Legal',
     drawerHome: 'Home',
     drawerDoctors: 'Doctors',
     drawerMap: 'Map',
     drawerAI: 'AI Assistance',
-    drawerDocuments: 'Documents',
     drawerProfile: 'Profile',
     drawerContact: 'Contact Us',
-    drawerAPI: 'API Developer',
     drawerArticles: 'Articles & Research',
     drawerBlood: 'Blood Donation',
     drawerDonation: 'Free Donation',
     drawerDocs: 'Documents',
     drawerPricing: 'Provider Pricing',
+    drawerFAQ: 'FAQ',
+    drawerPrivacy: 'Privacy',
+    drawerTerms: 'Terms',
     visitPlatform: 'Visit our platform',
     guest: 'Visitor',
     signIn: 'Sign in',
@@ -82,19 +98,21 @@ const drawerLabels: Record<string, Record<string, string>> = {
   ar: {
     services: 'الخدمات',
     platform: 'المنصة',
+    legal: 'قانوني',
     drawerHome: 'الرئيسية',
     drawerDoctors: 'الأطباء',
     drawerMap: 'الخريطة',
     drawerAI: 'مساعد ذكي',
-    drawerDocuments: 'الوثائق',
     drawerProfile: 'الملف الشخصي',
     drawerContact: 'اتصل بنا',
-    drawerAPI: 'مطوّر API',
     drawerArticles: 'مقالات وأبحاث',
     drawerBlood: 'التبرع بالدم',
     drawerDonation: 'تبرع مجاني',
     drawerDocs: 'وثائق',
     drawerPricing: 'تعريفات المزودين',
+    drawerFAQ: 'الأسئلة الشائعة',
+    drawerPrivacy: 'الخصوصية',
+    drawerTerms: 'الشروط',
     visitPlatform: 'زيارة منصتنا',
     guest: 'زائر',
     signIn: 'تسجيل الدخول',
@@ -115,8 +133,12 @@ export const SideDrawer = ({ open, onOpenChange }: SideDrawerProps) => {
     return location.pathname.startsWith(path);
   };
 
-  const go = (path: string) => {
-    navigate(path);
+  const go = (path: string, external?: boolean) => {
+    if (external) {
+      window.open(path, '_blank', 'noopener,noreferrer');
+    } else {
+      navigate(path);
+    }
     onOpenChange(false);
   };
 
@@ -188,7 +210,7 @@ export const SideDrawer = ({ open, onOpenChange }: SideDrawerProps) => {
                 return (
                   <button
                     key={item.path}
-                    onClick={() => go(item.path)}
+                    onClick={() => go(item.path, item.external)}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
                       active
                         ? 'bg-primary/10 text-primary'
@@ -196,7 +218,7 @@ export const SideDrawer = ({ open, onOpenChange }: SideDrawerProps) => {
                     }`}
                   >
                     <item.icon className="h-[18px] w-[18px] flex-shrink-0" strokeWidth={1.8} />
-                    {label(item.labelKey)}
+                    <span className="flex-1 text-left">{label(item.labelKey)}</span>
                   </button>
                 );
               })}
@@ -211,23 +233,39 @@ export const SideDrawer = ({ open, onOpenChange }: SideDrawerProps) => {
               {label('platform')}
             </p>
             <nav className="space-y-0.5">
-              {platformLinks.map((item) => {
-                const active = isActive(item.path);
-                return (
-                  <button
-                    key={item.path}
-                    onClick={() => go(item.path)}
-                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors ${
-                      active
-                        ? 'bg-primary/10 text-primary'
-                        : 'text-foreground hover:bg-muted'
-                    }`}
-                  >
-                    <item.icon className="h-[18px] w-[18px] flex-shrink-0" strokeWidth={1.8} />
-                    {label(item.labelKey)}
-                  </button>
-                );
-              })}
+              {platformLinks.map((item) => (
+                <button
+                  key={item.path}
+                  onClick={() => go(item.path, item.external)}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                >
+                  <item.icon className="h-[18px] w-[18px] flex-shrink-0" strokeWidth={1.8} />
+                  <span className="flex-1 text-left">{label(item.labelKey)}</span>
+                  <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+                </button>
+              ))}
+            </nav>
+          </div>
+
+          <Separator />
+
+          {/* Legal */}
+          <div>
+            <p className="px-3 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+              {label('legal')}
+            </p>
+            <nav className="space-y-0.5">
+              {legalLinks.map((item) => (
+                <button
+                  key={item.path}
+                  onClick={() => go(item.path, item.external)}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                >
+                  <item.icon className="h-[18px] w-[18px] flex-shrink-0" strokeWidth={1.8} />
+                  <span className="flex-1 text-left">{label(item.labelKey)}</span>
+                  <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+                </button>
+              ))}
             </nav>
           </div>
         </div>
