@@ -86,7 +86,13 @@ const SearchPage = () => {
     (filters.categories.length > 0 ? 1 : 0) +
     (filters.minRating > 0 ? 1 : 0) +
     (filters.verifiedOnly ? 1 : 0) +
-    (filters.emergencyServices ? 1 : 0);
+    (filters.emergencyServices ? 1 : 0) +
+    (filters.wheelchairAccessible ? 1 : 0) +
+    (filters.insuranceAccepted ? 1 : 0) +
+    (filters.cnasOnly ? 1 : 0) +
+    (filters.availability !== 'any' ? 1 : 0) +
+    (filters.equipmentBrands.length > 0 ? 1 : 0) +
+    (filters.location ? 1 : 0);
 
   const toggleCategory = (id: string) => {
     setFilters(f => ({
