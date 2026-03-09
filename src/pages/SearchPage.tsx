@@ -141,9 +141,11 @@ const SearchPage = () => {
     return sorted;
   }, [allProviders, debouncedQuery, filters, sortBy]);
 
-  const clearAll = () => setFilters(f => ({
-    ...f, categories: [], minRating: 0, verifiedOnly: false, emergencyServices: false,
-  }));
+  const clearAll = () => setFilters({
+    categories: [], location: '', radius: 25, availability: 'any', minRating: 0,
+    verifiedOnly: false, emergencyServices: false, wheelchairAccessible: false,
+    insuranceAccepted: false, priceRange: [0, 500], equipmentBrands: [], cnasOnly: false,
+  });
 
   return (
     <div className="flex flex-col min-h-full bg-background">
