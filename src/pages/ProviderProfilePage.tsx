@@ -382,7 +382,7 @@ const ProviderProfilePage = () => {
               <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-1">
                 <TypeIcon className={`h-3.5 w-3.5 ${typeConfig.color}`} />
                 <span>{t(`providerTypes.${resolvedType}`)}</span>
-                {provider.specialty && (
+                {provider.specialty && provider.specialty.toLowerCase() !== t(`providerTypes.${resolvedType}`).toLowerCase() && provider.specialty.toLowerCase() !== provider.type.toLowerCase() && (
                   <>
                     <span className="text-border">·</span>
                     <span>{provider.specialty}</span>
