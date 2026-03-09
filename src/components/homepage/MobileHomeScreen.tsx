@@ -17,7 +17,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { useNotifications } from '@/hooks/useNotifications';
-import { useHomepageAds, useHomepageArticles, useHomepageCommunity, useHomepageProviderCounts } from '@/hooks/useHomepageData';
+import { useHomepageAds, useHomepageArticles, useHomepageCommunity } from '@/hooks/useHomepageData';
 import { getProviders } from '@/data/providers';
 
 const stagger = {
@@ -46,7 +46,7 @@ export const MobileHomeScreen = () => {
   const { data: adsData } = useHomepageAds();
   const { data: articlesData } = useHomepageArticles();
   const { data: communityData } = useHomepageCommunity();
-  const { data: providerCounts } = useHomepageProviderCounts();
+  
 
   const displayName = profile?.full_name?.split(' ')[0] || user?.email?.split('@')[0] || t('mobileHome', 'visitor');
   const isGuest = !user;
@@ -97,12 +97,6 @@ export const MobileHomeScreen = () => {
     { icon: UserCircle, label: t('mobileHome', 'myProfile'), path: '/profile' },
   ];
 
-  const healthServices = [
-    { title: t('mobileHome', 'pharmacyOnDuty'), subtitle: t('mobileHome', 'openNow'), icon: Pill, path: '/search?type=pharmacy' },
-    { title: t('mobileHome', 'cardiology'), subtitle: `${providerCounts?.cardiologie ?? 0} ${t('mobileHome', 'specialists')}`, icon: Activity, path: '/search?specialty=cardiologie' },
-    { title: t('mobileHome', 'pediatrics'), subtitle: `${providerCounts?.pédiatrie ?? 0} ${t('mobileHome', 'doctors')}`, icon: Stethoscope, path: '/search?specialty=pédiatrie' },
-    { title: t('mobileHome', 'ophthalmology'), subtitle: `${providerCounts?.ophtalmologie ?? 0} ${t('mobileHome', 'doctors')}`, icon: Star, path: '/search?specialty=ophtalmologie' },
-  ];
 
   const entraideItems = [
     { icon: Handshake, title: t('mobileHome', 'medications'), subtitle: t('mobileHome', 'donationsAvailable'), path: '/citizen/provide' },
@@ -115,7 +109,11 @@ export const MobileHomeScreen = () => {
   // Map real data
   const ads = (adsData ?? []).map((ad) => ({
     id: ad.id, title: ad.title, provider: ad.provider_name,
+    shortDescription: ad.short_description,
     tag: ad.is_featured ? '⭐' : t('mobileHome', 'promoTag'), isPrimary: ad.is_featured,
+    isVerified: ad.is_verified_provider,
+    imageUrl: ad.image_url,
+    providerAvatar: ad.provider_avatar,
   }));
 
   const articles = (articlesData ?? []).map((a) => ({
@@ -354,54 +352,85 @@ export const MobileHomeScreen = () => {
         </div>
       </motion.div>
 
-      {/* ── Health services ── */}
-      <SectionHeader label={t('mobileHome', 'specialties')} title={t('mobileHome', 'healthServices')} actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/search')} />
-      <motion.div variants={fadeUp} className="-mx-4 px-4">
-        <div className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory scrollbar-hide">
-          {healthServices.map((s, i) => (
-            <button
-              key={i}
-              onClick={() => navigate(s.path)}
-              className="flex-shrink-0 w-[140px] snap-start active:scale-[0.97] transition-transform"
-              aria-label={s.title}
-            >
-              <div className="rounded-xl bg-card border border-border shadow-sm p-3.5 h-full flex flex-col justify-between min-h-[120px]">
-                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <s.icon className="h-4 w-4 text-primary" strokeWidth={2} />
-                </div>
-                <div className="mt-auto space-y-0.5">
-                  <p className="text-foreground font-semibold text-[11px] leading-tight">{s.title}</p>
-                  <p className="text-muted-foreground text-[10px]">{s.subtitle}</p>
-                </div>
-              </div>
-            </button>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* ── Medical ads ── */}
-      {ads.length > 0 && (
-        <>
-          <SectionHeader label={t('mobileHome', 'news')} title={t('mobileHome', 'medicalAds')} actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/annonces')} />
-          <motion.div variants={fadeUp} className="grid grid-cols-2 gap-3">
+      {/* ── Annonces Pro ── */}
+      <SectionHeader label={t('mobileHome', 'news')} title={t('mobileHome', 'medicalAds')} actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/annonces')} />
+      <motion.div variants={fadeUp}>
+        {ads.length > 0 ? (
+          <div className="grid grid-cols-2 gap-3">
             {ads.map((ad) => (
               <button
                 key={ad.id}
-                onClick={() => navigate('/ads')}
-                className="rounded-xl bg-card border border-border shadow-sm p-3.5 text-start active:scale-[0.97] transition-transform flex flex-col justify-between min-h-[100px]"
+                onClick={() => navigate(`/annonces`)}
+                className="group/ad rounded-2xl bg-card border border-border shadow-sm overflow-hidden text-start active:scale-[0.97] transition-all duration-200 hover:shadow-md"
               >
-                <span className={`self-start text-[9px] font-bold px-2 py-0.5 rounded-full ${ad.isPrimary ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
-                  {ad.tag}
-                </span>
-                <div className="mt-auto space-y-1">
-                  <p className="text-foreground font-medium text-[13px] leading-tight line-clamp-2">{ad.title}</p>
-                  <p className="text-muted-foreground text-[10px]">{ad.provider}</p>
+                {/* Image */}
+                {ad.imageUrl && (
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <img
+                      src={ad.imageUrl}
+                      alt={ad.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover/ad:scale-105"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                    {/* Badge */}
+                    <span className={`absolute top-2 left-2 text-[9px] font-bold px-2 py-0.5 rounded-full backdrop-blur-sm ${
+                      ad.isPrimary
+                        ? 'bg-amber-500/90 text-white'
+                        : 'bg-card/80 text-foreground'
+                    }`}>
+                      {ad.tag}
+                    </span>
+                  </div>
+                )}
+                {/* Content */}
+                <div className="p-3 space-y-2">
+                  {!ad.imageUrl && (
+                    <span className={`inline-block text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                      ad.isPrimary ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
+                    }`}>
+                      {ad.tag}
+                    </span>
+                  )}
+                  <p className="text-foreground font-semibold text-[13px] leading-tight line-clamp-2 group-hover/ad:text-primary transition-colors">
+                    {ad.title}
+                  </p>
+                  {ad.shortDescription && (
+                    <p className="text-muted-foreground text-[11px] leading-snug line-clamp-1">
+                      {ad.shortDescription}
+                    </p>
+                  )}
+                  <div className="flex items-center gap-1.5 pt-0.5">
+                    {ad.providerAvatar ? (
+                      <img src={ad.providerAvatar} alt="" className="w-4 h-4 rounded-full object-cover" />
+                    ) : (
+                      <div className="w-4 h-4 rounded-full bg-primary/10 flex items-center justify-center">
+                        <span className="text-[8px] font-bold text-primary">{ad.provider.charAt(0)}</span>
+                      </div>
+                    )}
+                    <span className="text-[10px] text-muted-foreground truncate">{ad.provider}</span>
+                    {ad.isVerified && (
+                      <Shield className="h-3 w-3 text-primary flex-shrink-0" />
+                    )}
+                  </div>
                 </div>
               </button>
             ))}
-          </motion.div>
-        </>
-      )}
+          </div>
+        ) : (
+          <button
+            onClick={() => navigate('/annonces')}
+            className="w-full rounded-2xl bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20 p-6 text-center active:scale-[0.98] transition-transform"
+          >
+            <Megaphone className="h-8 w-8 text-primary mx-auto mb-2" />
+            <p className="text-sm font-semibold text-foreground">{t('mobileHome', 'medicalAds')}</p>
+            <p className="text-xs text-muted-foreground mt-1">Découvrez les annonces des professionnels de santé</p>
+            <span className="inline-flex items-center gap-1 mt-3 px-4 py-2 rounded-full bg-primary text-primary-foreground text-xs font-semibold">
+              {t('mobileHome', 'viewAll')} <ArrowRight className="h-3 w-3" />
+            </span>
+          </button>
+        )}
+      </motion.div>
 
       {/* ── Research articles ── */}
       {articles.length > 0 && (
