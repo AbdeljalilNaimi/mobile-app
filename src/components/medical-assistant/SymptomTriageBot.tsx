@@ -317,18 +317,20 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
               <h2 className="text-lg font-semibold text-center mb-0.5 text-foreground">{t.welcome}</h2>
               <p className="text-[11px] text-center mb-6 text-muted-foreground">{t.welcomeSub}</p>
 
-              {/* Clean 2-column chips */}
-              <div className="grid grid-cols-2 gap-1.5 w-full max-w-sm">
+              {/* Premium 2-column symptom grid */}
+              <div className="grid grid-cols-2 gap-2 w-full max-w-sm">
                 {chips.map((chip) => {
                   const IconComponent = chip.icon;
                   return (
                     <button
                       key={chip.label}
                       onClick={() => sendMessage(chip.query)}
-                      className="flex items-center gap-2 h-10 px-3 rounded-lg border border-border bg-background text-left transition-colors hover:bg-muted active:scale-[0.98]"
+                      className="flex items-center gap-2.5 h-12 px-3.5 rounded-xl bg-card border border-border shadow-sm text-left transition-all hover:shadow-md hover:border-primary/30 hover:-translate-y-0.5 active:scale-[0.97] duration-200"
                     >
-                      <IconComponent className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
-                      <span className="text-[12px] text-foreground truncate">{chip.label}</span>
+                      <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <IconComponent className="w-3.5 h-3.5 text-primary" />
+                      </div>
+                      <span className="text-[12px] font-medium text-foreground truncate">{chip.label}</span>
                     </button>
                   );
                 })}
@@ -465,11 +467,11 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
         </div>
       </div>
 
-      {/* Input bar — clean */}
-      <div className="shrink-0 px-3 py-2 pb-[calc(3rem+env(safe-area-inset-bottom,0px))] border-t border-border bg-background">
+      {/* Modern AI-style input bar */}
+      <div className="shrink-0 px-3 pt-2 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] bg-gradient-to-t from-background via-background to-background/80">
         <div className={cn(
-          "flex items-center gap-2 min-h-[44px] px-3 rounded-xl border border-border bg-muted/30 transition-colors",
-          input && "border-primary/40 bg-background"
+          "flex items-end gap-2 min-h-[48px] px-4 py-2 rounded-2xl border-2 bg-card shadow-lg transition-all duration-200",
+          input ? "border-primary/50 shadow-primary/10" : "border-border"
         )}>
           <textarea
             ref={inputRef}
@@ -478,23 +480,23 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
             onKeyDown={handleKeyDown}
             placeholder={t.placeholder}
             rows={1}
-            className="flex-1 resize-none text-sm bg-transparent py-2.5 placeholder:text-muted-foreground/50 focus:outline-none max-h-[72px] leading-normal text-foreground"
+            className="flex-1 resize-none text-sm bg-transparent py-1.5 placeholder:text-muted-foreground/60 focus:outline-none max-h-[80px] leading-normal text-foreground"
             disabled={isLoading || isLoadingProviders}
           />
           <button
             onClick={() => sendMessage()}
             disabled={!input.trim() || isLoading || isLoadingProviders}
             className={cn(
-              "shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-90",
+              "shrink-0 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 active:scale-90 mb-0.5",
               input.trim()
-                ? "bg-primary text-primary-foreground"
-                : "bg-transparent text-muted-foreground/30"
+                ? "bg-primary text-primary-foreground shadow-md shadow-primary/25"
+                : "bg-muted text-muted-foreground"
             )}
           >
             {isLoading ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
-              <Send className="w-3.5 h-3.5" />
+              <Send className="w-4 h-4" />
             )}
           </button>
         </div>
