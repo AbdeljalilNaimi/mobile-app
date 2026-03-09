@@ -397,8 +397,6 @@ export const MobileHomeScreen = () => {
         </div>
       </motion.div>
 
-      </motion.div>
-
       {/* ── Research articles ── */}
       {articles.length > 0 && (
         <>
