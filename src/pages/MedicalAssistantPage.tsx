@@ -1,6 +1,5 @@
 import { useMemo, useState, useCallback, useEffect } from "react";
-import { Bot, AlertTriangle, Phone, PenSquare, History, ChevronRight, Clock, Trash2, LogIn, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Bot, AlertTriangle, PenSquare, History, ChevronRight, Clock, Trash2, X } from "lucide-react";
 import { Link, useSearchParams } from "react-router-dom";
 import {
   AlertDialog,
@@ -35,7 +34,6 @@ export default function MedicalAssistantPage() {
   const [showGuestBanner, setShowGuestBanner] = useState(true);
   const [initialMessages, setInitialMessages] = useState<{ role: "user" | "assistant"; content: string }[] | undefined>();
 
-  // Capture symptom from URL once, then clear the param
   const [capturedSymptom] = useState(() => searchParams.get("symptom"));
 
   useEffect(() => {
@@ -106,7 +104,7 @@ export default function MedicalAssistantPage() {
       fr: {
         title: "Assistant Médical",
         online: "En ligne",
-        disclaimer: "Cet assistant ne remplace pas un avis médical professionnel",
+        disclaimer: "Ne remplace pas un avis médical professionnel",
         resetTitle: "Nouvelle conversation ?",
         resetDescription: "L'historique de cette session sera effacé.",
         cancel: "Annuler",
@@ -117,13 +115,14 @@ export default function MedicalAssistantPage() {
         deleteAll: "Effacer tout l'historique",
         deleteAllTitle: "Effacer l'historique ?",
         deleteAllDesc: "Toutes vos conversations seront supprimées définitivement.",
-        guestBanner: "Connectez-vous pour sauvegarder",
-        login: "Se connecter →",
+        guestBanner: "Connectez-vous pour sauvegarder vos conversations",
+        login: "Se connecter",
+        emergency: "Urgence",
       },
       ar: {
         title: "المساعد الطبي",
         online: "متصل",
-        disclaimer: "هذا المساعد لا يحل محل الاستشارة الطبية المهنية",
+        disclaimer: "لا يحل محل الاستشارة الطبية المهنية",
         resetTitle: "محادثة جديدة؟",
         resetDescription: "سيتم مسح سجل هذه الجلسة.",
         cancel: "إلغاء",
@@ -135,12 +134,13 @@ export default function MedicalAssistantPage() {
         deleteAllTitle: "حذف السجل؟",
         deleteAllDesc: "سيتم حذف جميع محادثاتك نهائياً.",
         guestBanner: "سجل الدخول لحفظ محادثاتك",
-        login: "تسجيل الدخول →",
+        login: "تسجيل الدخول",
+        emergency: "طوارئ",
       },
       en: {
         title: "Medical Assistant",
         online: "Online",
-        disclaimer: "This assistant does not replace professional medical advice",
+        disclaimer: "Does not replace professional medical advice",
         resetTitle: "New conversation?",
         resetDescription: "This session's history will be cleared.",
         cancel: "Cancel",
@@ -152,7 +152,8 @@ export default function MedicalAssistantPage() {
         deleteAllTitle: "Clear history?",
         deleteAllDesc: "All your conversations will be permanently deleted.",
         guestBanner: "Sign in to save your conversations",
-        login: "Sign in →",
+        login: "Sign in",
+        emergency: "Emergency",
       },
     };
     return translations[language as keyof typeof translations] || translations.fr;
@@ -160,64 +161,59 @@ export default function MedicalAssistantPage() {
 
   return (
     <div className={cn(
-      "flex flex-col overflow-hidden h-[100dvh] bg-muted",
+      "flex flex-col overflow-hidden h-[100dvh] bg-background",
       language === "ar" && "rtl"
     )}>
-      {/* Header — 56px */}
-      <header className="shrink-0 h-14 bg-card border-b border-border">
+      {/* Clean header */}
+      <header className="shrink-0 h-14 border-b border-border bg-background">
         <div className="h-full px-4 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="w-6 h-6 flex items-center justify-center">
-              <Bot className="w-6 h-6 text-primary" />
-            </div>
+            <Bot className="w-5 h-5 text-primary" />
             <div className="leading-tight">
-              <h1 className="font-bold text-[15px] text-foreground">{t.title}</h1>
+              <h1 className="font-semibold text-sm text-foreground">{t.title}</h1>
               <div className="flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-green-500" />
-                <span className="text-[12px] text-muted-foreground">{t.online}</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                <span className="text-[11px] text-muted-foreground">{t.online}</span>
               </div>
             </div>
           </div>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-0.5">
             {isAuthed && (
               <button
                 onClick={handleOpenHistory}
-                className="h-9 w-9 flex items-center justify-center rounded-lg transition-colors hover:bg-muted active:scale-95"
+                className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors"
               >
-                <History className="w-[18px] h-[18px] text-muted-foreground" />
+                <History className="w-4 h-4 text-muted-foreground" />
               </button>
             )}
-
             <button
               onClick={() => setShowResetDialog(true)}
-              className="h-9 w-9 flex items-center justify-center rounded-lg transition-colors hover:bg-muted active:scale-95"
+              className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors"
             >
-              <PenSquare className="w-[18px] h-[18px] text-muted-foreground" />
+              <PenSquare className="w-4 h-4 text-muted-foreground" />
             </button>
-
-            <button
-              onClick={() => window.location.href = "tel:15"}
-              className="flex items-center gap-1 h-7 px-2.5 rounded-full bg-destructive text-destructive-foreground text-xs font-bold transition-all active:scale-95"
+            <a
+              href="tel:15"
+              className="ml-1 flex items-center gap-1 h-7 px-2.5 rounded-full text-[11px] font-semibold bg-destructive/10 text-destructive transition-colors hover:bg-destructive/15"
             >
-              <span>🚨</span>
-              <span>15</span>
-            </button>
+              15
+            </a>
           </div>
         </div>
       </header>
 
-      {/* Disclaimer — 32px */}
-      <div className="shrink-0 h-8 flex items-center justify-center px-4 bg-muted">
-        <div className="flex items-center gap-1.5">
-          <AlertTriangle className="w-3 h-3 shrink-0 text-muted-foreground" />
-          <span className="text-[11px] italic text-muted-foreground">{t.disclaimer}</span>
-        </div>
+      {/* Subtle disclaimer */}
+      <div className="shrink-0 flex items-center justify-center px-4 py-1.5 bg-muted/50">
+        <p className="text-[10px] text-muted-foreground flex items-center gap-1">
+          <AlertTriangle className="w-2.5 h-2.5" />
+          {t.disclaimer}
+        </p>
       </div>
 
       {/* Chat area */}
       <main className="flex-1 min-h-0 overflow-hidden flex flex-col">
-        <div className="flex-1 min-h-0 overflow-hidden bg-card mx-0">
+        <div className="flex-1 min-h-0 overflow-hidden">
           <SymptomTriageBot
             resetKey={resetKey}
             onMessageSent={handleMessageSent}
@@ -226,19 +222,16 @@ export default function MedicalAssistantPage() {
           />
         </div>
 
-        {/* Guest sign-in banner */}
+        {/* Guest sign-in banner — minimal */}
         {!isAuthed && showGuestBanner && (
-          <div className="shrink-0 mx-4 mb-2 mt-1 rounded-[10px] px-3.5 py-2.5 flex items-center justify-between bg-primary/10">
-            <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
-              <span>💾</span>
-              <span>{t.guestBanner}</span>
-            </div>
+          <div className="shrink-0 mx-3 mb-1 rounded-lg px-3 py-2 flex items-center justify-between bg-muted/60 border border-border">
+            <span className="text-[11px] text-muted-foreground">{t.guestBanner}</span>
             <div className="flex items-center gap-2">
-              <Link to="/citizen/login" className="text-[13px] font-bold text-primary hover:underline">
-                {t.login}
+              <Link to="/citizen/login" className="text-[11px] font-semibold text-primary hover:underline">
+                {t.login} →
               </Link>
               <button onClick={() => setShowGuestBanner(false)} className="p-0.5 rounded hover:bg-muted">
-                <X className="w-3.5 h-3.5 text-muted-foreground" />
+                <X className="w-3 h-3 text-muted-foreground" />
               </button>
             </div>
           </div>
@@ -265,10 +258,10 @@ export default function MedicalAssistantPage() {
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
         <DrawerContent className="max-h-[70vh] rounded-t-[20px]">
           <DrawerHeader className="flex items-center justify-between pb-1 px-4">
-            <DrawerTitle className="text-[15px] font-bold">{t.historyTitle}</DrawerTitle>
+            <DrawerTitle className="text-sm font-semibold">{t.historyTitle}</DrawerTitle>
             <DrawerClose asChild>
-              <button className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-muted">
-                <X className="w-4 h-4 text-muted-foreground" />
+              <button className="h-7 w-7 flex items-center justify-center rounded-full hover:bg-muted">
+                <X className="w-3.5 h-3.5 text-muted-foreground" />
               </button>
             </DrawerClose>
           </DrawerHeader>
@@ -277,37 +270,32 @@ export default function MedicalAssistantPage() {
             {isLoadingHistory ? (
               <div className="space-y-2 px-1">
                 {[1, 2, 3].map((i) => (
-                  <Skeleton key={i} className="h-[52px] rounded-xl" />
+                  <Skeleton key={i} className="h-12 rounded-lg" />
                 ))}
               </div>
             ) : conversations.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-10">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center mb-3 bg-muted">
-                  <Clock className="w-5 h-5 text-muted-foreground" />
-                </div>
-                <p className="text-sm font-medium text-muted-foreground">{t.emptyHistory}</p>
-                <p className="text-xs mt-0.5 text-muted-foreground">{t.emptyHistorySub}</p>
+                <Clock className="w-5 h-5 text-muted-foreground mb-2" />
+                <p className="text-xs font-medium text-muted-foreground">{t.emptyHistory}</p>
+                <p className="text-[10px] mt-0.5 text-muted-foreground">{t.emptyHistorySub}</p>
               </div>
             ) : (
-              <div className="space-y-1">
+              <div className="space-y-0.5">
                 {conversations.map((conv) => (
                   <button
                     key={conv.id}
                     onClick={() => handleSelectConversation(conv.id)}
-                    className="w-full flex items-center gap-3 p-2.5 rounded-xl hover:bg-muted active:bg-muted/80 transition-colors text-left group"
+                    className="w-full flex items-center gap-2.5 p-2.5 rounded-lg hover:bg-muted transition-colors text-left"
                   >
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 bg-primary/10">
-                      <Bot className="w-3.5 h-3.5 text-primary" />
-                    </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-[13px] font-medium truncate text-foreground">
                         {(conv.title || "…").slice(0, 35)}
                       </p>
-                      <p className="text-[11px] text-muted-foreground">
+                      <p className="text-[10px] text-muted-foreground">
                         {formatRelativeDate(conv.updated_at)}
                       </p>
                     </div>
-                    <ChevronRight className="w-4 h-4 shrink-0 text-muted-foreground/50" />
+                    <ChevronRight className="w-3.5 h-3.5 shrink-0 text-muted-foreground/40" />
                   </button>
                 ))}
               </div>
@@ -315,10 +303,10 @@ export default function MedicalAssistantPage() {
           </div>
 
           {conversations.length > 0 && (
-            <div className="px-4 py-2.5 border-t border-border">
+            <div className="px-4 py-2 border-t border-border">
               <button
                 onClick={() => setShowDeleteDialog(true)}
-                className="flex items-center gap-1.5 text-xs mx-auto active:scale-95 transition-all text-destructive"
+                className="flex items-center gap-1 text-[11px] mx-auto text-destructive hover:underline"
               >
                 <Trash2 className="w-3 h-3" />
                 {t.deleteAll}

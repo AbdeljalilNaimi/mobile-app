@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react";
-import { Send, Loader2, Bot, User, ShieldAlert, ShieldCheck, Shield, Thermometer, Heart, Brain, AlertCircle, Wind, Pill, Eye, Smile, Baby, Droplets, MapPin, FileText, Mic } from "lucide-react";
+import { Send, Loader2, Bot, ShieldAlert, ShieldCheck, Shield, Thermometer, Heart, Brain, AlertCircle, Wind, Pill, Eye, Smile, Baby, Droplets, MapPin, FileText } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { cn } from "@/lib/utils";
 import { CityHealthProvider } from "@/data/providers";
@@ -95,7 +95,6 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
   const [isLoadingProviders, setIsLoadingProviders] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-
   const autoSentRef = useRef(false);
 
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -132,7 +131,6 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
     }
   }, [messages, isLoading, suggestionsLoading, suggestions]);
 
-  // Mapping from homepage symptom keys to queries per language
   const SYMPTOM_KEY_QUERIES: Record<string, Record<string, string>> = useMemo(() => ({
     headache: { fr: "J'ai des maux de tête fréquents et intenses", ar: "أعاني من صداع متكرر وشديد", en: "I have frequent and intense headaches" },
     nausea: { fr: "J'ai des nausées et vomissements", ar: "أعاني من غثيان وقيء", en: "I have nausea and vomiting" },
@@ -143,18 +141,15 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
     chestPain: { fr: "J'ai une douleur dans la poitrine", ar: "لدي ألم في الصدر", en: "I have chest pain" },
   }), []);
 
-  // Auto-send symptom from URL param (supports both keys and labels)
   useEffect(() => {
     if (autoSendSymptom && !autoSentRef.current && !isLoadingProviders && providers.length >= 0) {
       autoSentRef.current = true;
-      // First try matching by key
       const keyMatch = SYMPTOM_KEY_QUERIES[autoSendSymptom];
       if (keyMatch) {
         const query = keyMatch[language] || keyMatch.fr;
         setTimeout(() => sendMessage(query), 300);
         return;
       }
-      // Fallback: match by label against chips
       const allChips = Object.values(SYMPTOM_CHIPS).flat();
       const match = allChips.find(c => c.label.toLowerCase() === autoSendSymptom.toLowerCase());
       const query = match?.query || autoSendSymptom;
@@ -168,17 +163,17 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
 
   const t = useMemo(() => ({
     fr: {
-      greeting: "Bonjour 👋",
+      greeting: "Bonjour",
       welcome: "Comment puis-je vous aider ?",
       welcomeSub: "Décrivez vos symptômes ou choisissez ci-dessous",
       noSpecialist: "Nous n'avons malheureusement pas de spécialiste en",
       noSpecialistSuffix: "inscrit sur la plateforme pour le moment.",
       recommended: "Spécialistes recommandés",
-      placeholder: "Écrivez vos symptômes...",
+      placeholder: "Décrivez vos symptômes...",
       analyzing: "Analyse en cours...",
     },
     ar: {
-      greeting: "مرحباً 👋",
+      greeting: "مرحباً",
       welcome: "كيف يمكنني مساعدتك؟",
       welcomeSub: "صف أعراضك أو اختر من الأسفل",
       noSpecialist: "للأسف لا يوجد لدينا أخصائي في",
@@ -188,13 +183,13 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
       analyzing: "جاري التحليل...",
     },
     en: {
-      greeting: "Hello 👋",
+      greeting: "Hello",
       welcome: "How can I help you?",
       welcomeSub: "Describe your symptoms or pick below",
       noSpecialist: "Unfortunately, we don't have a specialist in",
       noSpecialistSuffix: "registered on the platform at this time.",
       recommended: "Recommended specialists",
-      placeholder: "Write your symptoms...",
+      placeholder: "Describe your symptoms...",
       analyzing: "Analyzing...",
     },
   })[language] || {
@@ -209,18 +204,12 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
     return `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`;
   };
 
-  const handleChipClick = (query: string) => {
-    sendMessage(query);
-  };
-
   const fetchSuggestions = useCallback(async (allMessages: TriageMessage[]) => {
     setSuggestionsLoading(true);
     setSuggestions([]);
     const targetIndex = allMessages.length - 1;
     setSuggestionsForIndex(targetIndex);
-
     await new Promise(r => setTimeout(r, 500));
-
     try {
       const { data, error } = await supabase.functions.invoke("suggest-followups", {
         body: {
@@ -228,7 +217,6 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
           language,
         },
       });
-
       if (error || !data?.suggestions) {
         setSuggestions(["En savoir plus", "Quand consulter ?", "Trouver un médecin"]);
       } else {
@@ -260,7 +248,6 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
       const { data, error } = await supabase.functions.invoke("symptom-triage", {
         body: { userSymptoms: trimmed, availableDoctors: simplifiedDoctors, language },
       });
-
       if (error) {
         const errContent = error.message || "Une erreur est survenue.";
         const errMsg: TriageMessage = { role: "assistant", content: errContent, isError: true, timestamp: getTimeString() };
@@ -323,27 +310,25 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
       {/* Messages area */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto overscroll-contain scrollbar-hide">
         <div className="px-4 py-4" style={{ minHeight: "100%" }}>
-          {/* Welcome state */}
+          {/* Welcome state — clean & minimal */}
           {!hasConversation && (
-            <div className="flex flex-col items-center pt-8 sm:pt-16 animate-in fade-in duration-500">
-              <p className="text-sm mb-1 text-muted-foreground">{t.greeting}</p>
-              <h2 className="text-[22px] font-bold text-center mb-1 text-foreground">{t.welcome}</h2>
-              <p className="text-[13px] text-center mb-6 text-muted-foreground">{t.welcomeSub}</p>
+            <div className="flex flex-col items-center pt-10 sm:pt-16 animate-in fade-in duration-500">
+              <p className="text-xs text-muted-foreground mb-0.5">{t.greeting}</p>
+              <h2 className="text-lg font-semibold text-center mb-0.5 text-foreground">{t.welcome}</h2>
+              <p className="text-[11px] text-center mb-6 text-muted-foreground">{t.welcomeSub}</p>
 
-              {/* 2-column pill chip layout */}
-              <div className="grid grid-cols-2 gap-2 w-full max-w-md">
+              {/* Clean 2-column chips */}
+              <div className="grid grid-cols-2 gap-1.5 w-full max-w-sm">
                 {chips.map((chip) => {
                   const IconComponent = chip.icon;
                   return (
                     <button
                       key={chip.label}
-                      onClick={() => handleChipClick(chip.query)}
-                      className="flex items-center gap-2.5 h-11 px-3 rounded-[10px] bg-card border border-border text-left transition-all duration-150 active:scale-[0.98] hover:shadow-sm"
+                      onClick={() => sendMessage(chip.query)}
+                      className="flex items-center gap-2 h-10 px-3 rounded-lg border border-border bg-background text-left transition-colors hover:bg-muted active:scale-[0.98]"
                     >
-                      <div className="w-7 h-7 rounded-full flex items-center justify-center shrink-0 bg-primary/10">
-                        <IconComponent className="w-3.5 h-3.5 text-primary" />
-                      </div>
-                      <span className="text-[13px] font-medium text-foreground truncate">{chip.label}</span>
+                      <IconComponent className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
+                      <span className="text-[12px] text-foreground truncate">{chip.label}</span>
                     </button>
                   );
                 })}
@@ -351,7 +336,7 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
             </div>
           )}
 
-          {/* Chat messages — 12px gap */}
+          {/* Chat messages */}
           {hasConversation && (
             <div className="space-y-3">
               {messages.map((msg, i) => (
@@ -359,15 +344,13 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
                   key={i}
                   className={cn("flex gap-2 animate-in fade-in slide-in-from-bottom-2 duration-300", msg.role === "user" ? "justify-end" : "justify-start")}
                 >
-                  {/* AI avatar */}
                   {msg.role === "assistant" && (
-                    <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-1 bg-primary">
-                      <Bot className="w-3 h-3 text-primary-foreground" />
+                    <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 mt-1 bg-muted">
+                      <Bot className="w-3 h-3 text-foreground" />
                     </div>
                   )}
 
                   <div className={cn("max-w-[85%] sm:max-w-[70%] space-y-1.5", msg.role === "user" ? "order-1" : "")}>
-                    {/* Message bubble */}
                     {msg.role === "user" ? (
                       <div
                         className="px-3.5 py-2.5 text-[13px] leading-relaxed bg-primary text-primary-foreground"
@@ -377,7 +360,7 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
                       </div>
                     ) : (
                       <div
-                        className="px-3.5 py-2.5 text-[13px] leading-relaxed bg-card border border-border shadow-sm"
+                        className="px-3.5 py-2.5 text-[13px] leading-relaxed bg-muted/50 border border-border"
                         style={{ borderRadius: "18px 18px 18px 4px" }}
                       >
                         <div className="prose prose-sm dark:prose-invert max-w-none prose-p:mb-1.5 prose-p:last:mb-0 prose-ul:mb-1.5 prose-li:mb-0.5 prose-p:text-[13px] prose-li:text-[13px]">
@@ -386,9 +369,8 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
                       </div>
                     )}
 
-                    {/* Timestamp */}
                     {msg.timestamp && (
-                      <p className={cn("text-[12px] px-1 text-muted-foreground", msg.role === "user" ? "text-right" : "text-left")}>
+                      <p className={cn("text-[10px] px-1 text-muted-foreground", msg.role === "user" ? "text-right" : "text-left")}>
                         {msg.timestamp}
                       </p>
                     )}
@@ -397,15 +379,15 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
                     {msg.role === "assistant" && msg.urgencyLevel && (
                       <div
                         className={cn(
-                          "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold w-fit",
-                          msg.urgencyLevel === "high" && "bg-destructive/10 text-destructive border border-destructive/20",
-                          msg.urgencyLevel === "medium" && "bg-amber-500/10 text-amber-700 dark:text-amber-400 border border-amber-500/20",
-                          msg.urgencyLevel === "low" && "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20"
+                          "inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium w-fit",
+                          msg.urgencyLevel === "high" && "bg-destructive/10 text-destructive",
+                          msg.urgencyLevel === "medium" && "bg-amber-500/10 text-amber-700 dark:text-amber-400",
+                          msg.urgencyLevel === "low" && "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
                         )}
                       >
-                        {msg.urgencyLevel === "high" && <ShieldAlert className="w-3 h-3" />}
-                        {msg.urgencyLevel === "medium" && <Shield className="w-3 h-3" />}
-                        {msg.urgencyLevel === "low" && <ShieldCheck className="w-3 h-3" />}
+                        {msg.urgencyLevel === "high" && <ShieldAlert className="w-2.5 h-2.5" />}
+                        {msg.urgencyLevel === "medium" && <Shield className="w-2.5 h-2.5" />}
+                        {msg.urgencyLevel === "low" && <ShieldCheck className="w-2.5 h-2.5" />}
                         {msg.urgencyLevel === "high" && (language === "ar" ? "عاجل" : language === "en" ? "High urgency" : "Urgence élevée")}
                         {msg.urgencyLevel === "medium" && (language === "ar" ? "متوسط" : language === "en" ? "Moderate" : "Modéré")}
                         {msg.urgencyLevel === "low" && (language === "ar" ? "منخفض" : language === "en" ? "Low urgency" : "Faible")}
@@ -415,7 +397,7 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
                     {/* Doctor cards */}
                     {msg.role === "assistant" && msg.doctorIds && msg.doctorIds.length > 0 && (
                       <div className="flex flex-col gap-2 mt-1.5">
-                        <p className="text-[10px] font-semibold tracking-wide uppercase px-0.5 text-muted-foreground">{t.recommended}</p>
+                        <p className="text-[10px] font-medium tracking-wide uppercase px-0.5 text-muted-foreground">{t.recommended}</p>
                         {msg.doctorIds.map((id, idx) => {
                           const doc = getDoctorById(id);
                           if (!doc) return null;
@@ -430,27 +412,27 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
 
                     {/* No specialist */}
                     {msg.role === "assistant" && msg.doctorIds && msg.doctorIds.length === 0 && msg.recommendedSpecialty && (
-                      <div className="rounded-[10px] p-2.5 text-[11px] border border-dashed border-amber-400 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300">
-                        {t.noSpecialist} <strong>{msg.recommendedSpecialty}</strong> {t.noSpecialistSuffix}
+                      <div className="rounded-lg p-2.5 text-[11px] border border-dashed border-border bg-muted/30 text-muted-foreground">
+                        {t.noSpecialist} <strong className="text-foreground">{msg.recommendedSpecialty}</strong> {t.noSpecialistSuffix}
                       </div>
                     )}
 
-                    {/* Follow-up suggestion chips */}
+                    {/* Suggestion chips — neutral */}
                     {msg.role === "assistant" && i === lastAssistantIndex && !msg.isError && suggestionsForIndex === i && (
                       <div className="flex flex-wrap gap-1.5 mt-2">
                         {suggestionsLoading ? (
                           <>
-                            <Skeleton className="h-7 w-24 rounded-full" />
-                            <Skeleton className="h-7 w-28 rounded-full" />
-                            <Skeleton className="h-7 w-20 rounded-full" />
+                            <Skeleton className="h-6 w-24 rounded-full" />
+                            <Skeleton className="h-6 w-28 rounded-full" />
+                            <Skeleton className="h-6 w-20 rounded-full" />
                           </>
                         ) : (
                           suggestions.map((q, idx) => (
                             <button
                               key={q}
                               onClick={() => handleSuggestionClick(q)}
-                              className="px-3 py-1.5 text-[11px] rounded-full transition-all duration-150 active:scale-95 cursor-pointer animate-in fade-in duration-500 bg-primary/10 text-primary border border-primary/30"
-                              style={{ animationDelay: `${idx * 100}ms` }}
+                              className="px-2.5 py-1 text-[11px] rounded-full border border-border bg-background text-foreground hover:bg-muted transition-colors active:scale-95 animate-in fade-in duration-300"
+                              style={{ animationDelay: `${idx * 80}ms` }}
                             >
                               {q}
                             </button>
@@ -459,28 +441,23 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
                       </div>
                     )}
                   </div>
-
-                  {/* User avatar — hidden, user messages don't need one */}
                 </div>
               ))}
 
-              {/* Typing indicator */}
+              {/* Typing indicator — minimal */}
               {isLoading && (
                 <div className="flex items-center gap-2 animate-in fade-in duration-300">
-                  <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 bg-primary">
-                    <Bot className="w-3 h-3 text-primary-foreground" />
+                  <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0 bg-muted">
+                    <Bot className="w-3 h-3 text-foreground" />
                   </div>
-                  <div
-                    className="px-4 py-3 bg-card border border-border shadow-sm"
-                    style={{ borderRadius: "18px 18px 18px 4px" }}
-                  >
+                  <div className="px-3.5 py-2.5 bg-muted/50 border border-border" style={{ borderRadius: "18px 18px 18px 4px" }}>
                     <div className="flex items-center gap-1">
-                      <span className="typing-dot w-2 h-2 rounded-full bg-muted-foreground/50" style={{ animationDelay: "0ms" }} />
-                      <span className="typing-dot w-2 h-2 rounded-full bg-muted-foreground/50" style={{ animationDelay: "150ms" }} />
-                      <span className="typing-dot w-2 h-2 rounded-full bg-muted-foreground/50" style={{ animationDelay: "300ms" }} />
+                      <span className="typing-dot w-1.5 h-1.5 rounded-full bg-muted-foreground/40" style={{ animationDelay: "0ms" }} />
+                      <span className="typing-dot w-1.5 h-1.5 rounded-full bg-muted-foreground/40" style={{ animationDelay: "150ms" }} />
+                      <span className="typing-dot w-1.5 h-1.5 rounded-full bg-muted-foreground/40" style={{ animationDelay: "300ms" }} />
                     </div>
                   </div>
-                  <span className="text-[11px] text-muted-foreground">{t.analyzing}</span>
+                  <span className="text-[10px] text-muted-foreground">{t.analyzing}</span>
                 </div>
               )}
             </div>
@@ -488,14 +465,12 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
         </div>
       </div>
 
-      {/* Input bar */}
-      <div className="shrink-0 px-3 py-2 pb-[calc(3rem+env(safe-area-inset-bottom,0px))] bg-card/80 backdrop-blur-md border-t border-border/50">
-        <div
-          className={cn(
-            "flex items-center gap-2 min-h-[44px] px-3 rounded-2xl bg-muted/60 border border-border/60 transition-all duration-300",
-            input && "border-primary/40 shadow-[0_0_0_3px_hsl(var(--primary)/0.08)] bg-card"
-          )}
-        >
+      {/* Input bar — clean */}
+      <div className="shrink-0 px-3 py-2 pb-[calc(3rem+env(safe-area-inset-bottom,0px))] border-t border-border bg-background">
+        <div className={cn(
+          "flex items-center gap-2 min-h-[44px] px-3 rounded-xl border border-border bg-muted/30 transition-colors",
+          input && "border-primary/40 bg-background"
+        )}>
           <textarea
             ref={inputRef}
             value={input}
@@ -503,27 +478,23 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
             onKeyDown={handleKeyDown}
             placeholder={t.placeholder}
             rows={1}
-            className="flex-1 resize-none text-sm bg-transparent py-2.5 placeholder:text-muted-foreground/60 focus:outline-none max-h-[72px] leading-normal text-foreground"
+            className="flex-1 resize-none text-sm bg-transparent py-2.5 placeholder:text-muted-foreground/50 focus:outline-none max-h-[72px] leading-normal text-foreground"
             disabled={isLoading || isLoadingProviders}
           />
-
           <button
             onClick={() => sendMessage()}
             disabled={!input.trim() || isLoading || isLoadingProviders}
             className={cn(
-              "shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 active:scale-90",
+              "shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all active:scale-90",
               input.trim()
-                ? "bg-primary cursor-pointer shadow-md shadow-primary/25 hover:shadow-lg hover:shadow-primary/30 hover:scale-105"
-                : "bg-muted-foreground/10 cursor-default"
+                ? "bg-primary text-primary-foreground"
+                : "bg-transparent text-muted-foreground/30"
             )}
           >
             {isLoading ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin text-primary-foreground" />
+              <Loader2 className="w-3.5 h-3.5 animate-spin" />
             ) : (
-              <Send className={cn(
-                "w-3.5 h-3.5 transition-colors duration-200",
-                input.trim() ? "text-primary-foreground" : "text-muted-foreground/40"
-              )} />
+              <Send className="w-3.5 h-3.5" />
             )}
           </button>
         </div>
