@@ -28,10 +28,12 @@ const appLinks = [
 ];
 
 const platformLinks = [
-  { icon: Handshake, labelKey: 'drawerDonation', path: '/citizen/provide' },
-  { icon: MessageSquare, labelKey: 'drawerFeedback', path: '/community' },
-  { icon: Megaphone, labelKey: 'drawerAds', path: '/annonces' },
-  { icon: Code2, labelKey: 'drawerAPI', path: '/docs' },
+  { icon: Code2, labelKey: 'drawerAPI', path: '/service/api-developer' },
+  { icon: BookOpen, labelKey: 'drawerArticles', path: '/service/articles-recherche' },
+  { icon: Droplets, labelKey: 'drawerBlood', path: '/service/don-de-sang' },
+  { icon: Handshake, labelKey: 'drawerDonation', path: '/service/don-gratuit' },
+  { icon: FileText, labelKey: 'drawerDocs', path: '/service/documents' },
+  { icon: CreditCard, labelKey: 'drawerPricing', path: '/service/tarifs-providers' },
 ];
 
 const drawerLabels: Record<string, Record<string, string>> = {
