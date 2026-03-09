@@ -305,21 +305,6 @@ const ProviderProfilePage = () => {
 
   return (
     <main className="pt-20 pb-16" dir={language === 'ar' ? 'rtl' : 'ltr'}>
-      {/* Pharmacie de Garde Pulsing Banner */}
-      {resolvedType === 'pharmacy' && provider.isPharmacieDeGarde && (
-        <div className="mx-4 max-w-6xl lg:mx-auto mt-2 mb-0">
-          <div className="relative overflow-hidden rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white p-3 md:p-4 shadow-[0_0_30px_rgba(34,197,94,0.4)] animate-pulse">
-            <div className="flex items-center justify-center gap-2 md:gap-3 flex-wrap">
-              <span className="w-2.5 h-2.5 rounded-full bg-white animate-ping flex-shrink-0" />
-              <Pill className="h-5 w-5 flex-shrink-0" />
-              <span className="text-sm md:text-lg font-bold tracking-wide text-center">PHARMACIE DE GARDE — Ouverte maintenant</span>
-              <Pill className="h-5 w-5 flex-shrink-0 hidden md:block" />
-              <span className="w-2.5 h-2.5 rounded-full bg-white animate-ping flex-shrink-0 hidden md:block" />
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Minimal Hero */}
       <section className="relative h-40 md:h-52 bg-muted/50 overflow-hidden">
         {gallery[0] && (
@@ -349,6 +334,18 @@ const ProviderProfilePage = () => {
       </section>
 
       <div className="px-4 max-w-6xl mx-auto -mt-14 relative z-10">
+        {/* Pharmacie de Garde Banner — below hero */}
+        {resolvedType === 'pharmacy' && provider.isPharmacieDeGarde && (
+          <div className="mb-3">
+            <div className="rounded-xl bg-gradient-to-r from-green-500 to-emerald-500 text-white p-3 shadow-[0_0_20px_rgba(34,197,94,0.3)]">
+              <div className="flex items-center justify-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-white animate-ping flex-shrink-0" />
+                <Pill className="h-4 w-4 flex-shrink-0" />
+                <span className="text-xs md:text-sm font-bold tracking-wide">PHARMACIE DE GARDE — Ouverte maintenant</span>
+              </div>
+            </div>
+          </div>
+        )}
         {/* Profile Header */}
         <section className="rounded-2xl border bg-card p-6 mb-6 shadow-sm animate-fade-in">
           <div className="flex flex-col md:flex-row gap-5">
