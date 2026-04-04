@@ -2,7 +2,6 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Send, Loader2, Bot, User, X, AlertTriangle, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { toast } from 'sonner';
@@ -42,14 +41,12 @@ export const DocsFloatingChat = ({ isOpen: controlledOpen, onOpenChange }: DocsF
   const [isCheckingPdf, setIsCheckingPdf] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const supabaseUrl = SUPABASE_URL;
-
   // Pre-check PDF existence
   useEffect(() => {
     const checkPdf = async () => {
       setIsCheckingPdf(true);
       try {
-        const resp = await fetch(`${supabaseUrl}/storage/v1/object/public/pdfs/official_documentation.pdf`, { method: 'HEAD' });
+        const resp = await fetch(`/uploads/official_documentation.pdf`, { method: 'HEAD' });
         if (!resp.ok) setIsAiAvailable(false);
       } catch {
         setIsAiAvailable(false);
@@ -58,7 +55,7 @@ export const DocsFloatingChat = ({ isOpen: controlledOpen, onOpenChange }: DocsF
       }
     };
     checkPdf();
-  }, [supabaseUrl]);
+  }, []);
 
   // Welcome tooltip timer
   useEffect(() => {
@@ -87,18 +84,20 @@ export const DocsFloatingChat = ({ isOpen: controlledOpen, onOpenChange }: DocsF
     setIsLoading(true);
 
     try {
-      const resp = await fetch(`${supabaseUrl}/functions/v1/chat-with-pdf`, {
+      const resp = await fetch(`/api/ai/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ providerId: 'official_documentation', userMessage: trimmed }),
+        body: JSON.stringify({
+          messages: [{ role: 'user', content: trimmed }],
+          systemPrompt: 'Tu es un assistant pour CityHealth, une plateforme de santé algérienne. Réponds aux questions sur la plateforme en français.',
+        }),
       });
       const data = await resp.json();
       if (!resp.ok) {
-        if (data?.error === 'NO_PDF') { setIsAiAvailable(false); return; }
         setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', content: 'Une erreur est survenue. Veuillez réessayer.' }]);
         return;
       }
-      setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', content: data.reply || "Désolé, je n'ai pas pu répondre." }]);
+      setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', content: data.content || "Désolé, je n'ai pas pu répondre." }]);
     } catch {
       toast.error("Problème de connexion. Impossible de joindre l'assistant IA.");
     } finally {

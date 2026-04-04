@@ -3,7 +3,7 @@ import { X, Send, Bot, Loader2, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { supabase } from '@/integrations/supabase/client';
+import { apiPost } from '@/lib/apiClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { CityHealthProvider } from '@/data/providers';
 
@@ -115,15 +115,12 @@ INSTRUCTIONS IMPORTANTES:
         content: m.content
       }));
 
-      supabase.functions.invoke('map-bot', {
-        body: {
-          messages: [...history, { role: 'user', content: suggestion }],
-          systemPrompt,
-          model: 'google/gemini-3-flash-preview'
-        }
-      }).then(({ data, error }) => {
-        if (error) throw error;
-        const rawContent = data?.content || data?.message || tx.error;
+      apiPost<any>('/ai/map-bot', {
+        query: suggestion,
+        messages: [...history, { role: 'user', content: suggestion }],
+        systemPrompt,
+      }).then((data) => {
+        const rawContent = data?.content || tx.error;
         const { text, flyIds } = parseResponse(rawContent);
         setMessages(prev => [...prev, {
           id: (Date.now() + 1).toString(),
@@ -156,20 +153,13 @@ INSTRUCTIONS IMPORTANTES:
         content: m.content
       }));
 
-      const { data, error } = await supabase.functions.invoke('map-bot', {
-        body: {
-          messages: [
-            ...history,
-            { role: 'user', content: userMsg.content }
-          ],
-          systemPrompt,
-          model: 'google/gemini-3-flash-preview'
-        }
+      const data = await apiPost<any>('/ai/map-bot', {
+        query: userMsg.content,
+        messages: [...history, { role: 'user', content: userMsg.content }],
+        systemPrompt,
       });
 
-      if (error) throw error;
-
-      const rawContent = data?.content || data?.message || tx.error;
+      const rawContent = data?.content || tx.error;
       const { text, flyIds } = parseResponse(rawContent);
 
       const assistantMsg: MapBotMessage = {

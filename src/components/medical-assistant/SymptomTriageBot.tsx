@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { CityHealthProvider } from "@/data/providers";
 import { getVerifiedProviders } from "@/services/firestoreProviderService";
 import { DoctorProfileCard } from "./DoctorProfileCard";
-import { supabase } from "@/integrations/supabase/client";
+import { apiPost } from "@/lib/apiClient";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -198,16 +198,14 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
     setSuggestionsForIndex(targetIndex);
     await new Promise(r => setTimeout(r, 500));
     try {
-      const { data, error } = await supabase.functions.invoke("suggest-followups", {
-        body: {
-          messages: allMessages.map(m => ({ role: m.role, content: m.content })),
-          language,
-        },
+      const data = await apiPost<any>("/ai/suggest-followups", {
+        conversation: allMessages.map(m => ({ role: m.role, content: m.content })),
+        language,
       });
-      if (error || !data?.suggestions) {
+      if (!data?.questions) {
         setSuggestions(["En savoir plus", "Quand consulter ?", "Trouver un médecin"]);
       } else {
-        setSuggestions((data.suggestions as string[]).slice(0, 3));
+        setSuggestions((data.questions as string[]).slice(0, 3));
       }
     } catch {
       setSuggestions(["En savoir plus", "Quand consulter ?", "Trouver un médecin"]);
@@ -232,18 +230,12 @@ export function SymptomTriageBot({ resetKey = 0, onMessageSent, initialMessages,
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke("symptom-triage", {
-        body: { userSymptoms: trimmed, availableDoctors: simplifiedDoctors, language },
+      const data = await apiPost<any>("/ai/symptom-triage", {
+        symptoms: trimmed,
+        availableDoctors: simplifiedDoctors,
+        language,
       });
-      if (error) {
-        const errContent = error.message || "Une erreur est survenue.";
-        const errMsg: TriageMessage = { role: "assistant", content: errContent, isError: true, timestamp: getTimeString() };
-        setMessages((prev) => [...prev, errMsg]);
-        onMessageSent?.("assistant", errContent);
-        setIsLoading(false);
-        return;
-      }
-      const assistantContent = data.analysis || "Analyse non disponible.";
+      const assistantContent = data.content || "Analyse non disponible.";
       const assistantMsg: TriageMessage = {
         role: "assistant",
         content: assistantContent,

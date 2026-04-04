@@ -10,7 +10,6 @@ import {
   resolveEmergency,
   subscribeToResponses,
 } from '@/services/bloodEmergencyService';
-import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
 import { fr } from 'date-fns/locale';
@@ -37,15 +36,12 @@ export function ActiveEmergenciesDashboard({ providerId }: ActiveEmergenciesDash
     };
     load();
 
-    // Realtime updates for the provider's emergencies
-    const channel = supabase
-      .channel(`provider-emergencies-${providerId}`)
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'blood_emergencies', filter: `provider_id=eq.${providerId}` }, () => {
-        getEmergenciesByProvider(providerId).then(setEmergencies);
-      })
-      .subscribe();
+    // Poll for updates every 30 seconds
+    const interval = setInterval(() => {
+      getEmergenciesByProvider(providerId).then(setEmergencies);
+    }, 30000);
 
-    return () => { supabase.removeChannel(channel); };
+    return () => { clearInterval(interval); };
   }, [providerId]);
 
   // Subscribe to responses for active emergencies

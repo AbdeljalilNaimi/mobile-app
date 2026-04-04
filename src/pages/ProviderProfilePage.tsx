@@ -25,7 +25,7 @@ import { useSupabaseReviews } from "@/hooks/useSupabaseReviews";
 import { ReportProviderDialog } from "@/components/provider/ReportProviderDialog";
 import { useLanguage } from "@/hooks/useLanguage";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { apiPost } from "@/lib/apiClient";
 import ProviderMap from "@/components/ProviderMap";
 import { Skeleton } from "@/components/ui/skeleton";
 import { QRCodeSVG } from 'qrcode.react';
@@ -2309,14 +2309,13 @@ const ProviderProfilePage = () => {
                             return;
                           }
                           try {
-                            const { error } = await supabase.from('quote_requests').insert({
+                            await apiPost('/providers/quote-requests', {
                               provider_id: provider.id,
                               client_name: clientName,
                               client_phone: clientPhone,
                               equipment,
                               details: details || null,
                             });
-                            if (error) throw error;
                             toast.success("Demande envoyée !", { description: "Le fournisseur vous contactera prochainement." });
                             form.reset();
                           } catch (err) {

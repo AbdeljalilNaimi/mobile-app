@@ -62,7 +62,7 @@ import {
   BloodEmergency, BloodEmergencyResponse, 
   getEmergenciesByProvider, subscribeToResponses, BLOOD_TYPES 
 } from '@/services/bloodEmergencyService';
-import { supabase } from '@/integrations/supabase/client';
+import { apiGet, apiPatch } from '@/lib/apiClient';
 import { ProviderArticlesManager } from '@/components/research/ProviderArticlesManager';
 import { SubscriptionCard } from '@/components/provider/SubscriptionCard';
 
@@ -205,15 +205,12 @@ export default function ProviderDashboard() {
   useEffect(() => {
     if (!isEquipment || !providerData?.id) return;
     setQuotesLoading(true);
-    supabase
-      .from('quote_requests')
-      .select('*')
-      .eq('provider_id', providerData.id)
-      .order('created_at', { ascending: false })
-      .then(({ data, error }) => {
-        if (!error && data) setQuoteRequests(data);
+    apiGet<any[]>(`/providers/${providerData.id}/quote-requests`)
+      .then((data) => {
+        if (data) setQuoteRequests(data);
         setQuotesLoading(false);
-      });
+      })
+      .catch(() => setQuotesLoading(false));
   }, [isEquipment, providerData?.id]);
 
   const [isPharmacieDeGarde, setIsPharmacieDeGarde] = useState(false);
@@ -2385,7 +2382,7 @@ export default function ProviderDashboard() {
                             <TableCell>
                               {row.status === 'nouveau' && (
                                 <Button size="sm" variant="outline" onClick={async () => {
-                                  await supabase.from('quote_requests').update({ status: 'répondu' }).eq('id', row.id);
+                                  await apiPatch(`/providers/quote-requests/${row.id}`, { status: 'répondu' });
                                   setQuoteRequests(prev => prev.map(q => q.id === row.id ? { ...q, status: 'répondu' } : q));
                                   sonnerToast.success('Statut mis à jour');
                                 }}>

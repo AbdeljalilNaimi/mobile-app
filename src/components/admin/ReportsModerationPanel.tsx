@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { apiGet, apiPatch } from '@/lib/apiClient';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -46,22 +46,13 @@ export function ReportsModerationPanel() {
   const { data: reports = [], isLoading } = useQuery({
     queryKey,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('provider_reports')
-        .select('*')
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return (data || []) as ProviderReport[];
+      return apiGet<ProviderReport[]>('/admin/reports');
     },
   });
 
   const updateStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { error } = await supabase
-        .from('provider_reports')
-        .update({ status })
-        .eq('id', id);
-      if (error) throw error;
+      await apiPatch('/admin/reports/' + id, { status });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });

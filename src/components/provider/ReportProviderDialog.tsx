@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
+import { apiPost } from '@/lib/apiClient';
 
 const reportSchema = z.object({
   reason: z.string().min(1, 'Veuillez sélectionner une raison'),
@@ -46,14 +46,14 @@ export const ReportProviderDialog: React.FC<ReportProviderDialogProps> = ({
   const isSubmitting = form.formState.isSubmitting;
 
   const onSubmit = async (values: ReportFormValues) => {
-    const { error } = await supabase.from('provider_reports').insert({
-      provider_id: providerId,
-      reporter_id: reporterId,
-      reason: values.reason,
-      details: values.details || null,
-    });
-
-    if (error) {
+    try {
+      await apiPost('/providers/reports', {
+        provider_id: providerId,
+        reporter_id: reporterId,
+        reason: values.reason,
+        details: values.details || null,
+      });
+    } catch {
       toast.error("Erreur lors de l'envoi du signalement");
       return;
     }

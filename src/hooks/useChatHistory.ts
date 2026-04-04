@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { apiGet, apiPost, apiPatch, apiDelete } from "@/lib/apiClient";
 import { auth } from "@/lib/firebase";
 
 interface Conversation {
@@ -28,13 +28,8 @@ export function useChatHistory() {
     if (!uid) return;
     setIsLoadingHistory(true);
     try {
-      const { data } = await supabase
-        .from("chat_conversations")
-        .select("*")
-        .eq("user_id", uid)
-        .order("updated_at", { ascending: false })
-        .limit(50);
-      if (data) setConversations(data);
+      const data = await apiGet<Conversation[]>("/chat/conversations/" + uid);
+      setConversations(data || []);
     } catch {
       // silent
     } finally {
@@ -44,14 +39,10 @@ export function useChatHistory() {
 
   const loadConversation = useCallback(async (id: string): Promise<ChatMsg[]> => {
     try {
-      const { data } = await supabase
-        .from("chat_messages")
-        .select("role, content")
-        .eq("conversation_id", id)
-        .order("created_at", { ascending: true });
+      const data = await apiGet<ChatMsg[]>("/chat/conversations/" + id + "/messages");
       if (data) {
         setCurrentConversationId(id);
-        return data as ChatMsg[];
+        return data;
       }
     } catch {
       // silent
@@ -59,71 +50,69 @@ export function useChatHistory() {
     return [];
   }, []);
 
-  const saveMessage = useCallback(async (role: "user" | "assistant", content: string) => {
+  const createConversation = useCallback(async (firstMessage: string): Promise<string | null> => {
     const uid = getUserId();
-    if (!uid || savingRef.current) return;
-    savingRef.current = true;
-
+    if (!uid || !isAuthenticated()) return null;
     try {
-      let convId = currentConversationId;
-
-      if (!convId) {
-        const title = role === "user" ? content.slice(0, 40) : "Conversation";
-        const { data } = await supabase
-          .from("chat_conversations")
-          .insert({ user_id: uid, title })
-          .select("id")
-          .single();
-        if (data) {
-          convId = data.id;
-          setCurrentConversationId(convId);
-        } else {
-          return;
-        }
-      }
-
-      await supabase.from("chat_messages").insert({
-        conversation_id: convId,
-        role,
-        content,
+      const conv = await apiPost<Conversation>("/chat/conversations", {
+        user_id: uid,
+        title: firstMessage.slice(0, 60),
       });
-
-      await supabase
-        .from("chat_conversations")
-        .update({ updated_at: new Date().toISOString() })
-        .eq("id", convId);
+      setCurrentConversationId(conv.id);
+      await loadConversations();
+      return conv.id;
     } catch {
-      // silent — don't interrupt chat
+      return null;
+    }
+  }, [loadConversations]);
+
+  const saveMessages = useCallback(async (
+    conversationId: string,
+    messages: ChatMsg[]
+  ) => {
+    if (savingRef.current) return;
+    savingRef.current = true;
+    try {
+      await apiPost("/chat/conversations/" + conversationId + "/messages", { messages });
+    } catch {
+      // silent
     } finally {
       savingRef.current = false;
     }
+  }, []);
+
+  const deleteConversation = useCallback(async (id: string) => {
+    try {
+      await apiDelete("/chat/conversations/" + id);
+      setConversations((prev) => prev.filter((c) => c.id !== id));
+      if (currentConversationId === id) setCurrentConversationId(null);
+    } catch {
+      // silent
+    }
   }, [currentConversationId]);
 
-  const deleteAllHistory = useCallback(async () => {
-    const uid = getUserId();
-    if (!uid) return;
+  const updateConversationTitle = useCallback(async (id: string, title: string) => {
     try {
-      await supabase.from("chat_conversations").delete().eq("user_id", uid);
-      setConversations([]);
-      setCurrentConversationId(null);
+      await apiPatch("/chat/conversations/" + id, { title });
+      setConversations((prev) =>
+        prev.map((c) => (c.id === id ? { ...c, title } : c))
+      );
     } catch {
       // silent
     }
   }, []);
 
-  const startNewConversation = useCallback(() => {
-    setCurrentConversationId(null);
-  }, []);
-
   return {
     conversations,
     currentConversationId,
+    setCurrentConversationId,
     isLoadingHistory,
-    isAuthenticated,
     loadConversations,
     loadConversation,
-    saveMessage,
-    deleteAllHistory,
-    startNewConversation,
+    createConversation,
+    saveMessages,
+    deleteConversation,
+    updateConversationTitle,
+    isAuthenticated,
   };
 }

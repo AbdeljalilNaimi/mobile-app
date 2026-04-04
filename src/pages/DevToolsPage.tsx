@@ -521,8 +521,7 @@ export default function DevToolsPage() {
       const publicData = verified.map(mapToPublicFields);
 
       // POST to sync-provider edge function
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-      const response = await fetch(`${supabaseUrl}/functions/v1/sync-provider`, {
+      const response = await fetch(`/api/providers/sync`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useState, useEffect, useCallback } from "react";
+import { apiGet, apiPut } from "@/lib/apiClient";
+import { useAuth } from "@/contexts/AuthContext";
 
 export interface NotificationPrefs {
   appointments: boolean;
@@ -19,7 +19,6 @@ export const useNotificationPreferences = () => {
   const [prefs, setPrefs] = useState<NotificationPrefs>(defaults);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Load prefs from Supabase on mount / user change
   useEffect(() => {
     if (!user?.uid) {
       setPrefs(defaults);
@@ -29,52 +28,37 @@ export const useNotificationPreferences = () => {
 
     const load = async () => {
       setIsLoading(true);
-      const { data, error } = await supabase
-        .from('notification_preferences')
-        .select('appointments, blood_emergencies, messages')
-        .eq('user_id', user.uid)
-        .maybeSingle();
-
-      if (data && !error) {
-        setPrefs({
-          appointments: data.appointments,
-          blood_emergencies: data.blood_emergencies,
-          messages: data.messages,
-        });
+      try {
+        const data = await apiGet<NotificationPrefs | null>("/notification-prefs/" + user.uid);
+        if (data) {
+          setPrefs({
+            appointments: data.appointments,
+            blood_emergencies: data.blood_emergencies,
+            messages: data.messages,
+          });
+        }
+      } catch {
+        // silent
+      } finally {
+        setIsLoading(false);
       }
-      // If no row exists yet, keep defaults — row will be created on first toggle
-      setIsLoading(false);
     };
 
     load();
   }, [user?.uid]);
 
-  const updatePref = useCallback(
-    async (key: keyof NotificationPrefs, value: boolean) => {
+  const updatePrefs = useCallback(
+    async (newPrefs: NotificationPrefs) => {
       if (!user?.uid) return;
-
-      // Optimistic update
-      setPrefs((prev) => ({ ...prev, [key]: value }));
-
-      const { data: existing } = await supabase
-        .from('notification_preferences')
-        .select('id')
-        .eq('user_id', user.uid)
-        .maybeSingle();
-
-      if (existing) {
-        await supabase
-          .from('notification_preferences')
-          .update({ [key]: value, updated_at: new Date().toISOString() })
-          .eq('user_id', user.uid);
-      } else {
-        await supabase
-          .from('notification_preferences')
-          .insert({ user_id: user.uid, [key]: value });
+      setPrefs(newPrefs);
+      try {
+        await apiPut("/notification-prefs/" + user.uid, newPrefs);
+      } catch {
+        // silent
       }
     },
-    [user?.uid],
+    [user?.uid]
   );
 
-  return { prefs, isLoading, updatePref };
+  return { prefs, isLoading, updatePrefs };
 };

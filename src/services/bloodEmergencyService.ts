@@ -1,6 +1,4 @@
-import { supabase } from '@/integrations/supabase/client';
-import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { apiGet, apiPost, apiDelete } from "@/lib/apiClient";
 
 export interface BloodEmergency {
   id: string;
@@ -40,8 +38,6 @@ export interface DonationRecord {
 
 export const BLOOD_TYPES = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] as const;
 
-// ---- Emergencies ----
-
 export async function broadcastEmergency(data: {
   provider_id: string;
   provider_name?: string;
@@ -50,79 +46,37 @@ export async function broadcastEmergency(data: {
   blood_type_needed: string;
   urgency_level: string;
   message?: string;
-}) {
-  const { data: result, error } = await supabase
-    .from('blood_emergencies' as any)
-    .insert(data as any)
-    .select()
-    .single();
-  if (error) throw error;
-  return result as unknown as BloodEmergency;
+}): Promise<BloodEmergency> {
+  return apiPost("/blood-emergency", data);
 }
 
-export async function resolveEmergency(emergencyId: string) {
-  const { error } = await supabase
-    .from('blood_emergencies' as any)
-    .update({ status: 'resolved', resolved_at: new Date().toISOString() } as any)
-    .eq('id', emergencyId);
-  if (error) throw error;
+export async function resolveEmergency(emergencyId: string): Promise<void> {
+  await apiPatch("/blood-emergency/" + emergencyId + "/resolve");
 }
 
-export async function getActiveEmergencies() {
-  const { data, error } = await supabase
-    .from('blood_emergencies' as any)
-    .select('*')
-    .eq('status', 'active')
-    .order('created_at', { ascending: false });
-  if (error) throw error;
-  return (data || []) as unknown as BloodEmergency[];
+export async function getActiveEmergencies(): Promise<BloodEmergency[]> {
+  return apiGet("/blood-emergency/active");
 }
 
-export async function getEmergenciesByProvider(providerId: string) {
-  const { data, error } = await supabase
-    .from('blood_emergencies' as any)
-    .select('*')
-    .eq('provider_id', providerId)
-    .order('created_at', { ascending: false });
-  if (error) throw error;
-  return (data || []) as unknown as BloodEmergency[];
+export async function getEmergenciesByProvider(providerId: string): Promise<BloodEmergency[]> {
+  return apiGet("/blood-emergency/provider/" + providerId);
 }
-
-// ---- Responses ----
 
 export async function respondToEmergency(emergencyId: string, citizenData: {
   citizen_id: string;
   citizen_name?: string;
   citizen_phone?: string;
-}) {
-  const { data, error } = await supabase
-    .from('blood_emergency_responses' as any)
-    .insert({ emergency_id: emergencyId, ...citizenData } as any)
-    .select()
-    .single();
-  if (error) throw error;
-  return data as unknown as BloodEmergencyResponse;
+}): Promise<BloodEmergencyResponse> {
+  return apiPost("/blood-emergency/" + emergencyId + "/respond", citizenData);
 }
 
-export async function cancelResponse(responseId: string) {
-  const { error } = await supabase
-    .from('blood_emergency_responses' as any)
-    .delete()
-    .eq('id', responseId);
-  if (error) throw error;
+export async function cancelResponse(responseId: string): Promise<void> {
+  await apiDelete("/blood-emergency/responses/" + responseId);
 }
 
-export async function getResponsesForEmergency(emergencyId: string) {
-  const { data, error } = await supabase
-    .from('blood_emergency_responses' as any)
-    .select('*')
-    .eq('emergency_id', emergencyId)
-    .order('created_at', { ascending: false });
-  if (error) throw error;
-  return (data || []) as unknown as BloodEmergencyResponse[];
+export async function getResponsesForEmergency(emergencyId: string): Promise<BloodEmergencyResponse[]> {
+  return apiGet("/blood-emergency/" + emergencyId + "/responses");
 }
-
-// ---- Donation History ----
 
 export async function addDonation(data: {
   citizen_id: string;
@@ -131,75 +85,37 @@ export async function addDonation(data: {
   blood_type: string;
   emergency_id?: string;
   notes?: string;
-}) {
-  const { data: result, error } = await supabase
-    .from('donation_history' as any)
-    .insert(data as any)
-    .select()
-    .single();
-  if (error) throw error;
-  
-  // Sync last_donation_date to citizen profile in Firestore
-  try {
-    const donatedDate = (result as any).donated_at?.split('T')[0] || new Date().toISOString().split('T')[0];
-    await updateDoc(doc(db, 'profiles', data.citizen_id), {
-      last_donation_date: donatedDate,
-      updated_at: serverTimestamp()
-    });
-  } catch (syncError) {
-    console.warn('Could not sync last_donation_date to profile:', syncError);
-  }
-  
-  return result as unknown as DonationRecord;
+}): Promise<DonationRecord> {
+  return apiPost("/blood-emergency/donations", data);
 }
 
-export async function getDonationHistory(citizenId: string) {
-  const { data, error } = await supabase
-    .from('donation_history' as any)
-    .select('*')
-    .eq('citizen_id', citizenId)
-    .order('donated_at', { ascending: false });
-  if (error) throw error;
-  return (data || []) as unknown as DonationRecord[];
+export async function getDonationHistory(citizenId: string): Promise<DonationRecord[]> {
+  return apiGet("/blood-emergency/donations/" + citizenId);
 }
 
-// ---- Realtime ----
-
+// Polling-based subscription (replaces Supabase realtime)
 export function subscribeToEmergencies(callback: (emergencies: BloodEmergency[]) => void) {
-  // Initial fetch
   getActiveEmergencies().then(callback);
-
-  const channel = supabase
-    .channel('blood-emergencies-realtime')
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'blood_emergencies' },
-      () => {
-        getActiveEmergencies().then(callback);
-      }
-    )
-    .subscribe();
-
-  return () => {
-    supabase.removeChannel(channel);
-  };
+  const interval = setInterval(() => {
+    getActiveEmergencies().then(callback).catch(console.error);
+  }, 15000);
+  return () => clearInterval(interval);
 }
 
 export function subscribeToResponses(emergencyId: string, callback: (responses: BloodEmergencyResponse[]) => void) {
   getResponsesForEmergency(emergencyId).then(callback);
+  const interval = setInterval(() => {
+    getResponsesForEmergency(emergencyId).then(callback).catch(console.error);
+  }, 10000);
+  return () => clearInterval(interval);
+}
 
-  const channel = supabase
-    .channel(`blood-responses-${emergencyId}`)
-    .on(
-      'postgres_changes',
-      { event: '*', schema: 'public', table: 'blood_emergency_responses', filter: `emergency_id=eq.${emergencyId}` },
-      () => {
-        getResponsesForEmergency(emergencyId).then(callback);
-      }
-    )
-    .subscribe();
-
-  return () => {
-    supabase.removeChannel(channel);
-  };
+async function apiPatch(path: string, body?: unknown): Promise<unknown> {
+  const res = await fetch("/api" + path, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
 }

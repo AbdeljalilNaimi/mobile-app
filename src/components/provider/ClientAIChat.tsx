@@ -2,7 +2,6 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { MessageSquare, Send, Loader2, Bot, User, X, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { toast } from 'sonner';
@@ -38,15 +37,13 @@ export const ClientAIChat = ({ providerId, providerName, isOpen: controlledOpen,
   const [isCheckingPdf, setIsCheckingPdf] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const supabaseUrl = SUPABASE_URL;
-
   // Pre-check PDF existence on mount
   useEffect(() => {
     const checkPdf = async () => {
       setIsCheckingPdf(true);
       try {
         const userId = providerId.startsWith("provider_") ? providerId.slice("provider_".length) : providerId;
-        const resp = await fetch(`${supabaseUrl}/storage/v1/object/public/pdfs/${userId}.pdf`, { method: 'HEAD' });
+        const resp = await fetch(`/uploads/${userId}.pdf`, { method: 'HEAD' });
         if (!resp.ok) {
           setIsAiAvailable(false);
           onAvailabilityChange?.(false);
@@ -61,7 +58,7 @@ export const ClientAIChat = ({ providerId, providerName, isOpen: controlledOpen,
       }
     };
     checkPdf();
-  }, [providerId, supabaseUrl, onAvailabilityChange]);
+  }, [providerId, onAvailabilityChange]);
 
   // Welcome tooltip timer
   useEffect(() => {
@@ -92,18 +89,20 @@ export const ClientAIChat = ({ providerId, providerName, isOpen: controlledOpen,
     setIsLoading(true);
 
     try {
-      const resp = await fetch(`${supabaseUrl}/functions/v1/chat-with-pdf`, {
+      const resp = await fetch(`/api/ai/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ providerId, userMessage: trimmed }),
+        body: JSON.stringify({
+          messages: [{ role: 'user', content: trimmed }],
+          systemPrompt: `Tu es l'assistant virtuel du prestataire de santé "${providerName}". Réponds aux questions des patients de manière professionnelle.`,
+        }),
       });
       const data = await resp.json();
       if (!resp.ok) {
-        if (data?.error === 'NO_PDF') { setIsAiAvailable(false); return; }
         setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', content: 'Une erreur est survenue. Veuillez réessayer.' }]);
         return;
       }
-      setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', content: data.reply || "Désolé, je n'ai pas pu répondre." }]);
+      setMessages(prev => [...prev, { id: crypto.randomUUID(), role: 'assistant', content: data.content || "Désolé, je n'ai pas pu répondre." }]);
     } catch {
       toast.error("Problème de connexion. Impossible de joindre l'assistant IA pour le moment.");
     } finally {

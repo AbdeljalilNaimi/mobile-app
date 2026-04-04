@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
-import { supabase } from '@/integrations/supabase/client';
+import { apiPost } from '@/lib/apiClient';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DoctorProfileCard } from '@/components/medical-assistant/DoctorProfileCard';
 import type { CityHealthProvider } from '@/data/providers';
@@ -177,11 +177,12 @@ INSTRUCTIONS IMPORTANTES:
 
     try {
       const history = mapMessages.filter(m => m.id !== 'welcome').map(m => ({ role: m.role, content: m.content }));
-      const { data, error } = await supabase.functions.invoke('map-bot', {
-        body: { messages: [...history, { role: 'user', content }], systemPrompt: mapSystemPrompt, model: 'google/gemini-3-flash-preview' }
+      const data = await apiPost<any>('/ai/map-bot', {
+        query: content,
+        messages: [...history, { role: 'user', content }],
+        systemPrompt: mapSystemPrompt,
       });
-      if (error) throw error;
-      const rawContent = data?.content || data?.message || tx.error;
+      const rawContent = data?.content || tx.error;
       const { text: parsed, flyIds } = parseResponse(rawContent);
       setMapMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'assistant', content: parsed || rawContent }]);
       flyIds.forEach(id => { if (providers.find(p => p.id === id)) onFlyToProvider(id); });
@@ -202,14 +203,15 @@ INSTRUCTIONS IMPORTANTES:
     setTriageLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('symptom-triage', {
-        body: { userSymptoms: content, availableDoctors: simplifiedDoctors, language }
+      const data = await apiPost<any>('/ai/symptom-triage', {
+        symptoms: content,
+        availableDoctors: simplifiedDoctors,
+        language,
       });
-      if (error) throw error;
       setTriageMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.analysis || 'Analyse non disponible.',
+        content: data.content || 'Analyse non disponible.',
         doctorIds: data.doctorIds || [],
         recommendedSpecialty: data.recommendedSpecialty || '',
         urgencyLevel: data.urgencyLevel || undefined,

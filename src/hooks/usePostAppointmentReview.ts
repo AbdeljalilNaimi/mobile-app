@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { apiGet } from '@/lib/apiClient';
 import { useAuth } from '@/contexts/AuthContext';
 import { Appointment } from '@/types/appointments';
 
@@ -41,12 +41,9 @@ export function usePostAppointmentReview(appointments: Appointment[]) {
     queryKey: ['reviewed-providers', patientId, providerIds],
     queryFn: async () => {
       if (!patientId || providerIds.length === 0) return [];
-      const { data, error } = await supabase
-        .from('provider_reviews')
-        .select('provider_id')
-        .eq('patient_id', patientId)
-        .in('provider_id', providerIds);
-      if (error) throw error;
+      const data = await apiGet<Array<{ provider_id: string }>>(
+        `/reviews/reviewed-providers?patient_id=${patientId}&provider_ids=${providerIds.join(',')}`
+      );
       return (data || []).map((r) => r.provider_id);
     },
     enabled: !!patientId && providerIds.length > 0,

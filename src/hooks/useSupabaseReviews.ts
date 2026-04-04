@@ -1,5 +1,5 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { apiGet, apiPost, apiDelete } from "@/lib/apiClient";
 
 export interface SupabaseReview {
   id: string;
@@ -33,19 +33,13 @@ function computeStats(reviews: SupabaseReview[]): ReviewStats {
 
 export function useSupabaseReviews(providerId: string | undefined) {
   const queryClient = useQueryClient();
-  const queryKey = ['provider-reviews', providerId];
+  const queryKey = ["provider-reviews", providerId];
 
   const { data: reviews = [], isLoading } = useQuery({
     queryKey,
     queryFn: async () => {
       if (!providerId) return [];
-      const { data, error } = await supabase
-        .from('provider_reviews')
-        .select('*')
-        .eq('provider_id', providerId)
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return (data || []) as SupabaseReview[];
+      return apiGet<SupabaseReview[]>("/reviews/" + providerId);
     },
     enabled: !!providerId,
   });
@@ -54,44 +48,33 @@ export function useSupabaseReviews(providerId: string | undefined) {
 
   const submitReview = useMutation({
     mutationFn: async (input: { patientId: string; patientName: string; rating: number; comment: string }) => {
-      const { error } = await supabase.from('provider_reviews').insert({
+      return apiPost("/reviews", {
         provider_id: providerId!,
         patient_id: input.patientId,
         patient_name: input.patientName,
         rating: input.rating,
         comment: input.comment,
       });
-      if (error) {
-        if (error.code === '23505') {
-          throw new Error('Vous avez déjà laissé un avis pour ce professionnel.');
-        }
-        throw error;
-      }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey });
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey }),
   });
 
-  return { reviews, stats, isLoading, submitReview };
+  const deleteReview = useMutation({
+    mutationFn: async (reviewId: string) => apiDelete("/reviews/" + reviewId),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey }),
+  });
+
+  return { reviews, stats, isLoading, submitReview, deleteReview };
 }
 
-// Hook to fetch all reviews by a patient (citizen)
 export function usePatientSupabaseReviews(patientId: string | undefined) {
   const { data: reviews = [], isLoading } = useQuery({
-    queryKey: ['patient-reviews', patientId],
+    queryKey: ["patient-reviews", patientId],
     queryFn: async () => {
       if (!patientId) return [];
-      const { data, error } = await supabase
-        .from('provider_reviews')
-        .select('*')
-        .eq('patient_id', patientId)
-        .order('created_at', { ascending: false });
-      if (error) throw error;
-      return (data || []) as SupabaseReview[];
+      return apiGet<SupabaseReview[]>(`/reviews/patient/${patientId}`);
     },
     enabled: !!patientId,
   });
-
   return { data: reviews, isLoading };
 }

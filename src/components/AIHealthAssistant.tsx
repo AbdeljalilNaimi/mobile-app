@@ -11,7 +11,7 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { CityHealthProvider } from '@/data/providers';
 import { getVerifiedProviders } from '@/services/firestoreProviderService';
 import { DoctorProfileCard } from '@/components/medical-assistant/DoctorProfileCard';
-import { supabase } from '@/integrations/supabase/client';
+import { apiPost } from '@/lib/apiClient';
 
 interface TriageMessage {
   role: "user" | "assistant";
@@ -98,22 +98,15 @@ export const AIHealthAssistant = () => {
     setIsLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke("symptom-triage", {
-        body: {
-          userSymptoms: trimmed,
-          availableDoctors: simplifiedDoctors,
-          language,
-        },
+      const data = await apiPost<any>("/ai/symptom-triage", {
+        symptoms: trimmed,
+        availableDoctors: simplifiedDoctors,
+        language,
       });
 
-      if (error) {
-        setMessages(prev => [...prev, { role: "assistant", content: error.message || "Erreur." }]);
-        setIsLoading(false);
-        return;
-      }
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: data.analysis || "Analyse non disponible.",
+        content: data.content || "Analyse non disponible.",
         doctorIds: data.doctorIds || [],
         recommendedSpecialty: data.recommendedSpecialty || "",
         urgencyLevel: data.urgencyLevel || undefined,
