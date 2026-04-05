@@ -64,18 +64,47 @@ router.post("/sync", async (req, res) => {
       return;
     }
     let upserted: string[] = [];
+    const errors: string[] = [];
     for (const p of providers) {
-      await pool.query(
-        `INSERT INTO providers (id, name, type, city, specialty, phone, address, verified, avatar_url)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
-         ON CONFLICT (id) DO UPDATE SET name=EXCLUDED.name, type=EXCLUDED.type, city=EXCLUDED.city,
-         specialty=EXCLUDED.specialty, phone=EXCLUDED.phone, address=EXCLUDED.address,
-         verified=EXCLUDED.verified, avatar_url=EXCLUDED.avatar_url`,
-        [p.id, p.name, p.type, p.city, p.specialty, p.phone, p.address, p.verified, p.avatar_url]
-      );
-      upserted.push(p.id);
+      try {
+        const isPremium = p.planType === 'premium';
+        await pool.query(
+          `INSERT INTO providers_public (
+             id, name, type, specialty, address, city, area, phone,
+             lat, lng, is_verified, is_24h, is_open, rating, reviews_count,
+             description, languages, image_url, night_duty, is_premium
+           )
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20)
+           ON CONFLICT (id) DO UPDATE SET
+             name=EXCLUDED.name, type=EXCLUDED.type, specialty=EXCLUDED.specialty,
+             address=EXCLUDED.address, city=EXCLUDED.city, area=EXCLUDED.area,
+             phone=EXCLUDED.phone, lat=EXCLUDED.lat, lng=EXCLUDED.lng,
+             is_verified=EXCLUDED.is_verified, is_24h=EXCLUDED.is_24h,
+             is_open=EXCLUDED.is_open, rating=EXCLUDED.rating,
+             reviews_count=EXCLUDED.reviews_count, description=EXCLUDED.description,
+             languages=EXCLUDED.languages, image_url=EXCLUDED.image_url,
+             night_duty=EXCLUDED.night_duty, is_premium=EXCLUDED.is_premium`,
+          [
+            p.id, p.name, p.type, p.specialty || null,
+            p.address || null, p.city || null, p.area || null, p.phone || null,
+            p.lat || null, p.lng || null,
+            Boolean(p.verified || p.is_verified),
+            Boolean(p.is24_7 || p.is_24h),
+            Boolean(p.isOpen !== undefined ? p.isOpen : p.is_open !== undefined ? p.is_open : true),
+            Number(p.rating) || 0, Number(p.reviewsCount || p.reviews_count) || 0,
+            p.description || null,
+            Array.isArray(p.languages) ? p.languages : (p.languages ? [p.languages] : null),
+            p.image || p.image_url || null,
+            Boolean(p.nightDuty || p.night_duty),
+            isPremium,
+          ]
+        );
+        upserted.push(p.id);
+      } catch (rowErr: any) {
+        errors.push(`${p.id}: ${rowErr.message}`);
+      }
     }
-    res.json({ data: { upserted, removed: [], errors: [] } });
+    res.json({ data: { upserted, removed: [], errors } });
   } catch (err) {
     res.status(500).json({ error: "Sync failed" });
   }

@@ -42,4 +42,22 @@ router.get("/community", async (_req, res) => {
   }
 });
 
+// GET /api/homepage/premium-providers
+router.get("/premium-providers", async (_req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT id, name, type, specialty, address, city, area, phone, lat, lng,
+              is_verified, is_24h, is_open, rating, reviews_count, description,
+              languages, image_url, night_duty, is_premium
+       FROM providers_public
+       WHERE is_premium = true
+       ORDER BY rating DESC
+       LIMIT 10`
+    );
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch premium providers" });
+  }
+});
+
 export default router;

@@ -149,6 +149,37 @@ export function useSearchProviders(query: string) {
 }
 
 /**
+ * Fetch premium providers (planType === 'premium') from verified providers
+ * Use for: homepage "Meilleurs praticiens" section
+ */
+export function usePremiumProviders() {
+  const result = useQuery({
+    queryKey: [...providerKeys.verified(), 'premium'] as const,
+    queryFn: getVerifiedProviders,
+    staleTime: 3 * 60 * 1000,
+    refetchInterval: 3 * 60 * 1000,
+  });
+
+  const premiumProviders = result.data
+    ? result.data.filter(p => p.planType === 'premium')
+    : [];
+
+  // Fallback: top-rated verified providers when no premium ones exist
+  const topProviders = (premiumProviders.length > 0
+    ? premiumProviders
+    : (result.data || []).filter(p => p.name)
+  )
+    .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+    .slice(0, 3);
+
+  return {
+    ...result,
+    data: topProviders,
+    hasPremium: premiumProviders.length > 0,
+  };
+}
+
+/**
  * Mutation: Update provider verification status
  * Use for: admin approval/rejection
  */

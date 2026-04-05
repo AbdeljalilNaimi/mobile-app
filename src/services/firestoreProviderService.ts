@@ -232,6 +232,7 @@ function docToProvider(docData: DocumentData, id: string): CityHealthProvider {
     
     // ========== PLAN TYPE ==========
     planType: (merged.planType as 'basic' | 'standard' | 'premium') || undefined,
+    isPremium: merged.planType === 'premium',
     
     // ========== ACCOUNT SETTINGS ==========
     settings: merged.settings as CityHealthProvider['settings'] || undefined,

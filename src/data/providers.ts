@@ -230,6 +230,7 @@ export interface CityHealthProvider {
 
   // ========== PLAN TYPE ==========
   planType?: 'basic' | 'standard' | 'premium';
+  isPremium?: boolean;
 
   // ========== ACCOUNT SETTINGS ==========
   settings?: {

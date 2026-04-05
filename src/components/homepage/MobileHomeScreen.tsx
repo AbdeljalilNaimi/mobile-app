@@ -18,7 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useHomepageAds, useHomepageArticles, useHomepageCommunity } from '@/hooks/useHomepageData';
-import { getProviders } from '@/data/providers';
+import { usePremiumProviders } from '@/hooks/useProviders';
 import { SideDrawer } from '@/components/layout/SideDrawer';
 
 const stagger = {
@@ -72,13 +72,8 @@ export const MobileHomeScreen = () => {
       ? t('mobileHome', 'goodAfternoon')
       : t('mobileHome', 'goodMorning');
 
-  // Top providers — always use real providers from data
-  const allProviders = getProviders();
-  const topProviders = allProviders
-    .filter(p => p.name) // safety: skip providers without name
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, 3)
-    .map(p => ({ ...p, isPremium: p.planType === 'premium' || p.rating >= 4.5 }));
+  // Top providers — real data from Firestore via usePremiumProviders
+  const { data: topProviders = [], isLoading: loadingProviders } = usePremiumProviders();
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -247,10 +242,22 @@ export const MobileHomeScreen = () => {
       {/* ── Top Providers ── */}
       <motion.div variants={fadeUp}>
         <SectionHeader label={t('mobileHome', 'premiumLabel')} title={t('mobileHome', 'topProviders')} actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/search')} />
-        <div className="space-y-3 mt-3">
-          {topProviders.map((doc) => (
+        <div className="space-y-3 mt-3" data-testid="top-providers-list">
+          {loadingProviders ? (
+            [1, 2, 3].map(i => (
+              <div key={i} className="w-full rounded-2xl bg-card border border-border shadow-sm p-4 flex items-center gap-4 animate-pulse">
+                <div className="h-14 w-14 rounded-full bg-muted flex-shrink-0" />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 bg-muted rounded w-2/3" />
+                  <div className="h-3 bg-muted rounded w-1/2" />
+                  <div className="h-3 bg-muted rounded w-1/3" />
+                </div>
+              </div>
+            ))
+          ) : topProviders.map((doc) => (
             <button
               key={doc.id}
+              data-testid={`card-provider-${doc.id}`}
               onClick={() => navigate(`/provider/${doc.id}`)}
               className="w-full rounded-2xl bg-card border border-border shadow-sm p-4 flex items-center gap-4 text-start active:scale-[0.98] transition-transform"
             >
@@ -262,9 +269,9 @@ export const MobileHomeScreen = () => {
               </Avatar>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <p className="text-sm font-semibold text-foreground truncate">{doc.name}</p>
+                  <p className="text-sm font-semibold text-foreground truncate" data-testid={`text-provider-name-${doc.id}`}>{doc.name}</p>
                   {doc.isPremium && (
-                    <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[9px] font-bold flex-shrink-0">
+                    <span data-testid={`badge-premium-${doc.id}`} className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 text-[9px] font-bold flex-shrink-0">
                       <Shield className="h-2.5 w-2.5" /> {t('mobileHome', 'premiumBadge')}
                     </span>
                   )}
@@ -272,8 +279,8 @@ export const MobileHomeScreen = () => {
                 <p className="text-xs text-muted-foreground truncate">{doc.specialty || t('mobileHome', 'defaultSpecialty')}</p>
                 <div className="flex items-center gap-1 mt-1">
                   <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500" />
-                  <span className="text-xs font-medium text-foreground">{doc.rating.toFixed(1)}</span>
-                  <span className="text-[10px] text-muted-foreground">({doc.reviewsCount} {t('mobileHome', 'reviews')})</span>
+                  <span className="text-xs font-medium text-foreground">{(doc.rating || 0).toFixed(1)}</span>
+                  <span className="text-[10px] text-muted-foreground">({doc.reviewsCount || 0} {t('mobileHome', 'reviews')})</span>
                 </div>
               </div>
               <div className="flex flex-col items-center gap-2 flex-shrink-0">

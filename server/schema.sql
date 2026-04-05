@@ -337,6 +337,7 @@ CREATE TABLE IF NOT EXISTS providers_public (
   languages TEXT[],
   image_url TEXT,
   night_duty BOOLEAN DEFAULT false,
+  is_premium BOOLEAN NOT NULL DEFAULT false,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );
 
