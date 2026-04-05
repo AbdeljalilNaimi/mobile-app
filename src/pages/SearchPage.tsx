@@ -4,6 +4,8 @@ import { useVerifiedProviders } from '@/hooks/useProviders';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { isProviderVerified } from '@/utils/verificationUtils';
 import { useLanguage } from '@/contexts/LanguageContext';
+import type { Translations } from '@/i18n/translations';
+import type { Lang } from '@/data/providers';
 import {
   Search, SlidersHorizontal, Star, MapPin, Phone, Clock,
   X, Stethoscope, Pill, Building, FlaskConical, ChevronRight,
@@ -31,12 +33,14 @@ export interface FilterState {
   verifiedOnly: boolean;
   emergencyServices: boolean;
   wheelchairAccessible: boolean;
-  languages: string[];
+  languages: Lang[];
   area: string;
   maxDistance: number;
 }
 
 export type Provider = CityHealthProvider;
+
+type SearchCategoryKey = keyof Translations['searchCategories'];
 
 const CATEGORY_ICONS: Record<string, React.ElementType> = {
   doctor: Stethoscope,
@@ -50,14 +54,14 @@ const CATEGORY_ICONS: Record<string, React.ElementType> = {
   medical_equipment: Wrench,
 };
 
-const CATEGORY_IDS = [
+const CATEGORY_IDS: ReadonlyArray<SearchCategoryKey> = [
   'doctor', 'clinic', 'pharmacy', 'lab', 'hospital',
   'birth_hospital', 'blood_cabin', 'radiology_center', 'medical_equipment',
-] as const;
+];
 
 const SORT_OPTIONS: SortOption[] = ['relevance', 'rating', 'distance', 'newest'];
 
-const LANGUAGE_OPTIONS = [
+const LANGUAGE_OPTIONS: ReadonlyArray<{ value: Lang; label: string }> = [
   { value: 'fr', label: 'Français' },
   { value: 'ar', label: 'العربية' },
   { value: 'en', label: 'English' },
@@ -84,7 +88,7 @@ const SearchPage = () => {
 
   const categories = useMemo(() => CATEGORY_IDS.map(id => ({
     id,
-    label: t('searchCategories', id as any),
+    label: t('searchCategories', id),
     icon: CATEGORY_ICONS[id],
   })), [t]);
 
@@ -145,7 +149,7 @@ const SearchPage = () => {
     if (filters.availability === 'now') results = results.filter(p => p.isOpen);
     if (filters.languages.length > 0) {
       results = results.filter(p =>
-        filters.languages.some(lang => p.languages?.includes(lang as any))
+        filters.languages.some(lang => p.languages?.includes(lang))
       );
     }
     if (filters.area) {

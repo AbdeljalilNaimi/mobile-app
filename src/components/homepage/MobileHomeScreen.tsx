@@ -264,7 +264,7 @@ export const MobileHomeScreen = () => {
       </motion.div>
 
       {/* ── Top Providers (premium only) ── */}
-      {(loadingProviders || hasPremium) && (
+      {hasPremium && (
       <motion.div variants={fadeUp}>
         <SectionHeader label={t('mobileHome', 'premiumLabel')} title={t('mobileHome', 'topProviders')} actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/search')} />
         <div className="space-y-3 mt-3" data-testid="top-providers-list">
