@@ -1,10 +1,38 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/apiClient";
 
+export interface HomepageAd {
+  id: string;
+  title: string;
+  short_description: string;
+  provider_name: string;
+  provider_id: string;
+  is_featured: boolean;
+  is_verified_provider: boolean;
+  image_url: string;
+  provider_avatar: string | null;
+  status: string;
+}
+
+export interface HomepageArticle {
+  id: string;
+  title: string;
+  provider_name: string;
+  views_count: number;
+  status: string;
+}
+
+export interface HomepageCommunityPost {
+  id: string;
+  title: string;
+  category: string;
+  comments_count: number;
+}
+
 export function useHomepageAds() {
   return useQuery({
     queryKey: ["homepage-ads"],
-    queryFn: () => apiGet<any[]>("/homepage/ads"),
+    queryFn: () => apiGet<HomepageAd[]>("/homepage/ads"),
     staleTime: 5 * 60 * 1000,
   });
 }
@@ -12,7 +40,7 @@ export function useHomepageAds() {
 export function useHomepageArticles() {
   return useQuery({
     queryKey: ["homepage-articles"],
-    queryFn: () => apiGet<any[]>("/homepage/articles"),
+    queryFn: () => apiGet<HomepageArticle[]>("/homepage/articles"),
     staleTime: 5 * 60 * 1000,
   });
 }
@@ -20,7 +48,7 @@ export function useHomepageArticles() {
 export function useHomepageCommunity() {
   return useQuery({
     queryKey: ["homepage-community"],
-    queryFn: () => apiGet<any[]>("/homepage/community"),
+    queryFn: () => apiGet<HomepageCommunityPost[]>("/homepage/community"),
     staleTime: 5 * 60 * 1000,
   });
 }

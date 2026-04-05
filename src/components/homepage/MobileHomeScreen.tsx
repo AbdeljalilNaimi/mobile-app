@@ -136,7 +136,7 @@ export const MobileHomeScreen = () => {
     isVerified: ad.is_verified_provider,
     imageUrl: ad.image_url,
     providerAvatar: ad.provider_avatar,
-    providerId: (ad as any).provider_id ?? null,
+    providerId: ad.provider_id,
   }));
 
   const articles = (articlesData ?? []).map((a) => ({

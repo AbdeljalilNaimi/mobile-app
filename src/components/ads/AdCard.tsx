@@ -81,6 +81,7 @@ export function AdCard({
       layout
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
+      data-testid={`ad-card-${ad.id}`}
       className="group bg-card rounded-2xl shadow-sm hover:shadow-md border border-border/50 overflow-hidden transition-all duration-300 cursor-pointer"
       onClick={onClick}
     >
