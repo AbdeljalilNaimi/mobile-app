@@ -57,6 +57,18 @@ router.post("/reports", async (req, res) => {
 
 // POST /api/providers/sync
 router.post("/sync", async (req, res) => {
+  // Validate sync secret — must match SYNC_SECRET env var
+  const syncSecret = process.env.SYNC_SECRET;
+  const providedSecret = req.headers["x-sync-secret"];
+  if (!syncSecret) {
+    res.status(503).json({ error: "Sync is not configured (SYNC_SECRET missing on server)" });
+    return;
+  }
+  if (!providedSecret || providedSecret !== syncSecret) {
+    res.status(403).json({ error: "Invalid sync secret" });
+    return;
+  }
+
   try {
     const providers = req.body;
     if (!Array.isArray(providers)) {
