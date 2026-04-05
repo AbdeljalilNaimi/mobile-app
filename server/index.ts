@@ -4,6 +4,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import { pool } from "./db.js";
 import fs from "fs";
+import { runMigrations } from "./migrations.js";
 
 import communityRouter from "./routes/community.js";
 import bloodEmergencyRouter from "./routes/bloodEmergency.js";
@@ -63,8 +64,15 @@ if (fs.existsSync(distPath)) {
   });
 }
 
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`CityHealth server running on port ${PORT}`);
-});
+runMigrations()
+  .then(() => {
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`CityHealth server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("[startup] Migration failed, server will not start:", err);
+    process.exit(1);
+  });
 
 export default app;
