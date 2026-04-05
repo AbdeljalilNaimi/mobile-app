@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -20,6 +20,16 @@ import { useNotifications } from '@/hooks/useNotifications';
 import { useHomepageAds, useHomepageArticles, useHomepageCommunity } from '@/hooks/useHomepageData';
 import { usePremiumProviders } from '@/hooks/useProviders';
 import { SideDrawer } from '@/components/layout/SideDrawer';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const stagger = {
   hidden: {},
@@ -44,6 +54,19 @@ export const MobileHomeScreen = () => {
   const { unreadCount } = useNotifications(user?.uid);
   const [searchQuery, setSearchQuery] = useState('');
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [showExitDialog, setShowExitDialog] = useState(false);
+
+  useEffect(() => {
+    window.history.pushState({ homePage: true }, '');
+    const handlePopState = (e: PopStateEvent) => {
+      if (!e.state?.homePage) {
+        window.history.pushState({ homePage: true }, '');
+        setShowExitDialog(true);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   const { data: adsData } = useHomepageAds();
   const { data: articlesData } = useHomepageArticles();
@@ -113,6 +136,7 @@ export const MobileHomeScreen = () => {
     isVerified: ad.is_verified_provider,
     imageUrl: ad.image_url,
     providerAvatar: ad.provider_avatar,
+    providerId: (ad as any).provider_id ?? null,
   }));
 
   const articles = (articlesData ?? []).map((a) => ({
@@ -303,7 +327,8 @@ export const MobileHomeScreen = () => {
               {[...ads, ...ads].map((ad, idx) => (
                 <button
                   key={`${ad.id}-${idx}`}
-                  onClick={() => navigate('/annonces')}
+                  data-testid={`carousel-ad-${ad.id}-${idx}`}
+                  onClick={() => ad.providerId ? navigate(`/provider/${ad.providerId}`) : navigate('/annonces')}
                   className="w-[260px] shrink-0 rounded-2xl bg-card border border-border shadow-sm overflow-hidden text-start active:scale-[0.97] transition-all duration-200 hover:shadow-md"
                 >
                   {ad.imageUrl && (
@@ -491,6 +516,37 @@ export const MobileHomeScreen = () => {
       </motion.div>
 
       <SideDrawer open={drawerOpen} onOpenChange={setDrawerOpen} />
+
+      <AlertDialog open={showExitDialog} onOpenChange={setShowExitDialog}>
+        <AlertDialogContent data-testid="dialog-exit-confirm">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Quitter l'application ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Voulez-vous vraiment quitter l'application ?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              data-testid="button-exit-cancel"
+              onClick={() => {
+                window.history.pushState({ homePage: true }, '');
+                setShowExitDialog(false);
+              }}
+            >
+              Non
+            </AlertDialogCancel>
+            <AlertDialogAction
+              data-testid="button-exit-confirm"
+              onClick={() => {
+                setShowExitDialog(false);
+                window.history.go(-2);
+              }}
+            >
+              Oui, quitter
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </motion.div>
   );
 };

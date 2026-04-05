@@ -7,8 +7,8 @@ const router = Router();
 router.get("/ads", async (_req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, title, short_description, provider_name, is_featured, is_verified_provider, image_url, provider_avatar, status
-       FROM ads WHERE status = 'approved' ORDER BY created_at DESC LIMIT 4`
+      `SELECT id, title, short_description, provider_name, provider_id, is_featured, is_verified_provider, image_url, provider_avatar, status
+       FROM ads WHERE status = 'approved' ORDER BY is_featured DESC, created_at DESC LIMIT 4`
     );
     res.json(result.rows);
   } catch (err) {

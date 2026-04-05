@@ -1,15 +1,14 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Search, Filter, TrendingUp, Clock, Star, Loader2, Megaphone, SlidersHorizontal } from 'lucide-react';
+import { Search, TrendingUp, Clock, Star, Loader2, Megaphone, CheckCircle2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { AdCard } from '@/components/ads/AdCard';
 import { AdDetailDialog } from '@/components/ads/AdDetailDialog';
 import { Ad, getApprovedAds, getUserLikes, getUserSaves, AdFilters } from '@/services/adsService';
-import { cn } from '@/lib/utils';
-
 import { Helmet } from 'react-helmet-async';
+
+const PAGE_SIZE = 12;
 
 const SORT_OPTIONS = [
   { value: 'newest' as const, label: 'Récentes', icon: Clock },
@@ -19,27 +18,50 @@ const SORT_OPTIONS = [
 
 export default function AdsPage() {
   const { user } = useAuth();
+
   const [ads, setAds] = useState<Ad[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [offset, setOffset] = useState(0);
+
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<AdFilters['sort']>('featured');
   const [selectedAd, setSelectedAd] = useState<Ad | null>(null);
   const [userLikes, setUserLikes] = useState<string[]>([]);
   const [userSaves, setUserSaves] = useState<string[]>([]);
 
-  const fetchAds = useCallback(async () => {
-    setLoading(true);
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const isFetchingRef = useRef(false);
+
+  const fetchPage = useCallback(async (currentOffset: number, replace: boolean) => {
+    if (isFetchingRef.current) return;
+    isFetchingRef.current = true;
+    if (replace) setLoading(true); else setLoadingMore(true);
     try {
-      const result = await getApprovedAds({ search: search || undefined, sort });
-      setAds(result);
+      const result = await getApprovedAds({
+        search: search || undefined,
+        sort,
+        limit: PAGE_SIZE,
+        offset: currentOffset,
+      });
+      setAds(prev => replace ? result : [...prev, ...result]);
+      setHasMore(result.length >= PAGE_SIZE);
+      setOffset(currentOffset + result.length);
     } catch (error) {
       console.error('Failed to load ads:', error);
     } finally {
-      setLoading(false);
+      if (replace) setLoading(false); else setLoadingMore(false);
+      isFetchingRef.current = false;
     }
   }, [search, sort]);
 
-  useEffect(() => { fetchAds(); }, [fetchAds]);
+  useEffect(() => {
+    setAds([]);
+    setOffset(0);
+    setHasMore(true);
+    fetchPage(0, true);
+  }, [search, sort]);
 
   useEffect(() => {
     if (user?.uid) {
@@ -47,6 +69,21 @@ export default function AdsPage() {
       getUserSaves(user.uid).then(setUserSaves).catch(() => {});
     }
   }, [user?.uid]);
+
+  useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasMore && !loadingMore && !loading) {
+          fetchPage(offset, false);
+        }
+      },
+      { rootMargin: '200px' }
+    );
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [hasMore, loadingMore, loading, offset, fetchPage]);
 
   const handleLikeToggle = (adId: string, liked: boolean) => {
     setUserLikes(prev => liked ? [...prev, adId] : prev.filter(id => id !== adId));
@@ -64,7 +101,6 @@ export default function AdsPage() {
       </Helmet>
 
       <div className="min-h-screen bg-muted/30 pt-20">
-        {/* Hero header */}
         <div className="bg-gradient-to-br from-primary/5 via-background to-background border-b">
           <div className="container mx-auto px-4 py-10">
             <div className="flex items-center gap-3 mb-2">
@@ -77,11 +113,11 @@ export default function AdsPage() {
               Découvrez les services, offres et événements de nos professionnels de santé vérifiés.
             </p>
 
-            {/* Search + Filters */}
             <div className="mt-6 flex flex-col sm:flex-row gap-3">
               <div className="relative flex-1 max-w-lg">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
+                  data-testid="input-search-ads"
                   placeholder="Rechercher par titre, description ou prestataire..."
                   className="pl-10 h-11 bg-card"
                   value={search}
@@ -93,6 +129,7 @@ export default function AdsPage() {
                 {SORT_OPTIONS.map((opt) => (
                   <Button
                     key={opt.value}
+                    data-testid={`button-sort-${opt.value}`}
                     variant={sort === opt.value ? 'default' : 'outline'}
                     size="sm"
                     className="gap-1.5 h-11"
@@ -107,7 +144,6 @@ export default function AdsPage() {
           </div>
         </div>
 
-        {/* Feed */}
         <div className="container mx-auto px-4 py-8">
           {loading ? (
             <div className="flex items-center justify-center py-20">
@@ -120,26 +156,43 @@ export default function AdsPage() {
               <p className="text-sm text-muted-foreground/70 mt-1">Les annonces approuvées apparaîtront ici.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {ads.map((ad) => (
-                <AdCard
-                  key={ad.id}
-                  ad={ad}
-                  userId={user?.uid}
-                  isLiked={userLikes.includes(ad.id)}
-                  isSaved={userSaves.includes(ad.id)}
-                  onLikeToggle={handleLikeToggle}
-                  onSaveToggle={handleSaveToggle}
-                  onReport={() => setSelectedAd(ad)}
-                  onClick={() => setSelectedAd(ad)}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {ads.map((ad) => (
+                  <AdCard
+                    key={ad.id}
+                    ad={ad}
+                    userId={user?.uid}
+                    isLiked={userLikes.includes(ad.id)}
+                    isSaved={userSaves.includes(ad.id)}
+                    onLikeToggle={handleLikeToggle}
+                    onSaveToggle={handleSaveToggle}
+                    onReport={() => setSelectedAd(ad)}
+                    onClick={() => setSelectedAd(ad)}
+                  />
+                ))}
+              </div>
+
+              <div
+                ref={sentinelRef}
+                data-testid="sentinel-load-more"
+                className="flex items-center justify-center py-10 mt-4"
+              >
+                {loadingMore && (
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                )}
+                {!hasMore && !loadingMore && (
+                  <p className="text-sm text-muted-foreground flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-primary/60" />
+                    Fin des annonces
+                  </p>
+                )}
+              </div>
+            </>
           )}
         </div>
       </div>
 
-      {/* Detail dialog */}
       <AdDetailDialog
         ad={selectedAd}
         open={!!selectedAd}

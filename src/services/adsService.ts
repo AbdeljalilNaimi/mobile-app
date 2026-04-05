@@ -72,6 +72,7 @@ export async function deleteAd(id: string): Promise<void> {
 
 export async function getApprovedAds(filters: AdFilters = {}): Promise<Ad[]> {
   return apiGet<Ad[]>("/ads", {
+    status: "approved",
     search: filters.search,
     specialty: filters.specialty,
     city: filters.city,
