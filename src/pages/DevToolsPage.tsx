@@ -491,6 +491,7 @@ export default function DevToolsPage() {
     languages: p.languages || null,
     image_url: p.image || null,
     night_duty: false,
+    planType: p.planType || null,
   });
 
   const syncToApi = async () => {

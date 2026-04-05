@@ -100,8 +100,9 @@ router.post("/sync", async (req, res) => {
           ]
         );
         upserted.push(p.id);
-      } catch (rowErr: any) {
-        errors.push(`${p.id}: ${rowErr.message}`);
+      } catch (rowErr: unknown) {
+        const msg = rowErr instanceof Error ? rowErr.message : String(rowErr);
+        errors.push(`${p.id}: ${msg}`);
       }
     }
     res.json({ data: { upserted, removed: [], errors } });
