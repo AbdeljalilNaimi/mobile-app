@@ -95,6 +95,13 @@ export interface Translations {
     noResultsTitle: string;
     noResultsDescription: string;
     tryDifferentFilters: string;
+    loading: string;
+    error: string;
+    retry: string;
+    clearFilters: string;
+    km: string;
+    resultSingular: string;
+    resultPlural: string;
   };
 
   // Filters
@@ -129,6 +136,25 @@ export interface Translations {
     affordable: string;
     moderate: string;
     premium: string;
+    spokenLanguages: string;
+    neighborhood: string;
+    maxDistance: string;
+    reset: string;
+    apply: string;
+    activeFilters: string;
+    allNeighborhoods: string;
+  };
+
+  searchCategories: {
+    doctor: string;
+    clinic: string;
+    pharmacy: string;
+    lab: string;
+    hospital: string;
+    birth_hospital: string;
+    blood_cabin: string;
+    radiology_center: string;
+    medical_equipment: string;
   };
 
   // Provider
@@ -1331,6 +1357,13 @@ export const translations: Record<Language, Translations> = {
       noResultsTitle: 'Aucun résultat trouvé',
       noResultsDescription: 'Essayez de modifier vos critères de recherche ou d\'élargir votre zone de recherche',
       tryDifferentFilters: 'Essayez d\'autres filtres',
+      loading: 'Recherche en cours…',
+      error: 'Erreur de chargement',
+      retry: 'Réessayer',
+      clearFilters: 'Effacer les filtres',
+      km: 'km',
+      resultSingular: 'résultat',
+      resultPlural: 'résultats',
     },
     filters: {
       advancedFilters: 'Filtres avancés',
@@ -1363,6 +1396,24 @@ export const translations: Record<Language, Translations> = {
       affordable: 'Économique',
       moderate: 'Modéré',
       premium: 'Premium',
+      spokenLanguages: 'Langues parlées',
+      neighborhood: 'Quartier',
+      maxDistance: 'Distance maximale',
+      reset: 'Réinitialiser',
+      apply: 'Appliquer',
+      activeFilters: 'actifs',
+      allNeighborhoods: 'Tous',
+    },
+    searchCategories: {
+      doctor: 'Médecins',
+      clinic: 'Cliniques',
+      pharmacy: 'Pharmacies',
+      lab: 'Laboratoires',
+      hospital: 'Hôpitaux',
+      birth_hospital: 'Maternité',
+      blood_cabin: 'Don de sang',
+      radiology_center: 'Radiologie',
+      medical_equipment: 'Équipement',
     },
     provider: {
       verified: 'Vérifié',
@@ -2455,6 +2506,13 @@ export const translations: Record<Language, Translations> = {
       noResultsTitle: 'لم يتم العثور على نتائج',
       noResultsDescription: 'حاول تعديل معايير البحث أو توسيع منطقة البحث',
       tryDifferentFilters: 'جرب فلاتر أخرى',
+      loading: 'جاري البحث…',
+      error: 'خطأ في التحميل',
+      retry: 'إعادة المحاولة',
+      clearFilters: 'مسح الفلاتر',
+      km: 'كم',
+      resultSingular: 'نتيجة',
+      resultPlural: 'نتائج',
     },
     filters: {
       advancedFilters: 'فلاتر متقدمة',
@@ -2487,6 +2545,24 @@ export const translations: Record<Language, Translations> = {
       affordable: 'اقتصادي',
       moderate: 'معتدل',
       premium: 'مميز',
+      spokenLanguages: 'اللغات المتحدث بها',
+      neighborhood: 'الحي',
+      maxDistance: 'الحد الأقصى للمسافة',
+      reset: 'إعادة تعيين',
+      apply: 'تطبيق',
+      activeFilters: 'نشطة',
+      allNeighborhoods: 'الكل',
+    },
+    searchCategories: {
+      doctor: 'أطباء',
+      clinic: 'عيادات',
+      pharmacy: 'صيدليات',
+      lab: 'مختبرات',
+      hospital: 'مستشفيات',
+      birth_hospital: 'مستشفى الولادة',
+      blood_cabin: 'التبرع بالدم',
+      radiology_center: 'الأشعة',
+      medical_equipment: 'معدات طبية',
     },
     provider: {
       verified: 'موثق',
@@ -3579,6 +3655,13 @@ export const translations: Record<Language, Translations> = {
       noResultsTitle: 'No results found',
       noResultsDescription: 'Try adjusting your search criteria or expanding your search area',
       tryDifferentFilters: 'Try different filters',
+      loading: 'Searching…',
+      error: 'Loading error',
+      retry: 'Retry',
+      clearFilters: 'Clear filters',
+      km: 'km',
+      resultSingular: 'result',
+      resultPlural: 'results',
     },
     filters: {
       advancedFilters: 'Advanced filters',
@@ -3611,6 +3694,24 @@ export const translations: Record<Language, Translations> = {
       affordable: 'Affordable',
       moderate: 'Moderate',
       premium: 'Premium',
+      spokenLanguages: 'Spoken languages',
+      neighborhood: 'Neighborhood',
+      maxDistance: 'Maximum distance',
+      reset: 'Reset',
+      apply: 'Apply',
+      activeFilters: 'active',
+      allNeighborhoods: 'All',
+    },
+    searchCategories: {
+      doctor: 'Doctors',
+      clinic: 'Clinics',
+      pharmacy: 'Pharmacies',
+      lab: 'Laboratories',
+      hospital: 'Hospitals',
+      birth_hospital: 'Maternity',
+      blood_cabin: 'Blood donation',
+      radiology_center: 'Radiology',
+      medical_equipment: 'Equipment',
     },
     provider: {
       verified: 'Verified',

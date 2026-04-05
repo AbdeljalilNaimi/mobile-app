@@ -3,6 +3,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import { useVerifiedProviders } from '@/hooks/useProviders';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { isProviderVerified } from '@/utils/verificationUtils';
+import { useLanguage } from '@/contexts/LanguageContext';
 import {
   Search, SlidersHorizontal, Star, MapPin, Phone, Clock,
   X, Stethoscope, Pill, Building, FlaskConical, ChevronRight,
@@ -17,7 +18,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose 
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { VerifiedBadge } from '@/components/trust/VerifiedBadge';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { CityHealthProvider } from '@/data/providers';
 
@@ -38,32 +38,33 @@ export interface FilterState {
 
 export type Provider = CityHealthProvider;
 
-const categories = [
-  { id: 'doctor', label: 'Médecins', icon: Stethoscope },
-  { id: 'clinic', label: 'Cliniques', icon: Building },
-  { id: 'pharmacy', label: 'Pharmacies', icon: Pill },
-  { id: 'lab', label: 'Laboratoires', icon: FlaskConical },
-  { id: 'hospital', label: 'Hôpitaux', icon: Building },
-  { id: 'birth_hospital', label: 'Maternité', icon: Baby },
-  { id: 'blood_cabin', label: 'Don de sang', icon: Droplets },
-  { id: 'radiology_center', label: 'Radiologie', icon: ScanLine },
-  { id: 'medical_equipment', label: 'Équipement', icon: Wrench },
-];
+const CATEGORY_ICONS: Record<string, React.ElementType> = {
+  doctor: Stethoscope,
+  clinic: Building,
+  pharmacy: Pill,
+  lab: FlaskConical,
+  hospital: Building,
+  birth_hospital: Baby,
+  blood_cabin: Droplets,
+  radiology_center: ScanLine,
+  medical_equipment: Wrench,
+};
 
-const languageOptions = [
+const CATEGORY_IDS = [
+  'doctor', 'clinic', 'pharmacy', 'lab', 'hospital',
+  'birth_hospital', 'blood_cabin', 'radiology_center', 'medical_equipment',
+] as const;
+
+const SORT_OPTIONS: SortOption[] = ['relevance', 'rating', 'distance', 'newest'];
+
+const LANGUAGE_OPTIONS = [
   { value: 'fr', label: 'Français' },
   { value: 'ar', label: 'العربية' },
   { value: 'en', label: 'English' },
 ];
 
-const sortOptions: { value: SortOption; label: string }[] = [
-  { value: 'relevance', label: 'Pertinence' },
-  { value: 'rating', label: 'Meilleure note' },
-  { value: 'distance', label: 'Plus proche' },
-  { value: 'newest', label: 'Récent' },
-];
-
 const SearchPage = () => {
+  const { t } = useLanguage();
   const [searchParams] = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
   const initialType = searchParams.get('type') || '';
@@ -81,7 +82,20 @@ const SearchPage = () => {
   const debouncedQuery = useDebouncedValue(searchQuery, 300);
   const { data: allProviders = [], isLoading, isError, refetch } = useVerifiedProviders();
 
-  // Extract unique areas from providers for the area filter
+  const categories = useMemo(() => CATEGORY_IDS.map(id => ({
+    id,
+    label: t('searchCategories', id as any),
+    icon: CATEGORY_ICONS[id],
+  })), [t]);
+
+  const sortOptions = useMemo(() => SORT_OPTIONS.map(value => ({
+    value,
+    label: value === 'relevance' ? t('search', 'sortRelevance')
+      : value === 'rating' ? t('search', 'sortRating')
+      : value === 'distance' ? t('search', 'sortDistance')
+      : t('search', 'sortNewest'),
+  })), [t]);
+
   const availableAreas = useMemo(() => {
     const areas = new Set(allProviders.map(p => p.area).filter(Boolean));
     return Array.from(areas).sort();
@@ -138,7 +152,11 @@ const SearchPage = () => {
       results = results.filter(p => p.area === filters.area);
     }
     if (filters.maxDistance < 50) {
-      results = results.filter(p => (p.distance || 0) <= filters.maxDistance);
+      results = results.filter(p => {
+        const dist = p.distance;
+        if (!dist || dist === 0) return true;
+        return dist <= filters.maxDistance;
+      });
     }
 
     const sorted = [...results];
@@ -157,51 +175,58 @@ const SearchPage = () => {
 
   return (
     <div className="flex flex-col min-h-full bg-background">
-      {/* Search bar */}
-      <div className="sticky top-11 z-40 bg-background/90 backdrop-blur-xl px-4 pt-3 pb-2 border-b border-border/30">
-        <div className="relative">
+      {/* Sticky header: search bar + category chips + sort & filter bar */}
+      <div className="sticky top-11 z-40 bg-background/90 backdrop-blur-xl border-b border-border/30">
+        {/* Search input */}
+        <div className="px-4 pt-3 pb-2 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
+            data-testid="input-search"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            placeholder="Rechercher un médecin, pharmacie..."
+            placeholder={t('search', 'placeholder')}
             className="pl-10 pr-10 h-11 rounded-xl bg-muted/50 border-border/50 text-sm"
           />
           {searchQuery && (
-            <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2">
+            <button
+              data-testid="button-clear-search"
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2"
+            >
               <X className="h-4 w-4 text-muted-foreground" />
             </button>
           )}
         </div>
-      </div>
 
-      {/* Category chips row */}
-      <div className="px-4 py-3 flex gap-2 overflow-x-auto scrollbar-hide">
-        {categories.map(cat => {
-          const active = filters.categories.includes(cat.id);
-          return (
-            <button
-              key={cat.id}
-              onClick={() => toggleCategory(cat.id)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
-                active
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'bg-muted/60 text-muted-foreground hover:bg-muted'
-              }`}
-            >
-              <cat.icon className="h-3.5 w-3.5" />
-              {cat.label}
-            </button>
-          );
-        })}
-      </div>
+        {/* Category chips row */}
+        <div className="px-4 pb-2 flex gap-2 overflow-x-auto scrollbar-hide">
+          {categories.map(cat => {
+            const active = filters.categories.includes(cat.id);
+            return (
+              <button
+                key={cat.id}
+                data-testid={`chip-category-${cat.id}`}
+                onClick={() => toggleCategory(cat.id)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all border ${
+                  active
+                    ? 'bg-primary text-primary-foreground shadow-sm border-primary'
+                    : 'bg-muted text-muted-foreground border-border/60 hover:bg-muted/80 hover:text-foreground'
+                }`}
+              >
+                <cat.icon className="h-3.5 w-3.5" />
+                {cat.label}
+              </button>
+            );
+          })}
+        </div>
 
-      {/* Sort + Filter bar */}
-      <div className="px-4 pb-3 flex items-center justify-between">
+        {/* Sort + Filter bar */}
+        <div className="px-4 pb-3 flex items-center justify-between">
         <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
           {sortOptions.map(opt => (
             <button
               key={opt.value}
+              data-testid={`button-sort-${opt.value}`}
               onClick={() => setSortBy(opt.value)}
               className={`px-2.5 py-1 rounded-lg text-[11px] font-medium whitespace-nowrap transition-colors ${
                 sortBy === opt.value
@@ -218,6 +243,7 @@ const SearchPage = () => {
           {/* View toggle */}
           <div className="flex items-center bg-muted/60 rounded-lg p-0.5">
             <button
+              data-testid="button-view-list"
               onClick={() => setViewMode('list')}
               className={`p-1.5 rounded-md transition-colors ${
                 viewMode === 'list'
@@ -228,6 +254,7 @@ const SearchPage = () => {
               <List className="h-3.5 w-3.5" />
             </button>
             <button
+              data-testid="button-view-grid"
               onClick={() => setViewMode('grid')}
               className={`p-1.5 rounded-md transition-colors ${
                 viewMode === 'grid'
@@ -241,7 +268,12 @@ const SearchPage = () => {
 
         <Sheet>
           <SheetTrigger asChild>
-            <Button variant="outline" size="sm" className="h-8 px-2.5 rounded-lg border-border/50 relative">
+            <Button
+              data-testid="button-open-filters"
+              variant="outline"
+              size="sm"
+              className="h-8 px-2.5 rounded-lg border-border/50 relative"
+            >
               <SlidersHorizontal className="h-3.5 w-3.5" />
               {activeFiltersCount > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-primary text-primary-foreground text-[10px] flex items-center justify-center font-bold">
@@ -253,26 +285,27 @@ const SearchPage = () => {
           <SheetContent side="bottom" className="rounded-t-2xl max-h-[80vh] flex flex-col">
             <SheetHeader>
               <div className="flex items-center justify-between">
-                <SheetTitle className="text-base">Filtres avancés</SheetTitle>
+                <SheetTitle className="text-base">{t('filters', 'advancedFilters')}</SheetTitle>
                 {activeFiltersCount > 0 && (
-                  <Badge variant="secondary" className="text-xs">{activeFiltersCount} actifs</Badge>
+                  <Badge variant="secondary" className="text-xs" data-testid="badge-active-filters">
+                    {activeFiltersCount} {t('filters', 'activeFilters')}
+                  </Badge>
                 )}
               </div>
             </SheetHeader>
             <div className="space-y-6 py-4 overflow-y-auto flex-1 pr-1">
 
-              {/* Disponibilité */}
+              {/* Availability */}
               <div>
-                <Label className="text-sm font-medium mb-2 block">Disponibilité</Label>
+                <Label className="text-sm font-medium mb-2 block">{t('filters', 'availability')}</Label>
                 <div className="flex gap-2 flex-wrap">
                   {[
-                    { value: 'any', label: 'Tous' },
-                    { value: 'now', label: 'Ouvert maintenant' },
-                    { value: 'today', label: "Aujourd'hui" },
-                    { value: 'week', label: 'Cette semaine' },
+                    { value: 'any', label: t('filters', 'anyTime') },
+                    { value: 'now', label: t('filters', 'openNow') },
                   ].map(opt => (
                     <button
                       key={opt.value}
+                      data-testid={`filter-availability-${opt.value}`}
                       onClick={() => setFilters(f => ({ ...f, availability: opt.value }))}
                       className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                         filters.availability === opt.value
@@ -286,13 +319,14 @@ const SearchPage = () => {
                 </div>
               </div>
 
-              {/* Note minimum - étoiles interactives */}
+              {/* Minimum rating */}
               <div>
-                <Label className="text-sm font-medium mb-2 block">Note minimum</Label>
+                <Label className="text-sm font-medium mb-2 block">{t('filters', 'minimumRating')}</Label>
                 <div className="flex items-center gap-1">
                   {[1, 2, 3, 4, 5].map(rating => (
                     <button
                       key={rating}
+                      data-testid={`filter-rating-${rating}`}
                       onClick={() => setFilters(f => ({ ...f, minRating: rating === f.minRating ? 0 : rating }))}
                       className="p-1 transition-transform hover:scale-110"
                     >
@@ -301,59 +335,65 @@ const SearchPage = () => {
                       />
                     </button>
                   ))}
-                  <span className="ml-2 text-xs text-muted-foreground">
-                    {filters.minRating > 0 ? `${filters.minRating}+ étoiles` : 'Toutes les notes'}
+                  <span className="ml-2 text-xs text-muted-foreground" data-testid="text-rating-label">
+                    {filters.minRating > 0
+                      ? `${filters.minRating}+ ${t('filters', 'stars')}`
+                      : t('filters', 'anyRating')}
                   </span>
                 </div>
               </div>
 
-              {/* Options spéciales */}
+              {/* Special options */}
               <div>
-                <Label className="text-sm font-medium mb-3 block">Options</Label>
+                <Label className="text-sm font-medium mb-3 block">{t('filters', 'specialOptions')}</Label>
                 <div className="space-y-3">
                   <label className="flex items-center gap-3 cursor-pointer">
                     <Checkbox
+                      data-testid="filter-verified-only"
                       checked={filters.verifiedOnly}
                       onCheckedChange={v => setFilters(f => ({ ...f, verifiedOnly: !!v }))}
                     />
                     <span className="flex items-center gap-1.5 text-sm">
                       <ShieldCheck className="h-4 w-4 text-emerald-500" />
-                      Vérifiés uniquement
+                      {t('filters', 'verifiedOnly')}
                     </span>
                   </label>
                   <label className="flex items-center gap-3 cursor-pointer">
                     <Checkbox
+                      data-testid="filter-emergency"
                       checked={filters.emergencyServices}
                       onCheckedChange={v => setFilters(f => ({ ...f, emergencyServices: !!v }))}
                     />
                     <span className="flex items-center gap-1.5 text-sm">
                       <Heart className="h-4 w-4 text-destructive" />
-                      Services d'urgence
+                      {t('filters', 'emergencyServices')}
                     </span>
                   </label>
                   <label className="flex items-center gap-3 cursor-pointer">
                     <Checkbox
+                      data-testid="filter-wheelchair"
                       checked={filters.wheelchairAccessible}
                       onCheckedChange={v => setFilters(f => ({ ...f, wheelchairAccessible: !!v }))}
                     />
                     <span className="flex items-center gap-1.5 text-sm">
                       <Accessibility className="h-4 w-4 text-primary" />
-                      Accessibilité fauteuil roulant
+                      {t('filters', 'wheelchairAccessible')}
                     </span>
                   </label>
                 </div>
               </div>
 
-              {/* Langues */}
+              {/* Spoken languages */}
               <div>
                 <Label className="text-sm font-medium mb-2 block flex items-center gap-1.5">
                   <Globe className="h-4 w-4 text-primary" />
-                  Langues parlées
+                  {t('filters', 'spokenLanguages')}
                 </Label>
                 <div className="flex gap-2 flex-wrap">
-                  {languageOptions.map(lang => (
+                  {LANGUAGE_OPTIONS.map(lang => (
                     <button
                       key={lang.value}
+                      data-testid={`filter-lang-${lang.value}`}
                       onClick={() => setFilters(f => ({
                         ...f,
                         languages: f.languages.includes(lang.value)
@@ -372,15 +412,16 @@ const SearchPage = () => {
                 </div>
               </div>
 
-              {/* Quartier */}
+              {/* Neighborhood */}
               {availableAreas.length > 0 && (
                 <div>
                   <Label className="text-sm font-medium mb-2 block">
                     <MapPin className="h-4 w-4 text-primary inline mr-1.5" />
-                    Quartier
+                    {t('filters', 'neighborhood')}
                   </Label>
                   <div className="flex gap-1.5 flex-wrap">
                     <button
+                      data-testid="filter-area-all"
                       onClick={() => setFilters(f => ({ ...f, area: '' }))}
                       className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                         !filters.area
@@ -388,11 +429,12 @@ const SearchPage = () => {
                           : 'bg-muted/60 text-muted-foreground hover:bg-muted'
                       }`}
                     >
-                      Tous
+                      {t('filters', 'allNeighborhoods')}
                     </button>
                     {availableAreas.map(area => (
                       <button
                         key={area}
+                        data-testid={`filter-area-${area}`}
                         onClick={() => setFilters(f => ({ ...f, area }))}
                         className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
                           filters.area === area
@@ -407,13 +449,16 @@ const SearchPage = () => {
                 </div>
               )}
 
-              {/* Distance max */}
+              {/* Maximum distance */}
               <div>
                 <div className="flex justify-between text-sm mb-1.5">
-                  <Label className="font-medium">Distance maximale</Label>
-                  <span className="text-xs text-muted-foreground font-medium">{filters.maxDistance} km</span>
+                  <Label className="font-medium">{t('filters', 'maxDistance')}</Label>
+                  <span className="text-xs text-muted-foreground font-medium" data-testid="text-distance-value">
+                    {filters.maxDistance} {t('search', 'km')}
+                  </span>
                 </div>
                 <Slider
+                  data-testid="slider-max-distance"
                   value={[filters.maxDistance]}
                   onValueChange={v => setFilters(f => ({ ...f, maxDistance: v[0] }))}
                   max={50}
@@ -426,12 +471,17 @@ const SearchPage = () => {
 
             {/* Sticky footer */}
             <div className="flex gap-3 pt-3 border-t border-border/50">
-              <Button variant="outline" className="flex-1" onClick={clearAll}>
-                Réinitialiser
+              <Button
+                data-testid="button-reset-filters"
+                variant="outline"
+                className="flex-1"
+                onClick={clearAll}
+              >
+                {t('filters', 'reset')}
               </Button>
               <SheetClose asChild>
-                <Button className="flex-1">
-                  Appliquer ({filteredProviders.length})
+                <Button data-testid="button-apply-filters" className="flex-1">
+                  {t('filters', 'apply')} ({filteredProviders.length})
                 </Button>
               </SheetClose>
             </div>
@@ -439,31 +489,38 @@ const SearchPage = () => {
         </Sheet>
         </div>
       </div>
+      </div>
 
       {/* Results count */}
       <div className="px-4 pb-2">
-        <p className="text-xs text-muted-foreground">
-          {isLoading ? 'Chargement...' : `${filteredProviders.length} résultat${filteredProviders.length !== 1 ? 's' : ''}`}
+        <p className="text-xs text-muted-foreground" data-testid="text-results-count">
+          {isLoading
+            ? t('search', 'loading')
+            : `${filteredProviders.length} ${filteredProviders.length !== 1 ? t('search', 'resultPlural') : t('search', 'resultSingular')}`}
         </p>
       </div>
 
       {/* Provider list */}
       <div className={`flex-1 px-4 pb-4 ${viewMode === 'grid' ? '' : 'space-y-3'}`}>
         {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-16 gap-3">
+          <div className="flex flex-col items-center justify-center py-16 gap-3" data-testid="state-loading">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-sm text-muted-foreground">Recherche en cours…</p>
+            <p className="text-sm text-muted-foreground">{t('search', 'loading')}</p>
           </div>
         ) : isError ? (
-          <div className="flex flex-col items-center justify-center py-16 gap-3">
-            <p className="text-sm text-muted-foreground">Erreur de chargement</p>
-            <Button variant="outline" size="sm" onClick={() => refetch()}>Réessayer</Button>
+          <div className="flex flex-col items-center justify-center py-16 gap-3" data-testid="state-error">
+            <p className="text-sm text-muted-foreground">{t('search', 'error')}</p>
+            <Button variant="outline" size="sm" data-testid="button-retry" onClick={() => refetch()}>
+              {t('search', 'retry')}
+            </Button>
           </div>
         ) : filteredProviders.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 gap-3">
+          <div className="flex flex-col items-center justify-center py-16 gap-3" data-testid="state-empty">
             <Search className="h-10 w-10 text-muted-foreground/40" />
-            <p className="text-sm text-muted-foreground">Aucun résultat trouvé</p>
-            <Button variant="outline" size="sm" onClick={clearAll}>Effacer les filtres</Button>
+            <p className="text-sm text-muted-foreground">{t('search', 'noResultsTitle')}</p>
+            <Button variant="outline" size="sm" data-testid="button-clear-filters" onClick={clearAll}>
+              {t('search', 'clearFilters')}
+            </Button>
           </div>
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-2 gap-3">
@@ -503,10 +560,11 @@ const SearchPage = () => {
 
 /* ── Provider Card ── */
 function ProviderCard({ provider }: { provider: CityHealthProvider }) {
+  const { t } = useLanguage();
   const verified = isProviderVerified(provider);
 
   return (
-    <Link to={`/provider/${provider.id}`}>
+    <Link to={`/provider/${provider.id}`} data-testid={`card-provider-${provider.id}`}>
       <Card className="p-3.5 rounded-2xl border-border/40 shadow-sm hover:shadow-md hover:border-primary/30 active:scale-[0.98] transition-all duration-200 group">
         <div className="flex gap-3">
           {/* Info */}
@@ -516,7 +574,7 @@ function ProviderCard({ provider }: { provider: CityHealthProvider }) {
               {verified ? (
                 <span className="inline-flex items-center gap-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800">
                   <ShieldCheck className="h-2.5 w-2.5" />
-                  Vérifié
+                  {t('provider', 'verified')}
                 </span>
               ) : (
                 <span className="inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
@@ -524,25 +582,25 @@ function ProviderCard({ provider }: { provider: CityHealthProvider }) {
                 </span>
               )}
               {provider.isOpen && (
-                <span className="inline-flex items-center gap-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400">
-                  <Clock className="h-2.5 w-2.5" /> Ouvert
+                <span className="inline-flex items-center gap-0.5 text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-600 dark:bg-emerald-950/30 dark:text-emerald-400" data-testid={`badge-open-${provider.id}`}>
+                  <Clock className="h-2.5 w-2.5" /> {t('provider', 'openNow')}
                 </span>
               )}
               {provider.emergency && (
-                <span className="inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-destructive/10 text-destructive border border-destructive/20">
-                  Urgences
+                <span className="inline-flex items-center text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-destructive/10 text-destructive border border-destructive/20" data-testid={`badge-emergency-${provider.id}`}>
+                  {t('provider', 'emergency')}
                 </span>
               )}
             </div>
 
             {/* Name & specialty */}
-            <h3 className="text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors">{provider.name}</h3>
+            <h3 className="text-sm font-semibold text-foreground truncate group-hover:text-primary transition-colors" data-testid={`text-provider-name-${provider.id}`}>{provider.name}</h3>
             <p className="text-xs text-muted-foreground truncate">{provider.specialty || provider.type}</p>
 
             {/* Details row */}
             <div className="flex items-center gap-3 mt-1.5">
               {provider.rating > 0 && (
-                <span className="flex items-center gap-0.5 text-xs">
+                <span className="flex items-center gap-0.5 text-xs" data-testid={`text-rating-${provider.id}`}>
                   <Star className="h-3 w-3 fill-amber-400 text-amber-400" />
                   <span className="font-medium text-foreground">{provider.rating.toFixed(1)}</span>
                 </span>
@@ -557,14 +615,15 @@ function ProviderCard({ provider }: { provider: CityHealthProvider }) {
             <div className="flex gap-1.5 mt-2">
               {provider.phone && (
                 <button
+                  data-testid={`button-call-${provider.id}`}
                   onClick={(e) => { e.preventDefault(); window.open(`tel:${provider.phone}`, '_self'); }}
                   className="inline-flex items-center text-[10px] font-medium px-2 py-1 rounded-full border border-border hover:bg-muted transition-colors"
                 >
-                  <Phone className="h-2.5 w-2.5 mr-0.5" /> Appeler
+                  <Phone className="h-2.5 w-2.5 mr-0.5" /> {t('provider', 'callNow')}
                 </button>
               )}
-              <span className="inline-flex items-center text-[10px] font-medium px-2 py-1 rounded-full border border-primary/30 text-primary">
-                <ChevronRight className="h-2.5 w-2.5 mr-0.5" /> Voir profil
+              <span className="inline-flex items-center text-[10px] font-medium px-2 py-1 rounded-full border border-primary/30 text-primary" data-testid={`button-view-profile-${provider.id}`}>
+                <ChevronRight className="h-2.5 w-2.5 mr-0.5" /> {t('provider', 'viewProfile')}
               </span>
             </div>
           </div>
@@ -585,12 +644,13 @@ function ProviderCard({ provider }: { provider: CityHealthProvider }) {
   );
 }
 
-/* ── Provider Grid Card (Image 2 style) ── */
+/* ── Provider Grid Card ── */
 function ProviderGridCard({ provider }: { provider: CityHealthProvider }) {
+  const { t } = useLanguage();
   const verified = isProviderVerified(provider);
 
   return (
-    <Link to={`/provider/${provider.id}`}>
+    <Link to={`/provider/${provider.id}`} data-testid={`card-grid-provider-${provider.id}`}>
       <Card className="rounded-2xl border-border/40 shadow-sm hover:shadow-md hover:border-primary/30 active:scale-[0.97] transition-all duration-200 group overflow-hidden">
         {/* Image section */}
         <div className="relative aspect-[4/3] bg-muted/40 overflow-hidden">
@@ -616,16 +676,16 @@ function ProviderGridCard({ provider }: { provider: CityHealthProvider }) {
           {verified && (
             <div className="absolute top-2 left-2 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-background/90 backdrop-blur-sm shadow-sm">
               <ShieldCheck className="h-3 w-3 text-primary" />
-              <span className="text-[10px] font-medium text-primary">Vérifié</span>
+              <span className="text-[10px] font-medium text-primary">{t('provider', 'verified')}</span>
             </div>
           )}
         </div>
 
         {/* Info section */}
         <div className="p-3 text-center">
-          <h3 className="text-sm font-semibold text-foreground truncate">{provider.name}</h3>
+          <h3 className="text-sm font-semibold text-foreground truncate" data-testid={`text-grid-name-${provider.id}`}>{provider.name}</h3>
           <p className="text-xs text-muted-foreground truncate mt-0.5">{provider.specialty || provider.type}</p>
-          
+
           {/* Arrow button */}
           <div className="mt-3 flex justify-center">
             <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center group-hover:bg-primary/90 transition-colors shadow-sm">

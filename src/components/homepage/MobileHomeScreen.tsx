@@ -95,8 +95,8 @@ export const MobileHomeScreen = () => {
       ? t('mobileHome', 'goodAfternoon')
       : t('mobileHome', 'goodMorning');
 
-  // Top providers — real data from Firestore via usePremiumProviders
-  const { data: topProviders = [], isLoading: loadingProviders } = usePremiumProviders();
+  // Top providers — real data from Firestore via usePremiumProviders (premium only)
+  const { data: topProviders = [], isLoading: loadingProviders, hasPremium } = usePremiumProviders();
 
   const handleSearch = () => {
     if (searchQuery.trim()) {
@@ -263,7 +263,8 @@ export const MobileHomeScreen = () => {
         </div>
       </motion.div>
 
-      {/* ── Top Providers ── */}
+      {/* ── Top Providers (premium only) ── */}
+      {(loadingProviders || hasPremium) && (
       <motion.div variants={fadeUp}>
         <SectionHeader label={t('mobileHome', 'premiumLabel')} title={t('mobileHome', 'topProviders')} actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/search')} />
         <div className="space-y-3 mt-3" data-testid="top-providers-list">
@@ -317,6 +318,7 @@ export const MobileHomeScreen = () => {
           ))}
         </div>
       </motion.div>
+      )}
 
       {/* ── Auto-scrolling Ads Carousel ── */}
       {ads.length > 0 && (

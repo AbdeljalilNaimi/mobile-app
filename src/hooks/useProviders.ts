@@ -164,11 +164,7 @@ export function usePremiumProviders() {
     ? result.data.filter(p => p.planType === 'premium')
     : [];
 
-  // Fallback: top-rated verified providers when no premium ones exist
-  const topProviders = (premiumProviders.length > 0
-    ? premiumProviders
-    : (result.data || []).filter(p => p.name)
-  )
+  const topProviders = [...premiumProviders]
     .sort((a, b) => (b.rating || 0) - (a.rating || 0))
     .slice(0, 3);
 
