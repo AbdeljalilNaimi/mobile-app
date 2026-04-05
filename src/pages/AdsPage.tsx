@@ -181,6 +181,9 @@ export default function AdsPage() {
                 {loadingMore && (
                   <Loader2 className="h-6 w-6 animate-spin text-primary" />
                 )}
+                {hasMore && !loadingMore && (
+                  <p className="text-sm text-muted-foreground">Charger plus…</p>
+                )}
                 {!hasMore && !loadingMore && (
                   <p className="text-sm text-muted-foreground flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-primary/60" />
