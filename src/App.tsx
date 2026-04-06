@@ -81,6 +81,7 @@ const ServiceLandingPage = lazy(() => import("./pages/ServiceLandingPage"));
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
+      refetchOnWindowFocus: false,
       refetchOnReconnect: true,
       retry: (failureCount) => {
         if (!navigator.onLine) return false;
