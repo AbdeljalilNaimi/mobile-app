@@ -80,10 +80,10 @@ export default function AdsPage() {
   }, [search, sort, selectedCategory]);
 
   const handleRefresh = useCallback(async () => {
-    isFetchingRef.current = false;
     setAds([]);
     setOffset(0);
     setHasMore(true);
+    isFetchingRef.current = false;
     await fetchPage(0, true);
   }, [fetchPage]);
 

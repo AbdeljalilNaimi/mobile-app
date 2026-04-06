@@ -44,7 +44,7 @@ export function PullIndicator({
     >
       <div
         className="flex items-center justify-center w-10 h-10 rounded-full bg-background border border-border shadow-md"
-        style={{ opacity: Math.min(progress * 1.4, 1) }}
+        style={{ opacity: isRefreshing ? 1 : Math.min(progress * 1.4, 1) }}
       >
         {isRefreshing ? (
           <RefreshCw className="h-5 w-5 text-primary animate-spin" />
