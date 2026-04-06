@@ -268,10 +268,8 @@ export const MobileHomeScreen = () => {
       {/* ── Top Providers (premium only) ── */}
       {hasPremium && !loadingProviders && (
       <motion.div variants={fadeUp}>
-        <div className="flex items-center justify-between flex-wrap gap-1">
-          <SectionHeader label={t('mobileHome', 'premiumLabel')} title={t('mobileHome', 'topProviders')} actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/search')} />
-          <CacheBadge lastUpdated={cacheService.providersLastUpdated()} className="mb-1" />
-        </div>
+        <SectionHeader label={t('mobileHome', 'premiumLabel')} title={t('mobileHome', 'topProviders')} actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/search')} />
+        <CacheBadge lastUpdated={cacheService.providersLastUpdated()} className="mt-0.5 mb-1" />
         <div className="space-y-3 mt-3" data-testid="top-providers-list">
           {loadingProviders ? (
             [1, 2, 3].map(i => (
@@ -566,13 +564,13 @@ function SectionHeader({ label, title, actionLabel, onAction }: {
   onAction?: () => void;
 }) {
   return (
-    <motion.div variants={fadeUp} className="flex items-end justify-between">
+    <motion.div variants={fadeUp} className="flex w-full items-center justify-between gap-2">
       <div>
         <p className="text-[11px] uppercase tracking-widest text-muted-foreground font-medium">{label}</p>
         <h2 className="text-base font-semibold text-foreground">{title}</h2>
       </div>
       {actionLabel && onAction && (
-        <button onClick={onAction} className="text-xs font-medium text-primary flex items-center gap-0.5 pb-0.5">
+        <button onClick={onAction} className="flex-shrink-0 text-xs font-medium text-primary flex items-center gap-0.5">
           {actionLabel} <ChevronRight className="h-3 w-3" />
         </button>
       )}
