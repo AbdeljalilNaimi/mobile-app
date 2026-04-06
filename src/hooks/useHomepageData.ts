@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { apiGet } from "@/lib/apiClient";
+import { cacheService } from "@/services/cacheService";
 
 export interface HomepageAd {
   id: string;
@@ -32,8 +33,13 @@ export interface HomepageCommunityPost {
 export function useHomepageAds() {
   return useQuery({
     queryKey: ["homepage-ads"],
-    queryFn: () => apiGet<HomepageAd[]>("/homepage/ads"),
+    queryFn: async () => {
+      const data = await apiGet<HomepageAd[]>("/homepage/ads");
+      cacheService.saveHomepageAds(data);
+      return data;
+    },
     staleTime: 5 * 60 * 1000,
+    placeholderData: () => cacheService.loadHomepageAds() ?? undefined,
   });
 }
 

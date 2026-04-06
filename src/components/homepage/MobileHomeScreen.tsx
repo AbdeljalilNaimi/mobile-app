@@ -19,6 +19,8 @@ import { Input } from '@/components/ui/input';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useHomepageAds, useHomepageArticles, useHomepageCommunity } from '@/hooks/useHomepageData';
 import { usePremiumProviders } from '@/hooks/useProviders';
+import { CacheBadge } from '@/components/CacheBadge';
+import { cacheService } from '@/services/cacheService';
 import { SideDrawer } from '@/components/layout/SideDrawer';
 import {
   AlertDialog,
@@ -266,7 +268,10 @@ export const MobileHomeScreen = () => {
       {/* ── Top Providers (premium only) ── */}
       {hasPremium && !loadingProviders && (
       <motion.div variants={fadeUp}>
-        <SectionHeader label={t('mobileHome', 'premiumLabel')} title={t('mobileHome', 'topProviders')} actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/search')} />
+        <div className="flex items-center justify-between flex-wrap gap-1">
+          <SectionHeader label={t('mobileHome', 'premiumLabel')} title={t('mobileHome', 'topProviders')} actionLabel={t('mobileHome', 'viewAll')} onAction={() => navigate('/search')} />
+          <CacheBadge lastUpdated={cacheService.providersLastUpdated()} className="mb-1" />
+        </div>
         <div className="space-y-3 mt-3" data-testid="top-providers-list">
           {loadingProviders ? (
             [1, 2, 3].map(i => (

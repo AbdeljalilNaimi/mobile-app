@@ -163,6 +163,11 @@ export interface Translations {
     retry: string;
   };
 
+  cache: {
+    offlineBadge: string;
+    lastUpdated: string;
+  };
+
   // Provider
   provider: {
     verified: string;
@@ -1426,6 +1431,10 @@ export const translations: Record<Language, Translations> = {
       message: 'Vérifiez votre connexion internet et réessayez.',
       retry: 'Réessayer',
     },
+    cache: {
+      offlineBadge: 'Données hors-ligne',
+      lastUpdated: 'mis à jour à',
+    },
     provider: {
       verified: 'Vérifié',
       rating: 'Note',
@@ -2580,6 +2589,10 @@ export const translations: Record<Language, Translations> = {
       message: 'تحقق من اتصالك بالإنترنت وحاول مرة أخرى.',
       retry: 'إعادة المحاولة',
     },
+    cache: {
+      offlineBadge: 'بيانات غير متصلة',
+      lastUpdated: 'آخر تحديث',
+    },
     provider: {
       verified: 'موثق',
       rating: 'التقييم',
@@ -3733,6 +3746,10 @@ export const translations: Record<Language, Translations> = {
       title: 'No Connection',
       message: 'Check your internet connection and try again.',
       retry: 'Retry',
+    },
+    cache: {
+      offlineBadge: 'Offline data',
+      lastUpdated: 'updated at',
     },
     provider: {
       verified: 'Verified',

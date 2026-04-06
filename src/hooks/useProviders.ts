@@ -1,8 +1,13 @@
 /**
  * TanStack Query hooks for provider data
- * 
+ *
  * Use these hooks for all Firestore provider reads.
  * Benefits: automatic caching, background refetching, loading states.
+ *
+ * Cache strategy: stale-while-revalidate via TanStack Query + localStorage TTL cache.
+ * - On mount: placeholder data shown instantly from localStorage (if available & fresh).
+ * - Background: Firestore fetch refreshes the data and updates the localStorage cache.
+ * - Offline: Firestore SDK serves data from IndexedDB; TQ shows localStorage placeholder.
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -19,6 +24,7 @@ import {
   updateProviderVerification,
   updateProvider,
 } from '@/services/firestoreProviderService';
+import { cacheService } from '@/services/cacheService';
 import { ProviderType, CityHealthProvider } from '@/data/providers';
 
 // Query keys for cache management
@@ -41,9 +47,14 @@ export const providerKeys = {
 export function useVerifiedProviders() {
   return useQuery({
     queryKey: providerKeys.verified(),
-    queryFn: getVerifiedProviders,
-    staleTime: 3 * 60 * 1000, // 3 minutes
-    refetchInterval: 3 * 60 * 1000, // Auto-refetch every 3 minutes for near real-time updates
+    queryFn: async () => {
+      const data = await getVerifiedProviders();
+      cacheService.saveProviders(data);
+      return data;
+    },
+    staleTime: 3 * 60 * 1000,
+    refetchInterval: 3 * 60 * 1000,
+    placeholderData: () => cacheService.loadProviders() ?? undefined,
   });
 }
 
@@ -55,7 +66,7 @@ export function useAllProviders() {
   return useQuery({
     queryKey: providerKeys.all,
     queryFn: getAllProviders,
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    staleTime: 2 * 60 * 1000,
   });
 }
 
@@ -67,7 +78,7 @@ export function usePendingProviders() {
   return useQuery({
     queryKey: providerKeys.pending(),
     queryFn: getPendingProviders,
-    staleTime: 1 * 60 * 1000, // 1 minute - more frequent updates
+    staleTime: 1 * 60 * 1000,
   });
 }
 
@@ -116,9 +127,14 @@ export function useProviderByUserId(userId: string | undefined) {
 export function useEmergencyProviders() {
   return useQuery({
     queryKey: providerKeys.emergency(),
-    queryFn: getEmergencyProviders,
-    staleTime: 2 * 60 * 1000, // 2 minutes - more frequent for emergency
-    refetchInterval: 2 * 60 * 1000, // Auto-refetch every 2 minutes for real-time updates
+    queryFn: async () => {
+      const data = await getEmergencyProviders();
+      cacheService.saveEmergencyProviders(data);
+      return data;
+    },
+    staleTime: 2 * 60 * 1000,
+    refetchInterval: 2 * 60 * 1000,
+    placeholderData: () => cacheService.loadEmergencyProviders() ?? undefined,
   });
 }
 
@@ -130,8 +146,8 @@ export function useBloodCenters() {
   return useQuery({
     queryKey: providerKeys.bloodCenters(),
     queryFn: getBloodCenters,
-    staleTime: 2 * 60 * 1000, // 2 minutes
-    refetchInterval: 2 * 60 * 1000, // Auto-refetch every 2 minutes for real-time updates
+    staleTime: 2 * 60 * 1000,
+    refetchInterval: 2 * 60 * 1000,
   });
 }
 
@@ -155,9 +171,14 @@ export function useSearchProviders(query: string) {
 export function usePremiumProviders() {
   const result = useQuery({
     queryKey: [...providerKeys.verified(), 'premium'] as const,
-    queryFn: getVerifiedProviders,
+    queryFn: async () => {
+      const data = await getVerifiedProviders();
+      cacheService.saveProviders(data);
+      return data;
+    },
     staleTime: 3 * 60 * 1000,
     refetchInterval: 3 * 60 * 1000,
+    placeholderData: () => cacheService.loadProviders() ?? undefined,
   });
 
   const premiumProviders = result.data
@@ -193,7 +214,7 @@ export function useUpdateVerification() {
       isPublic: boolean;
     }) => updateProviderVerification(providerId, status, isPublic),
     onSuccess: () => {
-      // Invalidate all provider queries to refetch
+      cacheService.invalidateProviders();
       queryClient.invalidateQueries({ queryKey: providerKeys.all });
     },
   });
@@ -215,12 +236,11 @@ export function useUpdateProvider() {
       updates: Partial<CityHealthProvider>;
     }) => updateProvider(providerId, updates),
     onSuccess: (_, { providerId }) => {
-      // Invalidate specific provider, user-based queries, and all lists
+      cacheService.invalidateProviders();
       queryClient.invalidateQueries({ queryKey: providerKeys.detail(providerId) });
       queryClient.invalidateQueries({ queryKey: providerKeys.verified() });
       queryClient.invalidateQueries({ queryKey: providerKeys.all });
-      // Also invalidate byUser queries so the dashboard refreshes
-      queryClient.invalidateQueries({ predicate: (query) => 
+      queryClient.invalidateQueries({ predicate: (query) =>
         query.queryKey[0] === 'providers' && query.queryKey[1] === 'user'
       });
     },
@@ -250,7 +270,7 @@ export function useUpdateProviderWithVerification() {
       return updateProviderWithVerificationCheck(providerId, updates, currentVerificationStatus);
     },
     onSuccess: (result, { providerId }) => {
-      // Invalidate all provider queries
+      cacheService.invalidateProviders();
       queryClient.invalidateQueries({ queryKey: providerKeys.detail(providerId) });
       queryClient.invalidateQueries({ queryKey: providerKeys.verified() });
       queryClient.invalidateQueries({ queryKey: providerKeys.pending() });

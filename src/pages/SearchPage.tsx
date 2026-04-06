@@ -4,6 +4,8 @@ import { useVerifiedProviders } from '@/hooks/useProviders';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
 import { isProviderVerified } from '@/utils/verificationUtils';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { CacheBadge } from '@/components/CacheBadge';
+import { cacheService } from '@/services/cacheService';
 import type { Translations } from '@/i18n/translations';
 import type { Lang } from '@/data/providers';
 import {
@@ -496,12 +498,13 @@ const SearchPage = () => {
       </div>
 
       {/* Results count */}
-      <div className="px-4 pb-2">
+      <div className="px-4 pb-2 flex items-center gap-2 flex-wrap">
         <p className="text-xs text-muted-foreground" data-testid="text-results-count">
           {isLoading
             ? t('search', 'loading')
             : `${filteredProviders.length} ${filteredProviders.length !== 1 ? t('search', 'resultPlural') : t('search', 'resultSingular')}`}
         </p>
+        <CacheBadge lastUpdated={cacheService.providersLastUpdated()} />
       </div>
 
       {/* Provider list */}

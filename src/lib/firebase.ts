@@ -1,6 +1,10 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
+import {
+  initializeFirestore,
+  persistentLocalCache,
+  persistentSingleTabManager,
+} from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { getFunctions } from 'firebase/functions';
 
@@ -20,9 +24,17 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
+// Initialize Firestore with IndexedDB offline persistence.
+// All Firestore reads (providers, etc.) are cached in IndexedDB and served
+// transparently when the device is offline.
+export const db = initializeFirestore(app, {
+  localCache: persistentLocalCache({
+    tabManager: persistentSingleTabManager({ forceOwnership: false }),
+  }),
+});
+
 // Initialize services
 export const auth = getAuth(app);
-export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const functions = getFunctions(app);
 

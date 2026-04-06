@@ -1,7 +1,9 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import { BrowserRouter, Routes, Route, useLocation, Navigate, Outlet, useSearchParams } from "react-router-dom";
 import { useEffect, Suspense, lazy } from "react";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
@@ -83,12 +85,21 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       refetchOnReconnect: true,
+      gcTime: 24 * 60 * 60 * 1000, // 24 h — keep queries in cache for the persister
       retry: (failureCount) => {
         if (!navigator.onLine) return false;
         return failureCount < 2;
       },
     },
   },
+});
+
+// Persist the TanStack Query cache to localStorage (24 h TTL).
+// On cold start the cache hydrates before the first render — stale-while-revalidate.
+const queryPersister = createSyncStoragePersister({
+  storage: window.localStorage,
+  key: 'ch_query_cache',
+  throttleTime: 1000,
 });
 
 // Loading fallback component
@@ -279,7 +290,10 @@ const AppRoutes = () => {
 
 const App = () => (
   <ErrorBoundary>
-    <QueryClientProvider client={queryClient}>
+    <PersistQueryClientProvider
+      client={queryClient}
+      persistOptions={{ persister: queryPersister, maxAge: 24 * 60 * 60 * 1000 }}
+    >
       <ThemeProvider>
         <LanguageProvider>
           <NetworkStatusProvider>
@@ -300,7 +314,7 @@ const App = () => (
           </NetworkStatusProvider>
         </LanguageProvider>
       </ThemeProvider>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   </ErrorBoundary>
 );
 
