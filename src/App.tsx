@@ -97,7 +97,7 @@ const queryClient = new QueryClient({
 // Persist the TanStack Query cache to localStorage (24 h TTL).
 // On cold start the cache hydrates before the first render — stale-while-revalidate.
 const queryPersister = createSyncStoragePersister({
-  storage: window.localStorage,
+  storage: typeof window !== 'undefined' ? window.localStorage : undefined,
   key: 'ch_query_cache',
   throttleTime: 1000,
 });
