@@ -30,13 +30,7 @@ const app = express();
 const PORT = parseInt(process.env.PORT || "3001");
 
 app.use(cors({
-  origin: [
-    "capacitor://localhost",
-    "ionic://localhost",
-    "http://localhost",
-    /\.replit\.app$/,
-    /\.replit\.dev$/,
-  ],
+  origin: (_origin, callback) => callback(null, true),
   credentials: true,
 }));
 app.use(express.json({ limit: "10mb" }));
