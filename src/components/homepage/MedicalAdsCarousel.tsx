@@ -10,6 +10,28 @@ import { VerifiedBadge } from '@/components/trust/VerifiedBadge';
 import { SectionHeader } from './SectionHeader';
 import { getApprovedAds, Ad } from '@/services/adsService';
 
+function SlideImage({ src, alt }: { src: string | null; alt: string }) {
+  const [errored, setErrored] = useState(false);
+
+  if (!src || errored) {
+    return (
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+        <Megaphone className="h-24 w-24 text-primary/20" aria-hidden="true" />
+      </div>
+    );
+  }
+
+  return (
+    <img
+      src={src}
+      alt={alt}
+      className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+      loading="lazy"
+      onError={() => setErrored(true)}
+    />
+  );
+}
+
 export const MedicalAdsCarousel = () => {
   const { t } = useLanguage();
   const [ads, setAds] = useState<Ad[]>([]);
@@ -62,20 +84,7 @@ export const MedicalAdsCarousel = () => {
               {ads.map((ad) => (
                 <div key={ad.id} className="flex-shrink-0 w-full">
                   <div className="relative h-[450px] md:h-[520px] group">
-                    {ad.image_url ? (
-                      <img
-                        src={ad.image_url}
-                        alt=""
-                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                        loading="lazy"
-                        aria-hidden="true"
-                        onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                        <Megaphone className="h-24 w-24 text-primary/20" aria-hidden="true" />
-                      </div>
-                    )}
+                    <SlideImage src={ad.image_url} alt={ad.title} />
                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/10" />
                     <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-transparent to-accent/20 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                     <div className="absolute top-6 left-6 w-20 h-20 border-l-2 border-t-2 border-white/20 rounded-tl-xl" />

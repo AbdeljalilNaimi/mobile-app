@@ -74,7 +74,11 @@ export function AdCard({
 
   const handleReport = (e: React.MouseEvent) => {
     e.stopPropagation();
-    onReport?.(ad.id);
+    if (onReport) {
+      onReport(ad.id);
+    } else {
+      navigate(`/annonces/${ad.id}`);
+    }
   };
 
   return (

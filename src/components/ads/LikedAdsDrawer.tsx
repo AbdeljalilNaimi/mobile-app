@@ -1,9 +1,33 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Heart, Megaphone, ChevronRight } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getLikedAds, Ad } from '@/services/adsService';
+
+function LikedAdThumbnail({ src, alt }: { src: string | null; alt: string }) {
+  const [errored, setErrored] = useState(false);
+
+  if (!src || errored) {
+    return (
+      <div className="h-14 w-14 rounded-xl flex-shrink-0 bg-muted flex items-center justify-center">
+        <Megaphone className="h-6 w-6 text-muted-foreground/40" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-14 w-14 rounded-xl overflow-hidden flex-shrink-0 bg-muted">
+      <img
+        src={src}
+        alt={alt}
+        className="h-full w-full object-cover"
+        onError={() => setErrored(true)}
+      />
+    </div>
+  );
+}
 
 interface LikedAdsDrawerProps {
   open: boolean;
@@ -75,22 +99,7 @@ export function LikedAdsDrawer({ open, onOpenChange, userId }: LikedAdsDrawerPro
                   onClick={() => handleAdClick(ad)}
                   className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-muted/70 transition-colors text-left"
                 >
-                  <div className="h-14 w-14 rounded-xl overflow-hidden flex-shrink-0 bg-muted">
-                    {ad.image_url ? (
-                      <img
-                        src={ad.image_url}
-                        alt={ad.title}
-                        className="h-full w-full object-cover"
-                        onError={(e) => {
-                          (e.currentTarget as HTMLImageElement).style.display = 'none';
-                        }}
-                      />
-                    ) : (
-                      <div className="h-full w-full flex items-center justify-center">
-                        <Megaphone className="h-6 w-6 text-muted-foreground/40" />
-                      </div>
-                    )}
-                  </div>
+                  <LikedAdThumbnail src={ad.image_url} alt={ad.title} />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold truncate">{ad.title}</p>
                     <p className="text-xs text-muted-foreground truncate mt-0.5">
