@@ -1,0 +1,88 @@
+Refactor la page Annonces Pro pour améliorer significativement l’UX/UI tout en gardant la cohérence avec le design existant.
+
+1. Header (Hero Section amélioré)
+Ajouter une section top (hero) inspirée du design fourni (image style violet), mais avec la couleur :
+#4285F4 (bleu principal)
+Contenu :
+Texte engageant (exemple, mais améliorable) :
+“Welcome to Annonces Pro”
+Sous-texte : “Discover trusted medical services, offers and events near you”
+À gauche : photo de profil utilisateur
+À droite :
+Icône favoris (heart) → regroupe les annonces likées
+Icône notifications (déjà fonctionnelle, ne pas casser la logique)
+Ajouter un léger effet moderne :
+gradient subtil ou shadow
+border-radius bas
+spacing propre (mobile-first)
+2. Système de filtrage (Categories)
+Juste en dessous du header :
+Ajouter un filtrage horizontal par catégories
+Exemples : Médecin, Clinique, Pharmacie, Laboratoire…
+Scroll horizontal fluide
+État actif visuel clair
+IMPORTANT :
+Les catégories doivent être dynamiques depuis la BDD, pas hardcodées
+3. Cards des annonces (Feed principal)
+Reprendre le style des images fournies (fusion des deux inspirations) :
+Image principale (cover)
+Badges (Sponsorisé, Vérifié, Nouveau)
+Titre (grand, clair)
+Sous-titre (provider / type)
+Description courte
+En bas de chaque card :
+Actions :
+Like ❤️
+Partage
+Bookmark (optionnel)
+Date
+Les données doivent être 100% réelles (BDD) :
+Supprimer tout mock data
+4. Page détail annonce
+Quand on clique sur une annonce :
+Ouvrir une page détail moderne (inspirée de la 2ème partie de la 1ère image)
+Contenu :
+Image principale
+Titre + description complète
+Infos provider
+Bouton vers profil réel du provider
+Intégration map / localisation
+Vérifier :
+Navigation fluide
+Data cohérente (Firestore)
+5. Cohérence globale images & data
+Vérifier toutes les images dans :
+Ads section
+Search section
+Home page (ads preview)
+S’assurer que :
+Toutes les images sont réelles depuis la BDD
+Pas de placeholder ou mock
+Bon fallback si image absente
+6. Fonctionnalité favoris
+Le bouton ❤️ :
+Permet de liker une annonce
+Stockage en base (user → likedAds)
+Accessible via l’icône heart dans le header
+7. Contraintes techniques
+Ne pas casser :
+navigation existante
+système de notification
+Code :
+propre, modulaire
+scalable (React best practices si utilisé)
+Performance :
+lazy loading images
+optimisation des requêtes Firestore
+8. Tests (obligatoire)
+Tester end-to-end :
+affichage annonces
+filtrage catégories
+like / unlike
+navigation vers détail
+navigation vers profil provider
+Vérifier :
+aucune mock data
+toutes les interactions fonctionnelles
+
+Objectif : transformer une page basique en une expérience moderne, dynamique et data-driven, sans changer radicalement le design global mais en améliorant fortement l’impact visuel et l’engagement utilisateur.
