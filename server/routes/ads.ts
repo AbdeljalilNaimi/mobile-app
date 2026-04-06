@@ -46,7 +46,7 @@ router.get("/categories", async (_req, res) => {
   }
 });
 
-// GET /api/ads/:id — returns approved ads publicly; also returns own pending ad if provider matches
+// GET /api/ads/:id — publicly returns approved ads only
 router.get("/:id", async (req, res) => {
   try {
     const result = await pool.query(

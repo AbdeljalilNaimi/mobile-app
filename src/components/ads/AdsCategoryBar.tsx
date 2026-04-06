@@ -15,16 +15,6 @@ export function AdsCategoryBar({ selected, onSelect }: AdsCategoryBarProps) {
     staleTime: 5 * 60 * 1000,
   });
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-10">
-        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
-
-  if (categories.length === 0) return null;
-
   return (
     <div
       data-testid="category-bar"
@@ -43,21 +33,28 @@ export function AdsCategoryBar({ selected, onSelect }: AdsCategoryBarProps) {
       >
         Tous
       </button>
-      {categories.map((cat) => (
-        <button
-          key={cat}
-          data-testid={`category-chip-${cat}`}
-          onClick={() => onSelect(cat === selected ? null : cat)}
-          className={cn(
-            'flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap',
-            selected === cat
-              ? 'bg-[#4285F4] text-white shadow-sm'
-              : 'bg-muted text-muted-foreground hover:bg-muted/80'
-          )}
-        >
-          {cat}
-        </button>
-      ))}
+
+      {isLoading ? (
+        <div className="flex items-center px-2">
+          <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+        </div>
+      ) : (
+        categories.map((cat) => (
+          <button
+            key={cat}
+            data-testid={`category-chip-${cat}`}
+            onClick={() => onSelect(cat === selected ? null : cat)}
+            className={cn(
+              'flex-shrink-0 px-4 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap',
+              selected === cat
+                ? 'bg-[#4285F4] text-white shadow-sm'
+                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+            )}
+          >
+            {cat}
+          </button>
+        ))
+      )}
     </div>
   );
 }
