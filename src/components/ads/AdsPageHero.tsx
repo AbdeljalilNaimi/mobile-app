@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNotifications } from '@/hooks/useNotifications';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { Badge } from '@/components/ui/badge';
 
 interface AdsPageHeroProps {
@@ -14,6 +15,9 @@ export function AdsPageHero({ onOpenLikedDrawer }: AdsPageHeroProps) {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
   const { unreadCount } = useNotifications(user?.uid);
+  const { t } = useLanguage();
+
+  const greetingLabel = t('citizenDashboard', 'greeting');
 
   const displayName =
     user?.displayName || profile?.full_name || 'Vous';
@@ -53,7 +57,7 @@ export function AdsPageHero({ onOpenLikedDrawer }: AdsPageHeroProps) {
                 </AvatarFallback>
               </Avatar>
               <div>
-                <p className="text-white/70 text-xs font-medium">Bonjour,</p>
+                <p className="text-white/70 text-xs font-medium">{greetingLabel},</p>
                 <p className="text-white font-semibold text-base leading-tight truncate max-w-[140px]">
                   {displayName.split(' ')[0]}
                 </p>
@@ -65,7 +69,7 @@ export function AdsPageHero({ onOpenLikedDrawer }: AdsPageHeroProps) {
                 <span className="text-white text-xl">🏥</span>
               </div>
               <div>
-                <p className="text-white/70 text-xs">Bienvenue sur</p>
+                <p className="text-white/70 text-xs">{greetingLabel}</p>
                 <p className="text-white font-semibold text-base">CityHealth</p>
               </div>
             </div>
@@ -111,7 +115,7 @@ export function AdsPageHero({ onOpenLikedDrawer }: AdsPageHeroProps) {
             Annonces Pro
           </h1>
           <p className="text-white/75 text-sm mt-1 leading-relaxed">
-            Offres et services de santé vérifiés
+            {t('citizenDashboard', 'medicalAdsDesc')}
           </p>
         </div>
       </div>

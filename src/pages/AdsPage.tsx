@@ -1,14 +1,18 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Search, TrendingUp, Clock, Star, Loader2, Megaphone, CheckCircle2 } from 'lucide-react';
+import { Search, TrendingUp, Clock, Star, Loader2, Megaphone, CheckCircle2, Flag } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { AdCard } from '@/components/ads/AdCard';
 import { AdsPageHero } from '@/components/ads/AdsPageHero';
 import { AdsCategoryBar } from '@/components/ads/AdsCategoryBar';
 import { LikedAdsDrawer } from '@/components/ads/LikedAdsDrawer';
-import { Ad, getApprovedAds, getUserLikes, getUserSaves, AdFilters } from '@/services/adsService';
+import { Ad, getApprovedAds, getUserLikes, getUserSaves, reportAd, AdFilters } from '@/services/adsService';
 import { Helmet } from 'react-helmet-async';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
+import { toast } from 'sonner';
 
 const PAGE_SIZE = 12;
 
@@ -34,6 +38,11 @@ export default function AdsPage() {
 
   const [userLikes, setUserLikes] = useState<string[]>([]);
   const [userSaves, setUserSaves] = useState<string[]>([]);
+
+  const [reportAdId, setReportAdId] = useState<string | null>(null);
+  const [reportReason, setReportReason] = useState('');
+  const [reportDetails, setReportDetails] = useState('');
+  const [reporting, setReporting] = useState(false);
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const isFetchingRef = useRef(false);
@@ -96,6 +105,28 @@ export default function AdsPage() {
 
   const handleSaveToggle = (adId: string, saved: boolean) => {
     setUserSaves(prev => saved ? [...prev, adId] : prev.filter(id => id !== adId));
+  };
+
+  const handleReportOpen = (adId: string) => {
+    if (!user) { toast.info('Connectez-vous pour signaler une annonce'); return; }
+    setReportAdId(adId);
+    setReportReason('');
+    setReportDetails('');
+  };
+
+  const handleReportSubmit = async () => {
+    if (!user || !reportAdId) return;
+    if (!reportReason) { toast.error('Veuillez sélectionner une raison'); return; }
+    setReporting(true);
+    try {
+      await reportAd(reportAdId, user.uid, reportReason, reportDetails);
+      toast.success('Signalement envoyé, merci.');
+      setReportAdId(null);
+    } catch {
+      toast.error('Erreur lors du signalement');
+    } finally {
+      setReporting(false);
+    }
   };
 
   return (
@@ -183,6 +214,7 @@ export default function AdsPage() {
                     isSaved={userSaves.includes(ad.id)}
                     onLikeToggle={handleLikeToggle}
                     onSaveToggle={handleSaveToggle}
+                    onReport={handleReportOpen}
                   />
                 ))}
               </div>
@@ -210,6 +242,56 @@ export default function AdsPage() {
         onOpenChange={setLikedDrawerOpen}
         userId={user?.uid}
       />
+
+      {/* Report Dialog */}
+      <Dialog open={!!reportAdId} onOpenChange={(open) => !open && setReportAdId(null)}>
+        <DialogContent className="max-w-sm mx-auto">
+          <DialogTitle className="flex items-center gap-2 text-base">
+            <Flag className="h-4 w-4 text-destructive" />
+            Signaler cette annonce
+          </DialogTitle>
+          <div className="space-y-3 mt-2">
+            <Select value={reportReason} onValueChange={setReportReason}>
+              <SelectTrigger data-testid="select-report-reason-feed">
+                <SelectValue placeholder="Raison du signalement" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="spam">Spam / Publicité abusive</SelectItem>
+                <SelectItem value="inappropriate">Contenu inapproprié</SelectItem>
+                <SelectItem value="misleading">Information trompeuse</SelectItem>
+                <SelectItem value="non_medical">Non médical</SelectItem>
+                <SelectItem value="other">Autre</SelectItem>
+              </SelectContent>
+            </Select>
+            <Textarea
+              data-testid="textarea-report-details-feed"
+              placeholder="Détails supplémentaires (optionnel)"
+              value={reportDetails}
+              onChange={(e) => setReportDetails(e.target.value)}
+              rows={3}
+            />
+            <div className="flex gap-2">
+              <Button
+                data-testid="button-submit-report-feed"
+                variant="destructive"
+                size="sm"
+                className="flex-1"
+                onClick={handleReportSubmit}
+                disabled={reporting}
+              >
+                {reporting ? 'Envoi...' : 'Envoyer le signalement'}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setReportAdId(null)}
+              >
+                Annuler
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
