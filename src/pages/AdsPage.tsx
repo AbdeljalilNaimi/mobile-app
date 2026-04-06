@@ -48,10 +48,12 @@ export default function AdsPage() {
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const isFetchingRef = useRef(false);
+  const epochRef = useRef(0);
 
   const fetchPage = useCallback(async (currentOffset: number, replace: boolean) => {
     if (isFetchingRef.current) return;
     isFetchingRef.current = true;
+    const epoch = epochRef.current;
     if (replace) setLoading(true); else setLoadingMore(true);
     try {
       const result = await getApprovedAds({
@@ -61,18 +63,23 @@ export default function AdsPage() {
         limit: PAGE_SIZE,
         offset: currentOffset,
       });
+      if (epochRef.current !== epoch) return;
       setAds(prev => replace ? result : [...prev, ...result]);
       setHasMore(result.length >= PAGE_SIZE);
       setOffset(currentOffset + result.length);
     } catch (error) {
-      console.error('Failed to load ads:', error);
+      if (epochRef.current === epoch) console.error('Failed to load ads:', error);
     } finally {
-      if (replace) setLoading(false); else setLoadingMore(false);
-      isFetchingRef.current = false;
+      if (epochRef.current === epoch) {
+        if (replace) setLoading(false); else setLoadingMore(false);
+        isFetchingRef.current = false;
+      }
     }
   }, [search, sort, selectedCategory]);
 
   useEffect(() => {
+    epochRef.current += 1;
+    isFetchingRef.current = false;
     setAds([]);
     setOffset(0);
     setHasMore(true);
@@ -80,10 +87,11 @@ export default function AdsPage() {
   }, [search, sort, selectedCategory]);
 
   const handleRefresh = useCallback(async () => {
+    epochRef.current += 1;
+    isFetchingRef.current = false;
     setAds([]);
     setOffset(0);
     setHasMore(true);
-    isFetchingRef.current = false;
     await fetchPage(0, true);
   }, [fetchPage]);
 
