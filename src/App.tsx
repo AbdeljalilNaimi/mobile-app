@@ -8,6 +8,8 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { ProviderProvider } from "@/contexts/ProviderContext";
+import { NetworkStatusProvider } from "@/contexts/NetworkStatusContext";
+import { NoConnectionScreen } from "@/components/NoConnectionScreen";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ProviderRouteGuard } from "@/components/ProviderRouteGuard";
 import { AdminGuard } from "@/components/guards/AdminGuard";
@@ -76,7 +78,17 @@ const DeveloperLandingPage = lazy(() => import("./pages/developers/DeveloperLand
 const DeveloperDashboardPage = lazy(() => import("./pages/developers/DeveloperDashboardPage"));
 const DeveloperDocsPage = lazy(() => import("./pages/developers/DeveloperDocsPage"));
 const ServiceLandingPage = lazy(() => import("./pages/ServiceLandingPage"));
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnReconnect: true,
+      retry: (failureCount) => {
+        if (!navigator.onLine) return false;
+        return failureCount < 2;
+      },
+    },
+  },
+});
 
 // Loading fallback component
 const PageLoader = () => (
@@ -269,19 +281,22 @@ const App = () => (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <LanguageProvider>
-          <AuthProvider>
-            <ProviderProvider>
-              <TooltipProvider>
-                <Toaster />
-                <Sonner />
-                <BrowserRouter>
-                  <div className="min-h-screen bg-background text-foreground">
-                    <AppRoutes />
-                  </div>
-                </BrowserRouter>
-              </TooltipProvider>
-            </ProviderProvider>
-          </AuthProvider>
+          <NetworkStatusProvider>
+            <AuthProvider>
+              <ProviderProvider>
+                <TooltipProvider>
+                  <Toaster />
+                  <Sonner />
+                  <BrowserRouter>
+                    <div className="min-h-screen bg-background text-foreground">
+                      <AppRoutes />
+                      <NoConnectionScreen />
+                    </div>
+                  </BrowserRouter>
+                </TooltipProvider>
+              </ProviderProvider>
+            </AuthProvider>
+          </NetworkStatusProvider>
         </LanguageProvider>
       </ThemeProvider>
     </QueryClientProvider>

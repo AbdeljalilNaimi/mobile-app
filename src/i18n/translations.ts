@@ -157,6 +157,12 @@ export interface Translations {
     medical_equipment: string;
   };
 
+  offline: {
+    title: string;
+    message: string;
+    retry: string;
+  };
+
   // Provider
   provider: {
     verified: string;
@@ -1415,6 +1421,11 @@ export const translations: Record<Language, Translations> = {
       radiology_center: 'Radiologie',
       medical_equipment: 'Équipement',
     },
+    offline: {
+      title: 'Pas de connexion',
+      message: 'Vérifiez votre connexion internet et réessayez.',
+      retry: 'Réessayer',
+    },
     provider: {
       verified: 'Vérifié',
       rating: 'Note',
@@ -2564,6 +2575,11 @@ export const translations: Record<Language, Translations> = {
       radiology_center: 'الأشعة',
       medical_equipment: 'معدات طبية',
     },
+    offline: {
+      title: 'لا يوجد اتصال',
+      message: 'تحقق من اتصالك بالإنترنت وحاول مرة أخرى.',
+      retry: 'إعادة المحاولة',
+    },
     provider: {
       verified: 'موثق',
       rating: 'التقييم',
@@ -3712,6 +3728,11 @@ export const translations: Record<Language, Translations> = {
       blood_cabin: 'Blood donation',
       radiology_center: 'Radiology',
       medical_equipment: 'Equipment',
+    },
+    offline: {
+      title: 'No Connection',
+      message: 'Check your internet connection and try again.',
+      retry: 'Retry',
     },
     provider: {
       verified: 'Verified',
