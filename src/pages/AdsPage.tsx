@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Search, TrendingUp, Clock, Star, Loader2, Megaphone, CheckCircle2, Flag } from 'lucide-react';
+import { usePullToRefresh } from '@/hooks/usePullToRefresh';
+import { PullIndicator } from '@/components/PullIndicator';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { AdCard } from '@/components/ads/AdCard';
@@ -77,6 +79,16 @@ export default function AdsPage() {
     fetchPage(0, true);
   }, [search, sort, selectedCategory]);
 
+  const handleRefresh = useCallback(async () => {
+    isFetchingRef.current = false;
+    setAds([]);
+    setOffset(0);
+    setHasMore(true);
+    await fetchPage(0, true);
+  }, [fetchPage]);
+
+  const { pullDistance, isRefreshing } = usePullToRefresh({ onRefresh: handleRefresh });
+
   useEffect(() => {
     if (user?.uid) {
       getUserLikes(user.uid).then(setUserLikes).catch(() => {});
@@ -135,6 +147,8 @@ export default function AdsPage() {
         <title>Annonces Pro - CityHealth Sidi Bel Abbès</title>
         <meta name="description" content="Découvrez les annonces et offres de nos professionnels de santé vérifiés à Sidi Bel Abbès." />
       </Helmet>
+
+      <PullIndicator pullDistance={pullDistance} isRefreshing={isRefreshing} />
 
       <div className="min-h-screen bg-muted/30">
         {/* Hero */}

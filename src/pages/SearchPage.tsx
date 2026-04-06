@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { useVerifiedProviders } from '@/hooks/useProviders';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
@@ -6,6 +6,8 @@ import { isProviderVerified } from '@/utils/verificationUtils';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { CacheBadge } from '@/components/CacheBadge';
 import { cacheService } from '@/services/cacheService';
+import { usePullToRefresh } from '@/hooks/usePullToRefresh';
+import { PullIndicator } from '@/components/PullIndicator';
 import type { Translations } from '@/i18n/translations';
 import type { Lang } from '@/data/providers';
 import {
@@ -87,6 +89,13 @@ const SearchPage = () => {
 
   const debouncedQuery = useDebouncedValue(searchQuery, 300);
   const { data: allProviders = [], isLoading, isError, refetch } = useVerifiedProviders();
+
+  const handleRefresh = useCallback(async () => {
+    cacheService.invalidateProviders();
+    await refetch();
+  }, [refetch]);
+
+  const { pullDistance, isRefreshing } = usePullToRefresh({ onRefresh: handleRefresh });
 
   const categories = useMemo(() => CATEGORY_IDS.map(id => ({
     id,
@@ -181,6 +190,7 @@ const SearchPage = () => {
 
   return (
     <div className="flex flex-col min-h-full bg-background">
+      <PullIndicator pullDistance={pullDistance} isRefreshing={isRefreshing} />
       {/* Sticky header: search bar + category chips + sort & filter bar */}
       <div className="sticky top-0 z-40 bg-background/90 backdrop-blur-xl border-b border-border/30">
         {/* Search input */}

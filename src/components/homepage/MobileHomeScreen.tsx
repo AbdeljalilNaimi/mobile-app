@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -16,12 +16,15 @@ import {
 } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Input } from '@/components/ui/input';
+import { useQueryClient } from '@tanstack/react-query';
 import { useNotifications } from '@/hooks/useNotifications';
 import { useHomepageAds, useHomepageArticles, useHomepageCommunity } from '@/hooks/useHomepageData';
-import { usePremiumProviders } from '@/hooks/useProviders';
+import { usePremiumProviders, providerKeys } from '@/hooks/useProviders';
 import { CacheBadge } from '@/components/CacheBadge';
 import { cacheService } from '@/services/cacheService';
 import { SideDrawer } from '@/components/layout/SideDrawer';
+import { usePullToRefresh } from '@/hooks/usePullToRefresh';
+import { PullIndicator } from '@/components/PullIndicator';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -53,10 +56,21 @@ export const MobileHomeScreen = () => {
   const { user, profile } = useAuth();
   const { t, isRTL } = useLanguage();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { unreadCount } = useNotifications(user?.uid);
   const [searchQuery, setSearchQuery] = useState('');
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showExitDialog, setShowExitDialog] = useState(false);
+
+  const handleRefresh = useCallback(async () => {
+    cacheService.invalidateProviders();
+    await queryClient.invalidateQueries({ queryKey: ['homepage-ads'] });
+    await queryClient.invalidateQueries({ queryKey: ['homepage-articles'] });
+    await queryClient.invalidateQueries({ queryKey: ['homepage-community'] });
+    await queryClient.invalidateQueries({ queryKey: providerKeys.all });
+  }, [queryClient]);
+
+  const { pullDistance, isRefreshing } = usePullToRefresh({ onRefresh: handleRefresh });
 
   useEffect(() => {
     window.history.pushState({ homePage: true }, '');
@@ -157,6 +171,7 @@ export const MobileHomeScreen = () => {
       animate="show"
       className="bg-background min-h-screen px-4 pb-20 space-y-5"
     >
+      <PullIndicator pullDistance={pullDistance} isRefreshing={isRefreshing} />
       {/* ── Header with background shape ── */}
       <motion.div variants={fadeUp} className="-mx-4 -mt-0 bg-primary rounded-b-[32px] px-5 pt-5 pb-14 relative">
         {/* Top row: settings + avatar */}
