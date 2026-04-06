@@ -46,15 +46,25 @@ export function useHomepageAds() {
 export function useHomepageArticles() {
   return useQuery({
     queryKey: ["homepage-articles"],
-    queryFn: () => apiGet<HomepageArticle[]>("/homepage/articles"),
+    queryFn: async () => {
+      const data = await apiGet<HomepageArticle[]>("/homepage/articles");
+      cacheService.saveHomepageArticles(data);
+      return data;
+    },
     staleTime: 5 * 60 * 1000,
+    placeholderData: () => cacheService.loadHomepageArticles() ?? undefined,
   });
 }
 
 export function useHomepageCommunity() {
   return useQuery({
     queryKey: ["homepage-community"],
-    queryFn: () => apiGet<HomepageCommunityPost[]>("/homepage/community"),
+    queryFn: async () => {
+      const data = await apiGet<HomepageCommunityPost[]>("/homepage/community");
+      cacheService.saveHomepageCommunity(data);
+      return data;
+    },
     staleTime: 5 * 60 * 1000,
+    placeholderData: () => cacheService.loadHomepageCommunity() ?? undefined,
   });
 }

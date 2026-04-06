@@ -1,20 +1,22 @@
 /**
  * CacheService — TTL-aware localStorage wrapper for critical app data.
  *
- * Provides typed helpers for providers and ads with explicit TTLs.
+ * Provides typed helpers for providers, ads, articles, and community posts.
  * A CACHE_VERSION bump automatically clears stale cache from old schemas.
  */
 
 import { CityHealthProvider } from '@/data/providers';
-import type { HomepageAd } from '@/hooks/useHomepageData';
+import type { HomepageAd, HomepageArticle, HomepageCommunityPost } from '@/hooks/useHomepageData';
 
-const CACHE_VERSION = 1;
+const CACHE_VERSION = 2;
 const VERSION_KEY = 'ch_cache_version';
 
 const TTL = {
-  providers: 3 * 60 * 60 * 1000,   // 3 hours
-  emergency: 30 * 60 * 1000,        // 30 minutes (critical data)
-  homepageAds: 60 * 60 * 1000,      // 1 hour
+  providers: 3 * 60 * 60 * 1000,        // 3 hours
+  emergency: 30 * 60 * 1000,             // 30 minutes (critical data)
+  homepageAds: 60 * 60 * 1000,           // 1 hour
+  homepageArticles: 6 * 60 * 60 * 1000,  // 6 hours
+  homepageCommunity: 2 * 60 * 60 * 1000, // 2 hours
 };
 
 interface CacheEntry<T> {
@@ -76,6 +78,7 @@ function invalidate(key: string): void {
 // ── Typed helpers ──────────────────────────────────────────────
 
 export const cacheService = {
+  // Providers
   saveProviders(data: CityHealthProvider[]) {
     save('verified_providers', data, TTL.providers);
   },
@@ -89,6 +92,7 @@ export const cacheService = {
     invalidate('verified_providers');
   },
 
+  // Emergency providers
   saveEmergencyProviders(data: CityHealthProvider[]) {
     save('emergency_providers', data, TTL.emergency);
   },
@@ -96,6 +100,7 @@ export const cacheService = {
     return load<CityHealthProvider[]>('emergency_providers');
   },
 
+  // Homepage ads
   saveHomepageAds(data: HomepageAd[]) {
     save('homepage_ads', data, TTL.homepageAds);
   },
@@ -104,5 +109,21 @@ export const cacheService = {
   },
   homepageAdsLastUpdated(): Date | null {
     return getCachedAt('homepage_ads');
+  },
+
+  // Homepage articles
+  saveHomepageArticles(data: HomepageArticle[]) {
+    save('homepage_articles', data, TTL.homepageArticles);
+  },
+  loadHomepageArticles(): HomepageArticle[] | null {
+    return load<HomepageArticle[]>('homepage_articles');
+  },
+
+  // Homepage community posts
+  saveHomepageCommunity(data: HomepageCommunityPost[]) {
+    save('homepage_community', data, TTL.homepageCommunity);
+  },
+  loadHomepageCommunity(): HomepageCommunityPost[] | null {
+    return load<HomepageCommunityPost[]>('homepage_community');
   },
 };
