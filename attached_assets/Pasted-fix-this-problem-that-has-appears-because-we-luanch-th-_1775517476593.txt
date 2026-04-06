@@ -1,0 +1,60 @@
+fix this problem that has appears because we luanch th app and there's was a section called announce pro is missing : 
+PS C:\Users\MECHREVO\Desktop\mobile-app-2> npm run dev
+
+> vite_react_shadcn_ts@0.0.0 dev
+> concurrently "tsx watch server/index.ts" "vite"
+
+[1] Re-optimizing dependencies because lockfile has changed
+[0] C:\Users\MECHREVO\Desktop\mobile-app-2\server\db.ts:6
+[0]   throw new Error(
+[0]         ^
+[0] 
+[0] Error: DATABASE_URL must be set. Did you forget to provision a database?
+[0]     at <anonymous> (C:\Users\MECHREVO\Desktop\mobile-app-2\server\db.ts:6:9)
+[0]     at ModuleJob.run (node:internal/modules/esm/module_job:430:25)
+[0]     at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:661:26)
+[0]     at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:101:5)
+[0]
+[0] Node.js v24.14.0
+[1] 
+[1]   VITE v5.4.10  ready in 8363 ms
+[1]
+[1]   ➜  Local:   http://localhost:5000/
+[1]   ➜  Network: http://192.168.56.1:5000/
+[1]   ➜  Network: http://192.168.1.29:5000/
+[1] 12:02:18 AM [vite] http proxy error: /api/homepage/ads
+[1] AggregateError [ECONNREFUSED]:
+[1]     at internalConnectMultiple (node:net:1142:49)
+[1]     at afterConnectMultiple (node:net:1723:7)
+[1] 12:02:18 AM [vite] http proxy error: /api/homepage/articles
+[1] AggregateError [ECONNREFUSED]:
+[1]     at internalConnectMultiple (node:net:1142:49)
+[1]     at afterConnectMultiple (node:net:1723:7)
+[1] 12:02:18 AM [vite] http proxy error: /api/homepage/community
+[1] AggregateError [ECONNREFUSED]:
+[1]     at internalConnectMultiple (node:net:1142:49)
+[1]     at afterConnectMultiple (node:net:1723:7)
+[1] 12:02:20 AM [vite] http proxy error: /api/homepage/ads
+[1] AggregateError [ECONNREFUSED]:
+[1]     at internalConnectMultiple (node:net:1142:49)
+[1]     at afterConnectMultiple (node:net:1723:7)
+[1] 12:02:20 AM [vite] http proxy error: /api/homepage/articles
+[1] AggregateError [ECONNREFUSED]:
+[1]     at internalConnectMultiple (node:net:1142:49)
+[1]     at afterConnectMultiple (node:net:1723:7)
+[1] 12:02:20 AM [vite] http proxy error: /api/homepage/community
+[1] AggregateError [ECONNREFUSED]:
+[1]     at internalConnectMultiple (node:net:1142:49)
+[1]     at afterConnectMultiple (node:net:1723:7)
+[1] 12:02:22 AM [vite] http proxy error: /api/homepage/ads
+[1] AggregateError [ECONNREFUSED]:
+[1]     at internalConnectMultiple (node:net:1142:49)
+[1]     at afterConnectMultiple (node:net:1723:7)
+[1] 12:02:22 AM [vite] http proxy error: /api/homepage/articles
+[1] AggregateError [ECONNREFUSED]:
+[1]     at internalConnectMultiple (node:net:1142:49)
+[1]     at afterConnectMultiple (node:net:1723:7)
+[1] 12:02:22 AM [vite] http proxy error: /api/homepage/community
+[1] AggregateError [ECONNREFUSED]:
+[1]     at internalConnectMultiple (node:net:1142:49)
+[1]     at afterConnectMultiple (node:net:1723:7)
