@@ -1,6 +1,6 @@
 import { auth } from "@/lib/firebase";
 
-const BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "") + "/api";
+const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "/api";
 
 async function getAuthHeader(): Promise<Record<string, string>> {
   const user = auth.currentUser;

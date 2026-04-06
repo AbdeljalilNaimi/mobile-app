@@ -5,14 +5,9 @@ const config: CapacitorConfig = {
   appName: 'CityHealth',
   webDir: 'dist',
   server: {
+    url: 'https://cityhealth.replit.app',
     androidScheme: 'https',
-  },
-  plugins: {
-    SplashScreen: {
-      launchShowDuration: 2000,
-      backgroundColor: '#ffffff',
-      showSpinner: false,
-    },
+    cleartext: false,
   },
 };
 

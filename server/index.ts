@@ -29,12 +29,14 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = parseInt(process.env.PORT || "3001");
 
-const CAPACITOR_ORIGINS = ["capacitor://localhost", "ionic://localhost", "http://localhost"];
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin || CAPACITOR_ORIGINS.includes(origin)) return callback(null, true);
-    callback(null, true);
-  },
+  origin: [
+    "capacitor://localhost",
+    "ionic://localhost",
+    "http://localhost",
+    /\.replit\.app$/,
+    /\.replit\.dev$/,
+  ],
   credentials: true,
 }));
 app.use(express.json({ limit: "10mb" }));
