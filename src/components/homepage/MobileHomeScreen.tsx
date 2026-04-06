@@ -70,7 +70,7 @@ export const MobileHomeScreen = () => {
     await queryClient.invalidateQueries({ queryKey: providerKeys.all });
   }, [queryClient]);
 
-  const { pullDistance, isRefreshing } = usePullToRefresh({ onRefresh: handleRefresh });
+  const { ref: pullRef, pullDistance, isRefreshing } = usePullToRefresh<HTMLDivElement>({ onRefresh: handleRefresh });
 
   useEffect(() => {
     window.history.pushState({ homePage: true }, '');
@@ -166,6 +166,7 @@ export const MobileHomeScreen = () => {
 
   return (
     <motion.div
+      ref={pullRef}
       variants={stagger}
       initial="hidden"
       animate="show"

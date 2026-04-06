@@ -87,7 +87,7 @@ export default function AdsPage() {
     await fetchPage(0, true);
   }, [fetchPage]);
 
-  const { pullDistance, isRefreshing } = usePullToRefresh({ onRefresh: handleRefresh });
+  const { ref: pullRef, pullDistance, isRefreshing } = usePullToRefresh<HTMLDivElement>({ onRefresh: handleRefresh });
 
   useEffect(() => {
     if (user?.uid) {
@@ -150,7 +150,7 @@ export default function AdsPage() {
 
       <PullIndicator pullDistance={pullDistance} isRefreshing={isRefreshing} />
 
-      <div className="min-h-screen bg-muted/30">
+      <div ref={pullRef} className="min-h-screen bg-muted/30">
         {/* Hero */}
         <AdsPageHero onOpenLikedDrawer={() => setLikedDrawerOpen(true)} />
 

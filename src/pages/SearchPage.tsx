@@ -95,7 +95,7 @@ const SearchPage = () => {
     await refetch();
   }, [refetch]);
 
-  const { pullDistance, isRefreshing } = usePullToRefresh({ onRefresh: handleRefresh });
+  const { ref: pullRef, pullDistance, isRefreshing } = usePullToRefresh<HTMLDivElement>({ onRefresh: handleRefresh });
 
   const categories = useMemo(() => CATEGORY_IDS.map(id => ({
     id,
@@ -189,7 +189,7 @@ const SearchPage = () => {
   });
 
   return (
-    <div className="flex flex-col min-h-full bg-background">
+    <div ref={pullRef} className="flex flex-col min-h-full bg-background">
       <PullIndicator pullDistance={pullDistance} isRefreshing={isRefreshing} />
       {/* Sticky header: search bar + category chips + sort & filter bar */}
       <div className="sticky top-0 z-40 bg-background/90 backdrop-blur-xl border-b border-border/30">
