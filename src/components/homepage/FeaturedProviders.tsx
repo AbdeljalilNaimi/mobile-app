@@ -152,7 +152,7 @@ export const FeaturedProviders = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="flex items-end justify-between mb-8"
+          className="flex items-center justify-between mb-8 gap-4"
         >
           <div>
             <span className="inline-block px-3 py-1 text-xs font-medium text-muted-foreground bg-muted border border-border rounded-full mb-3">
@@ -162,7 +162,7 @@ export const FeaturedProviders = () => {
               {t('featuredProviders', 'healthProfessionals')}
             </h2>
           </div>
-          <Button asChild variant="ghost" size="sm" className="hidden sm:flex gap-1.5 text-muted-foreground hover:text-foreground">
+          <Button asChild variant="ghost" size="sm" className="flex-shrink-0 flex gap-1.5 text-muted-foreground hover:text-foreground">
             <Link to="/search">
               {t('featuredProviders', 'viewAll')}
               <ArrowRight className="h-4 w-4" />
@@ -337,20 +337,6 @@ export const FeaturedProviders = () => {
           </div>
         )}
 
-        {/* Mobile CTA */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="sm:hidden mt-6 text-center"
-        >
-          <Button asChild variant="outline" size="sm">
-            <Link to="/search" className="flex items-center gap-2">
-              {t('featuredProviders', 'viewAllPractitioners')}
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Button>
-        </motion.div>
       </div>
     </section>
   );
