@@ -182,7 +182,7 @@ const SearchPage = () => {
   return (
     <div className="flex flex-col min-h-full bg-background">
       {/* Sticky header: search bar + category chips + sort & filter bar */}
-      <div className="sticky top-11 z-40 bg-background/90 backdrop-blur-xl border-b border-border/30">
+      <div className="sticky top-0 z-40 bg-background/90 backdrop-blur-xl border-b border-border/30">
         {/* Search input */}
         <div className="px-4 pt-3 pb-2 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -498,7 +498,7 @@ const SearchPage = () => {
       </div>
 
       {/* Results count */}
-      <div className="px-4 pb-2 flex items-center gap-2 flex-wrap">
+      <div className="px-4 pt-2 pb-2 flex items-center gap-2 flex-wrap">
         <p className="text-xs text-muted-foreground" data-testid="text-results-count">
           {isLoading
             ? t('search', 'loading')
