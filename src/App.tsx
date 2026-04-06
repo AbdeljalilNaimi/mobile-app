@@ -66,6 +66,7 @@ const EditOfferPage = lazy(() => import("./pages/citizen/provide/EditOfferPage")
 const DevToolsPage = lazy(() => import("./pages/DevToolsPage"));
 const ProviderWelcomePage = lazy(() => import("./pages/ProviderWelcomePage"));
 const AdsPage = lazy(() => import("./pages/AdsPage"));
+const AdDetailPage = lazy(() => import("./pages/AdDetailPage"));
 const ResearchHubPage = lazy(() => import("./pages/ResearchHubPage"));
 const ArticleDetailPage = lazy(() => import("./pages/ArticleDetailPage"));
 const EmailVerifiedPage = lazy(() => import("./pages/EmailVerifiedPage"));
@@ -193,6 +194,7 @@ const AppRoutes = () => {
           <Route path="/community" element={<CommunityPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/annonces" element={<AdsPage />} />
+          <Route path="/annonces/:id" element={<AdDetailPage />} />
           <Route path="/research" element={<ResearchHubPage />} />
           <Route path="/research/:articleId" element={<ArticleDetailPage />} />
           <Route path="/provider/:id" element={<ProviderProfilePage />} />

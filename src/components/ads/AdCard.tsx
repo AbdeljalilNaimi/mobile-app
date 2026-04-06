@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Heart, Bookmark, Share2, Flag, Eye, MapPin, Clock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Heart, Bookmark, Share2, Flag, Eye, MapPin, Clock, Megaphone } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -19,7 +20,6 @@ interface AdCardProps {
   onLikeToggle?: (adId: string, liked: boolean) => void;
   onSaveToggle?: (adId: string, saved: boolean) => void;
   onReport?: (adId: string) => void;
-  onClick?: () => void;
 }
 
 export function AdCard({
@@ -30,12 +30,13 @@ export function AdCard({
   onLikeToggle,
   onSaveToggle,
   onReport,
-  onClick,
 }: AdCardProps) {
+  const navigate = useNavigate();
   const [liked, setLiked] = useState(isLiked);
   const [saved, setSaved] = useState(isSaved);
   const [likesCount, setLikesCount] = useState(ad.likes_count);
   const [animateLike, setAnimateLike] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   const isNew = new Date().getTime() - new Date(ad.created_at).getTime() < 7 * 24 * 60 * 60 * 1000;
   const hasExpiry = !!ad.expires_at;
@@ -67,7 +68,7 @@ export function AdCard({
 
   const handleShare = (e: React.MouseEvent) => {
     e.stopPropagation();
-    navigator.clipboard.writeText(`${window.location.origin}/annonces?ad=${ad.id}`);
+    navigator.clipboard.writeText(`${window.location.origin}/annonces/${ad.id}`);
     toast.success('Lien copié !');
   };
 
@@ -83,16 +84,23 @@ export function AdCard({
       animate={{ opacity: 1, y: 0 }}
       data-testid={`ad-card-${ad.id}`}
       className="group bg-card rounded-2xl shadow-sm hover:shadow-md border border-border/50 overflow-hidden transition-all duration-300 cursor-pointer"
-      onClick={onClick}
+      onClick={() => navigate(`/annonces/${ad.id}`)}
     >
       {/* Cover Image */}
-      <div className="relative aspect-video overflow-hidden">
-        <img
-          src={ad.image_url}
-          alt={ad.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          loading="lazy"
-        />
+      <div className="relative aspect-video overflow-hidden bg-muted">
+        {!imgError && ad.image_url ? (
+          <img
+            src={ad.image_url}
+            alt={ad.title}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+            onError={() => setImgError(true)}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <Megaphone className="h-10 w-10 text-muted-foreground/30" />
+          </div>
+        )}
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 

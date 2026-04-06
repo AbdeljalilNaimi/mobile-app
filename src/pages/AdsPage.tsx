@@ -4,7 +4,9 @@ import { Search, TrendingUp, Clock, Star, Loader2, Megaphone, CheckCircle2 } fro
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { AdCard } from '@/components/ads/AdCard';
-import { AdDetailDialog } from '@/components/ads/AdDetailDialog';
+import { AdsPageHero } from '@/components/ads/AdsPageHero';
+import { AdsCategoryBar } from '@/components/ads/AdsCategoryBar';
+import { LikedAdsDrawer } from '@/components/ads/LikedAdsDrawer';
 import { Ad, getApprovedAds, getUserLikes, getUserSaves, AdFilters } from '@/services/adsService';
 import { Helmet } from 'react-helmet-async';
 
@@ -27,7 +29,9 @@ export default function AdsPage() {
 
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<AdFilters['sort']>('featured');
-  const [selectedAd, setSelectedAd] = useState<Ad | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [likedDrawerOpen, setLikedDrawerOpen] = useState(false);
+
   const [userLikes, setUserLikes] = useState<string[]>([]);
   const [userSaves, setUserSaves] = useState<string[]>([]);
 
@@ -41,6 +45,7 @@ export default function AdsPage() {
     try {
       const result = await getApprovedAds({
         search: search || undefined,
+        specialty: selectedCategory || undefined,
         sort,
         limit: PAGE_SIZE,
         offset: currentOffset,
@@ -54,14 +59,14 @@ export default function AdsPage() {
       if (replace) setLoading(false); else setLoadingMore(false);
       isFetchingRef.current = false;
     }
-  }, [search, sort]);
+  }, [search, sort, selectedCategory]);
 
   useEffect(() => {
     setAds([]);
     setOffset(0);
     setHasMore(true);
     fetchPage(0, true);
-  }, [search, sort]);
+  }, [search, sort, selectedCategory]);
 
   useEffect(() => {
     if (user?.uid) {
@@ -100,51 +105,48 @@ export default function AdsPage() {
         <meta name="description" content="Découvrez les annonces et offres de nos professionnels de santé vérifiés à Sidi Bel Abbès." />
       </Helmet>
 
-      <div className="min-h-screen bg-muted/30 pt-20">
-        <div className="bg-gradient-to-br from-primary/5 via-background to-background border-b">
-          <div className="container mx-auto px-4 py-10">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <Megaphone className="h-5 w-5 text-primary" />
-              </div>
-              <h1 className="text-2xl font-bold">Annonces Pro</h1>
+      <div className="min-h-screen bg-muted/30">
+        {/* Hero */}
+        <AdsPageHero onOpenLikedDrawer={() => setLikedDrawerOpen(true)} />
+
+        {/* Search + Sort bar */}
+        <div className="bg-background border-b px-4 py-3">
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                data-testid="input-search-ads"
+                placeholder="Rechercher..."
+                className="pl-9 h-9 bg-muted/50 border-0 focus-visible:ring-1"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </div>
-            <p className="text-muted-foreground max-w-xl">
-              Découvrez les services, offres et événements de nos professionnels de santé vérifiés.
-            </p>
-
-            <div className="mt-6 flex flex-col sm:flex-row gap-3">
-              <div className="relative flex-1 max-w-lg">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  data-testid="input-search-ads"
-                  placeholder="Rechercher par titre, description ou prestataire..."
-                  className="pl-10 h-11 bg-card"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
-              </div>
-
-              <div className="flex gap-2">
-                {SORT_OPTIONS.map((opt) => (
-                  <Button
-                    key={opt.value}
-                    data-testid={`button-sort-${opt.value}`}
-                    variant={sort === opt.value ? 'default' : 'outline'}
-                    size="sm"
-                    className="gap-1.5 h-11"
-                    onClick={() => setSort(opt.value)}
-                  >
-                    <opt.icon className="h-3.5 w-3.5" />
-                    <span className="hidden sm:inline">{opt.label}</span>
-                  </Button>
-                ))}
-              </div>
+            <div className="flex gap-1.5">
+              {SORT_OPTIONS.map((opt) => (
+                <Button
+                  key={opt.value}
+                  data-testid={`button-sort-${opt.value}`}
+                  variant={sort === opt.value ? 'default' : 'ghost'}
+                  size="sm"
+                  className="gap-1 h-9 px-3"
+                  onClick={() => setSort(opt.value)}
+                >
+                  <opt.icon className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline text-xs">{opt.label}</span>
+                </Button>
+              ))}
             </div>
           </div>
         </div>
 
-        <div className="container mx-auto px-4 py-8">
+        {/* Category chips */}
+        <div className="bg-background border-b">
+          <AdsCategoryBar selected={selectedCategory} onSelect={setSelectedCategory} />
+        </div>
+
+        {/* Ads grid */}
+        <div className="px-4 py-4">
           {loading ? (
             <div className="flex items-center justify-center py-20">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -152,12 +154,26 @@ export default function AdsPage() {
           ) : ads.length === 0 ? (
             <div className="text-center py-20">
               <Megaphone className="h-16 w-16 text-muted-foreground/30 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-muted-foreground">Aucune annonce pour le moment</h3>
-              <p className="text-sm text-muted-foreground/70 mt-1">Les annonces approuvées apparaîtront ici.</p>
+              <h3 className="text-lg font-medium text-muted-foreground">Aucune annonce</h3>
+              <p className="text-sm text-muted-foreground/70 mt-1">
+                {selectedCategory
+                  ? `Aucune annonce dans la catégorie "${selectedCategory}".`
+                  : 'Les annonces approuvées apparaîtront ici.'}
+              </p>
+              {selectedCategory && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-4"
+                  onClick={() => setSelectedCategory(null)}
+                >
+                  Voir toutes les annonces
+                </Button>
+              )}
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 gap-4">
                 {ads.map((ad) => (
                   <AdCard
                     key={ad.id}
@@ -167,8 +183,6 @@ export default function AdsPage() {
                     isSaved={userSaves.includes(ad.id)}
                     onLikeToggle={handleLikeToggle}
                     onSaveToggle={handleSaveToggle}
-                    onReport={() => setSelectedAd(ad)}
-                    onClick={() => setSelectedAd(ad)}
                   />
                 ))}
               </div>
@@ -178,12 +192,7 @@ export default function AdsPage() {
                 data-testid="sentinel-load-more"
                 className="flex items-center justify-center py-10 mt-4"
               >
-                {loadingMore && (
-                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                )}
-                {hasMore && !loadingMore && (
-                  <p className="text-sm text-muted-foreground">Charger plus…</p>
-                )}
+                {loadingMore && <Loader2 className="h-6 w-6 animate-spin text-primary" />}
                 {!hasMore && !loadingMore && (
                   <p className="text-sm text-muted-foreground flex items-center gap-2">
                     <CheckCircle2 className="h-4 w-4 text-primary/60" />
@@ -196,15 +205,10 @@ export default function AdsPage() {
         </div>
       </div>
 
-      <AdDetailDialog
-        ad={selectedAd}
-        open={!!selectedAd}
-        onOpenChange={(open) => !open && setSelectedAd(null)}
+      <LikedAdsDrawer
+        open={likedDrawerOpen}
+        onOpenChange={setLikedDrawerOpen}
         userId={user?.uid}
-        isLiked={selectedAd ? userLikes.includes(selectedAd.id) : false}
-        isSaved={selectedAd ? userSaves.includes(selectedAd.id) : false}
-        onLikeToggle={handleLikeToggle}
-        onSaveToggle={handleSaveToggle}
       />
     </>
   );

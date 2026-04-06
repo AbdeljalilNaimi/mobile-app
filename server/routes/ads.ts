@@ -15,6 +15,7 @@ router.get("/", async (req, res) => {
     if (provider_id) { conditions.push(`provider_id = $${idx++}`); params.push(provider_id); }
     if (search) { conditions.push(`(title ILIKE $${idx} OR short_description ILIKE $${idx})`); params.push(`%${search}%`); idx++; }
     if (city) { conditions.push(`provider_city = $${idx++}`); params.push(city); }
+    if (specialty) { conditions.push(`provider_type = $${idx++}`); params.push(specialty); }
 
     const where = conditions.length > 0 ? `WHERE ${conditions.join(" AND ")}` : "";
 
@@ -30,6 +31,18 @@ router.get("/", async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch ads" });
+  }
+});
+
+// GET /api/ads/categories — distinct provider_type values from approved ads
+router.get("/categories", async (_req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT DISTINCT provider_type FROM ads WHERE status = 'approved' AND provider_type IS NOT NULL ORDER BY provider_type`
+    );
+    res.json(result.rows.map((r: any) => r.provider_type));
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch categories" });
   }
 });
 
@@ -203,6 +216,19 @@ router.get("/user/:userId/saved-ads", async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch saved ads" });
+  }
+});
+
+// GET /api/ads/user/:userId/liked-ads — full Ad objects for liked ads
+router.get("/user/:userId/liked-ads", async (req, res) => {
+  try {
+    const likes = await pool.query("SELECT ad_id FROM ad_likes WHERE user_id = $1", [req.params.userId]);
+    if (!likes.rows.length) { res.json([]); return; }
+    const ids = likes.rows.map((r: any) => r.ad_id);
+    const result = await pool.query(`SELECT * FROM ads WHERE id = ANY($1) AND status = 'approved' ORDER BY created_at DESC`, [ids]);
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch liked ads" });
   }
 });
 

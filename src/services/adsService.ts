@@ -116,6 +116,18 @@ export async function getSavedAds(userId: string): Promise<Ad[]> {
   return apiGet<Ad[]>(`/ads/user/${userId}/saved-ads`);
 }
 
+export async function getLikedAds(userId: string): Promise<Ad[]> {
+  return apiGet<Ad[]>(`/ads/user/${userId}/liked-ads`);
+}
+
+export async function getAdById(id: string): Promise<Ad> {
+  return apiGet<Ad>(`/ads/${id}`);
+}
+
+export async function getAdCategories(): Promise<string[]> {
+  return apiGet<string[]>(`/ads/categories`);
+}
+
 export async function incrementViews(adId: string): Promise<void> {
   await apiPost(`/ads/${adId}/view`, {});
 }
